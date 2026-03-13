@@ -1,24 +1,44 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import {
+	Poppins_400Regular,
+	Poppins_500Medium,
+	Poppins_600SemiBold,
+	useFonts
+} from "@expo-google-fonts/poppins";
+import { SplashScreen, Stack } from "expo-router";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useEffect } from "react";
+import "../styles/global.css";
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+	const [fontsLoaded] = useFonts({
+		Poppins_400Regular,
+		Poppins_500Medium,
+		Poppins_600SemiBold
+	});
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+	useEffect(() => {
+		if (fontsLoaded) {
+			SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded]);
+
+	if (!fontsLoaded) return null;
+
+	return (
+		<Stack
+			screenOptions={{
+				headerTransparent: true,
+				headerShadowVisible: false,
+				headerTitleStyle: {
+					color: "white"
+				},
+				headerTintColor: "white"
+			}}
+		>
+			<Stack.Screen name="index" options={{ headerShown: false }} />
+			<Stack.Screen name="detail" />
+		</Stack>
+	);
 }
