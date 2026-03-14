@@ -1,13 +1,21 @@
-import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { getTeachings } from "@/services/teachingServices";
+import { useEffect } from "react";
+import { View } from "react-native";
 
 export default function Index() {
-	return (
-		<View className="flex-1 justify-center items-center">
-			<Text className="text-2xl font-bold">Hello World</Text>
-			<Link href="/detail" className="text-blue-500">
-				Detail
-			</Link>
-		</View>
-	);
+	useEffect(() => {
+		getTeachings(
+			{ page: 1, limit: 10, teacher: "lisa" },
+			{
+				onSuccess: (data) => {
+					console.log(data);
+				},
+				onError: (error) => {
+					console.log(error);
+				}
+			}
+		);
+	}, []);
+
+	return <View className="flex-1 justify-center items-center"></View>;
 }
