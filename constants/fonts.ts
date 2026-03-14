@@ -1,0 +1,19 @@
+const fonts = {
+	subtitle1White: {
+		fontSize: 15,
+		fontFamily: "Poppins_500Medium",
+		color: "white"
+	},
+	caption1Grey: {
+		fontSize: 12,
+		fontFamily: "Poppins_400Regular",
+		color: "#A3A1A1"
+	},
+	caption1White: {
+		fontSize: 12,
+		fontFamily: "Poppins_400Regular",
+		color: "white"
+	}
+};
+
+export default fonts;

@@ -4,4 +4,4 @@ type RequestHandlerParams = {
 	onFulfilled?: () => void;
 };
 
-export type { RequestHandlerParams };
+export { RequestHandlerParams };

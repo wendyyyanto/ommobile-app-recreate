@@ -34,11 +34,13 @@ export default function RootLayout() {
 				headerTitleStyle: {
 					color: "white"
 				},
-				headerTintColor: "white"
+				headerTintColor: "white",
+				contentStyle: {
+					backgroundColor: "black"
+				}
 			}}
 		>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
-			<Stack.Screen name="detail" />
 		</Stack>
 	);
 }

@@ -1,4 +1,4 @@
-import axios from "@/config/axios";
+import axios from "@/constants/axios";
 import { RequestHandlerParams } from "@/types/request";
 
 type GetTeachingParams = {
