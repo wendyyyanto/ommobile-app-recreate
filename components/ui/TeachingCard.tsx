@@ -1,14 +1,21 @@
 import fonts from "@/constants/fonts";
 import { Teaching } from "@/types/teaching";
-import { Image, Text, View } from "react-native";
+import { getImageSource } from "@/utils/imageHelper";
+import { Image } from "expo-image";
+import { Text, View } from "react-native";
 
 const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 	return (
 		<View className="flex-1 text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl">
 			<Image
-				source={{ uri: teaching.thumbnailUrl }}
-				resizeMode="cover"
-				className="w-20 h-20 rounded-2xl"
+				source={getImageSource(teaching.thumbnailUrl)}
+				transition={1000}
+				style={{
+					width: 80,
+					height: 80,
+					borderRadius: 16
+				}}
+				contentFit="cover"
 			/>
 			<View className="flex-1 flex justify-between max-h-20 w-full">
 				<Text
