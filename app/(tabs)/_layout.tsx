@@ -1,0 +1,118 @@
+import {
+	Poppins_400Regular,
+	Poppins_500Medium,
+	Poppins_600SemiBold,
+	useFonts
+} from "@expo-google-fonts/poppins";
+import { SplashScreen, Tabs } from "expo-router";
+
+import fonts from "@/constants/fonts";
+import "@/styles/global.css";
+import { Image } from "expo-image";
+import { useEffect } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+SplashScreen.preventAutoHideAsync();
+
+const tabBarIconSize = { width: 18, height: 18, marginBottom: 6 };
+
+export default function RootLayout() {
+	const [fontsLoaded] = useFonts({
+		Poppins_400Regular,
+		Poppins_500Medium,
+		Poppins_600SemiBold
+	});
+	const insets = useSafeAreaInsets();
+
+	useEffect(() => {
+		if (fontsLoaded) {
+			SplashScreen.hideAsync();
+		}
+	}, [fontsLoaded]);
+
+	if (!fontsLoaded) return null;
+
+	return (
+		<Tabs
+			screenOptions={{
+				headerTransparent: true,
+				headerShadowVisible: false,
+				headerTitleStyle: {
+					color: "white"
+				},
+				headerTintColor: "white",
+				sceneStyle: {
+					backgroundColor: "black"
+				},
+				tabBarStyle: {
+					backgroundColor: "black",
+					paddingBottom: 12 + insets.bottom,
+					paddingTop: 10,
+					height: 58 + 10 + (12 + insets.bottom),
+					borderColor: "transparent"
+				},
+				tabBarLabelStyle: {
+					...fonts.caption1White
+				}
+			}}
+		>
+			<Tabs.Screen
+				name="index"
+				options={{
+					title: "Home",
+					tabBarIcon: ({ focused }) =>
+						focused ? (
+							<Image
+								source={require("@/assets/icons/home_active.svg")}
+								style={tabBarIconSize}
+							/>
+						) : (
+							<Image
+								source={require("@/assets/icons/home_inactive.svg")}
+								style={tabBarIconSize}
+							/>
+						),
+					headerShown: false
+				}}
+			/>
+			<Tabs.Screen
+				name="teachings"
+				options={{
+					title: "Teachings",
+					tabBarIcon: ({ focused }) =>
+						focused ? (
+							<Image
+								source={require("@/assets/icons/teaching_active.svg")}
+								style={tabBarIconSize}
+							/>
+						) : (
+							<Image
+								source={require("@/assets/icons/teaching_inactive.svg")}
+								style={tabBarIconSize}
+							/>
+						),
+					headerShown: false
+				}}
+			/>
+			<Tabs.Screen
+				name="notifications"
+				options={{
+					title: "Notifications",
+					tabBarIcon: ({ focused }) =>
+						focused ? (
+							<Image
+								source={require("@/assets/icons/notif_active.svg")}
+								style={tabBarIconSize}
+							/>
+						) : (
+							<Image
+								source={require("@/assets/icons/notif_inactive.svg")}
+								style={tabBarIconSize}
+							/>
+						),
+					headerShown: false
+				}}
+			/>
+		</Tabs>
+	);
+}

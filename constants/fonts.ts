@@ -13,6 +13,11 @@ const fonts = {
 		fontSize: 12,
 		fontFamily: "Poppins_400Regular",
 		color: "white"
+	},
+	body1White: {
+		fontSize: 14,
+		fontFamily: "Poppins_400Regular",
+		color: "white"
 	}
 };
 

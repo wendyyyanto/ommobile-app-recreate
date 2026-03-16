@@ -9,7 +9,11 @@ module.exports = {
 		extend: {
 			colors: {
 				"charcoal-blue": "#171F2A",
-				"slate-gray": "#4B5A6F"
+				"charcoal-slate": "#364458",
+				"slate-gray": "#4B5A6F",
+				"slate-gray-blue": "#3D4D61",
+				"light-gray": "#D9D9D9",
+				"light-steel-gray": "#A3A1A1"
 			},
 			fontFamily: {
 				poppins: [

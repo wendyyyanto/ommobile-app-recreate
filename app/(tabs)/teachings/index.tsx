@@ -1,10 +1,74 @@
-import { Text, View } from "react-native";
+import fonts from "@/constants/fonts";
+import { Image } from "expo-image";
+import { useEffect } from "react";
+import {
+	ImageBackground,
+	Pressable,
+	ScrollView,
+	Text,
+	View
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const backgroundImage = require("@/assets/images/background.png");
 
 const Teachings = () => {
+	useEffect(() => {}, []);
+
+	const teachingCategories = [
+		"New Testament",
+		"Topical",
+		"Old Testament",
+		"Workshop"
+	];
+
 	return (
-		<View>
-			<Text>Teachings</Text>
-		</View>
+		<ImageBackground
+			source={backgroundImage}
+			className="flex-1"
+			resizeMode="cover"
+		>
+			<SafeAreaView edges={["top"]} className="flex-1">
+				<View className="flex-1 px-4 font-poppins">
+					<View className="flex-row justify-between items-start mb-6">
+						<Text className="text-3xl w-1/3 text-white">
+							Bible Teachings
+						</Text>
+						<Pressable className="rounded-full px-5 py-5 bg-slate-gray">
+							<Image
+								source={require("@/assets/icons/search_icon.svg")}
+								style={{ width: 14, height: 14 }}
+							/>
+						</Pressable>
+					</View>
+					<View className="flex flex-row justify-between flex-wrap gap-2 mb-11">
+						{teachingCategories.map((category) => (
+							<Pressable
+								key={category}
+								className="w-2/5 flex-1 flex flex-row justify-between items-center p-4 rounded-full bg-transparent border border-slate-gray-blue"
+							>
+								<Text style={fonts.body1White}>{category}</Text>
+								<Image
+									source={require("@/assets/icons/chevron_right.svg")}
+									style={{
+										width: 28,
+										height: 28,
+										marginRight: -6
+									}}
+								/>
+							</Pressable>
+						))}
+					</View>
+
+					<View className="flex-1 gap-4">
+						<Text className="font-poppins text-white">
+							Popular Teachings
+						</Text>
+						<ScrollView className="flex-1"></ScrollView>
+					</View>
+				</View>
+			</SafeAreaView>
+		</ImageBackground>
 	);
 };
 
