@@ -41,7 +41,7 @@ const AnnouncementCarousel = () => {
 			<Carousel
 				ref={carouselRef}
 				autoPlay={true}
-				autoPlayInterval={2000}
+				autoPlayInterval={5000}
 				snapEnabled={true}
 				data={announcementList}
 				loop={true}

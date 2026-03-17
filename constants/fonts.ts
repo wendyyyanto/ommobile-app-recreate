@@ -18,6 +18,11 @@ const fonts = {
 		fontSize: 14,
 		fontFamily: "Poppins_400Regular",
 		color: "white"
+	},
+	body2White: {
+		fontSize: 16,
+		fontFamily: "Poppins_400Regular",
+		color: "white"
 	}
 };
 

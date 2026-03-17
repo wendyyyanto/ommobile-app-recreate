@@ -1,28 +1,102 @@
+import TeachingCard from "@/components/ui/TeachingCard";
+import colors from "@/constants/colors";
+import fonts from "@/constants/fonts";
+import useSearchTeachings from "@/hooks/useSearchTeachings";
+import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { ImageBackground, Pressable, View } from "react-native";
+import {
+	ImageBackground,
+	Pressable,
+	ScrollView,
+	Text,
+	TextInput,
+	View
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const backgroundImage = require("@/assets/images/background.png");
-
 const SearchTeaching = () => {
+	const { searchTeachings, isLoadingSearchTeachings, searchQuery } =
+		useTeachingStore();
+	const { handleSearchTeachings } = useSearchTeachings();
+
+	const backgroundImage =
+		searchQuery.trim() !== "" && searchTeachings?.length === 0
+			? require("@/assets/images/search_noresult.png")
+			: require("@/assets/images/search_initial.png");
+
 	return (
-		<ImageBackground source={backgroundImage} className="flex-1">
+		<ImageBackground
+			source={backgroundImage}
+			className="flex-1"
+			resizeMode="contain"
+		>
 			<SafeAreaView
 				edges={["top", "bottom"]}
 				className="flex-1 px-4 gap-7"
 			>
 				<View className="flex flex-row justify-between items-start">
 					<Pressable
-						className="rounded-full px-5 py-5 bg-slate-gray"
+						className="flex-1 flex-row items-center gap-4"
 						onPress={() => router.back()}
 					>
 						<Image
 							source={require("@/assets/icons/arrow_back.svg")}
-							style={{ width: 14, height: 14 }}
+							style={{ width: 32, height: 32 }}
 						/>
+						<Text style={fonts.body2White}>Search</Text>
 					</Pressable>
 				</View>
+				<View
+					className="flex-row items-center gap-2 py-2"
+					style={{
+						borderBottomWidth: 0.5,
+						borderColor: colors.lightSteelGray
+					}}
+				>
+					<Image
+						source={require("@/assets/icons/search_icon.svg")}
+						style={{ width: 14, height: 14 }}
+					/>
+					<TextInput
+						placeholder="Search teachings..."
+						placeholderTextColor={colors.lightSteelGray}
+						style={[fonts.body1White]}
+						textAlignVertical="center"
+						onChangeText={handleSearchTeachings}
+					/>
+				</View>
+
+				{searchTeachings?.length > 0 ? (
+					<ScrollView showsVerticalScrollIndicator={false}>
+						<View className="flex-1 gap-4">
+							{searchTeachings?.map((teaching) => (
+								<TeachingCard
+									key={teaching.id}
+									teaching={teaching}
+								/>
+							))}
+						</View>
+					</ScrollView>
+				) : (
+					<View className="flex-1 items-center justify-center">
+						<Text
+							style={[
+								fonts.body1White,
+								{
+									opacity: 0.7,
+									textAlign: "center",
+									width: "80%"
+								}
+							]}
+						>
+							{searchQuery.trim() === "" &&
+							searchTeachings?.length === 0
+								? "Search teaching by books, title, verses, teachers, or keywords.."
+								: `Couldn't find "${searchQuery}" Please try another keywords`}
+						</Text>
+					</View>
+				)}
 			</SafeAreaView>
 		</ImageBackground>
 	);
