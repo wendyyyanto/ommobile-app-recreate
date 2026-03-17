@@ -111,7 +111,7 @@ const Teachings = () => {
 					</View>
 
 					<View className="flex-1 gap-4">
-						<Text className="font-poppins text-white">
+						<Text style={fonts.subtitle1White}>
 							Popular Teachings
 						</Text>
 						<ScrollView

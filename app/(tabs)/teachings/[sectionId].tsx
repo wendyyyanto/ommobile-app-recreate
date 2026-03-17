@@ -66,7 +66,7 @@ const TeachingsSection = () => {
 				<View className="flex flex-row gap-4">
 					{(sectionId === "new-testament" ||
 						sectionId === "old-testament") && (
-						<Pressable className="basis-2/5 flex-1 flex flex-row justify-between items-center border border-slate-gray-blue rounded-full px-4 py-4">
+						<Pressable className="basis-2/5 flex-1 flex flex-row justify-between items-center border border-slate-gray-blue rounded-full px-4">
 							<Text className="text-white font-poppins">
 								All Books
 							</Text>
@@ -76,7 +76,7 @@ const TeachingsSection = () => {
 							/>
 						</Pressable>
 					)}
-					<Pressable className="basis-2/5 flex-1 flex flex-row justify-between items-center border border-slate-gray-blue rounded-full px-4 py-4">
+					<Pressable className="basis-2/5 flex-1 flex flex-row justify-between items-center border border-slate-gray-blue rounded-full px-4 py-3">
 						<View className="flex flex-row items-center">
 							<Image
 								source={require("@/assets/icons/filter.svg")}

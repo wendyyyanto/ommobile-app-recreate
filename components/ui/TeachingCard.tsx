@@ -11,8 +11,8 @@ const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 				source={getImageSource(teaching.thumbnailUrl)}
 				transition={1000}
 				style={{
-					width: 80,
-					height: 80,
+					width: 62,
+					height: 62,
 					borderRadius: 16
 				}}
 				contentFit="cover"

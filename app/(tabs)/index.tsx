@@ -59,7 +59,7 @@ export default function Index() {
 					showsVerticalScrollIndicator={false}
 				>
 					<View className="flex-1 flex flex-col gap-8 px-4">
-						<Text className="font-poppins text-3xl text-white w-1/2">
+						<Text className="font-poppins text-4xl text-white w-1/2">
 							Listen
 							<Text className="color-slate-gray">.</Text> Learn
 							<Text className="color-slate-gray">
