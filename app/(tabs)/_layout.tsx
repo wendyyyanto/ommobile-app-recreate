@@ -4,7 +4,7 @@ import {
 	Poppins_600SemiBold,
 	useFonts
 } from "@expo-google-fonts/poppins";
-import { SplashScreen, Tabs } from "expo-router";
+import { SplashScreen, Tabs, usePathname } from "expo-router";
 
 import fonts from "@/constants/fonts";
 import "@/styles/global.css";
@@ -23,6 +23,16 @@ export default function RootLayout() {
 		Poppins_600SemiBold
 	});
 	const insets = useSafeAreaInsets();
+	const pathname = usePathname();
+	const tabBarRootRoutes = ["/", "/teachings", "/notifications"];
+	const shouldHideTabBar = !tabBarRootRoutes.includes(pathname);
+	const baseTabBarStyle = {
+		backgroundColor: "black",
+		paddingBottom: 12 + insets.bottom,
+		paddingTop: 10,
+		height: 58 + 10 + (12 + insets.bottom),
+		borderColor: "transparent"
+	};
 
 	useEffect(() => {
 		if (fontsLoaded) {
@@ -44,13 +54,9 @@ export default function RootLayout() {
 				sceneStyle: {
 					backgroundColor: "black"
 				},
-				tabBarStyle: {
-					backgroundColor: "black",
-					paddingBottom: 12 + insets.bottom,
-					paddingTop: 10,
-					height: 58 + 10 + (12 + insets.bottom),
-					borderColor: "transparent"
-				},
+				tabBarStyle: shouldHideTabBar
+					? [{ ...baseTabBarStyle }, { display: "none" }]
+					: baseTabBarStyle,
 				tabBarLabelStyle: {
 					...fonts.caption1White
 				}

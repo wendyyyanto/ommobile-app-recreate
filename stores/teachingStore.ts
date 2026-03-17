@@ -2,16 +2,37 @@ import { Teaching } from "@/types/teaching";
 import { create } from "zustand";
 
 interface TeachingState {
-	teachingList: Teaching[];
-	isLoadingTeachingList: boolean;
-	setTeachingList: (teachingList: Teaching[]) => void;
-	setIsLoadingTeachingList: (isLoadingTeachingList: boolean) => void;
+	latestTeachings: Teaching[];
+	popularTeachings: Teaching[];
+	sectionTeachings: Teaching[];
+	isLoadingLatestTeachings: boolean;
+	isLoadingPopularTeachings: boolean;
+	isLoadingSectionTeachings: boolean;
+	setLatestTeachings: (latestTeachings: Teaching[]) => void;
+	setPopularTeachings: (popularTeachings: Teaching[]) => void;
+	setSectionTeachings: (sectionTeachings: Teaching[]) => void;
+	setIsLoadingLatestTeachings: (isLoadingLatestTeachings: boolean) => void;
+	setIsLoadingPopularTeachings: (isLoadingPopularTeachings: boolean) => void;
+	setIsLoadingSectionTeachings: (isLoadingSectionTeachings: boolean) => void;
 }
 
 export const useTeachingStore = create<TeachingState>()((set) => ({
-	teachingList: [],
-	isLoadingTeachingList: false,
-	setTeachingList: (teachingList: Teaching[]) => set({ teachingList }),
-	setIsLoadingTeachingList: (isLoadingTeachingList: boolean) =>
-		set({ isLoadingTeachingList })
+	latestTeachings: [],
+	popularTeachings: [],
+	sectionTeachings: [],
+	isLoadingLatestTeachings: false,
+	isLoadingPopularTeachings: false,
+	isLoadingSectionTeachings: false,
+	setLatestTeachings: (latestTeachings: Teaching[]) =>
+		set({ latestTeachings }),
+	setPopularTeachings: (popularTeachings: Teaching[]) =>
+		set({ popularTeachings }),
+	setSectionTeachings: (sectionTeachings: Teaching[]) =>
+		set({ sectionTeachings }),
+	setIsLoadingLatestTeachings: (isLoadingLatestTeachings: boolean) =>
+		set({ isLoadingLatestTeachings }),
+	setIsLoadingPopularTeachings: (isLoadingPopularTeachings: boolean) =>
+		set({ isLoadingPopularTeachings }),
+	setIsLoadingSectionTeachings: (isLoadingSectionTeachings: boolean) =>
+		set({ isLoadingSectionTeachings })
 }));

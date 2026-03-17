@@ -12,24 +12,24 @@ const backgroundImage = require("@/assets/images/background.png");
 
 export default function Index() {
 	const {
-		setIsLoadingTeachingList,
-		setTeachingList,
-		teachingList,
-		isLoadingTeachingList
+		setIsLoadingLatestTeachings,
+		setLatestTeachings,
+		latestTeachings,
+		isLoadingLatestTeachings
 	} = useTeachingStore();
 
 	useEffect(() => {
-		setIsLoadingTeachingList(true);
+		setIsLoadingLatestTeachings(true);
 		getTeachings(
-			{ page: 1, limit: 10, teacher: "lisa" },
+			{ page: 1, limit: 10 },
 			{
 				onSuccess: (data) => {
-					setTeachingList(data.data);
-					setIsLoadingTeachingList(false);
+					setLatestTeachings(data.data);
+					setIsLoadingLatestTeachings(false);
 				},
 				onError: (error) => {
 					console.log(error);
-					setIsLoadingTeachingList(false);
+					setIsLoadingLatestTeachings(false);
 				}
 			}
 		);
@@ -37,7 +37,7 @@ export default function Index() {
 		return () => {};
 	}, []);
 
-	if (isLoadingTeachingList) {
+	if (isLoadingLatestTeachings) {
 		return (
 			<View className="flex-1 justify-center items-center">
 				<Text className="text-black text-lg font-semibold">
@@ -86,8 +86,8 @@ export default function Index() {
 								</Link>
 							</View>
 							<View className="flex flex-1 gap-4">
-								{teachingList?.length > 0 &&
-									teachingList?.map((teaching) => (
+								{latestTeachings?.length > 0 &&
+									latestTeachings?.map((teaching) => (
 										<TeachingCard
 											key={teaching.id}
 											teaching={teaching}
