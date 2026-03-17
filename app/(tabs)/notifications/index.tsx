@@ -1,10 +1,19 @@
-import { Text, View } from "react-native";
+import { ImageBackground } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Notifications = () => {
 	return (
-		<View>
-			<Text>Teachings</Text>
-		</View>
+		<ImageBackground
+			source={require("@/assets/images/background_notification.png")}
+			resizeMode="contain"
+			style={{
+				position: "absolute",
+				left: 0,
+				top: 0
+			}}
+		>
+			<SafeAreaView></SafeAreaView>
+		</ImageBackground>
 	);
 };
 
