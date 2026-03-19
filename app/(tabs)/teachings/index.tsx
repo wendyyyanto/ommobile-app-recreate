@@ -87,7 +87,7 @@ const Teachings = () => {
 								className="basis-[48%] flex-1 flex-row justify-between items-center p-4 rounded-full bg-transparent border border-slate-gray-blue"
 								onPress={() =>
 									router.push(
-										`/teachings/${category.id}?name=${category.name}`
+										`/teachings/section/${category.id}?name=${category.name}`
 									)
 								}
 							>

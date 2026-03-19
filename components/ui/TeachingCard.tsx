@@ -2,11 +2,15 @@ import fonts from "@/constants/fonts";
 import { Teaching } from "@/types/teaching";
 import { getImageSource } from "@/utils/imageHelper";
 import { Image } from "expo-image";
-import { Text, View } from "react-native";
+import { router } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 
 const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 	return (
-		<View className="flex-1 text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl">
+		<Pressable
+			className="flex-1 text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl"
+			onPress={() => router.push(`/teachings/${teaching.id}`)}
+		>
 			<Image
 				source={getImageSource(teaching.thumbnailUrl)}
 				transition={1000}
@@ -40,7 +44,7 @@ const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 					{teaching.teacher}
 				</Text>
 			</View>
-		</View>
+		</Pressable>
 	);
 };
 

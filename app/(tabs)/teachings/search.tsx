@@ -1,13 +1,12 @@
+import BackButton from "@/components/ui/BackButton";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import useSearchTeachings from "@/hooks/useSearchTeachings";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import {
 	ImageBackground,
-	Pressable,
 	ScrollView,
 	Text,
 	TextInput,
@@ -35,17 +34,9 @@ const SearchTeaching = () => {
 				edges={["top", "bottom"]}
 				className="flex-1 px-4 gap-7"
 			>
-				<View className="flex flex-row justify-between items-start">
-					<Pressable
-						className="flex-1 flex-row items-center gap-4"
-						onPress={() => router.back()}
-					>
-						<Image
-							source={require("@/assets/icons/arrow_back.svg")}
-							style={{ width: 32, height: 32 }}
-						/>
-						<Text style={fonts.body2White}>Search</Text>
-					</Pressable>
+				<View className="flex flex-row justify-start items-center gap-4">
+					<BackButton />
+					<Text style={fonts.body2White}>Search</Text>
 				</View>
 				<View
 					className="flex-row items-center gap-2 py-2"

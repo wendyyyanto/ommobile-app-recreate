@@ -1,3 +1,4 @@
+import BackButton from "@/components/ui/BackButton";
 import TeachingCard from "@/components/ui/TeachingCard";
 import fonts from "@/constants/fonts";
 import useTeachingSection from "@/hooks/useTeachingSection";
@@ -39,18 +40,12 @@ const TeachingsSection = () => {
 				className="flex-1 px-4 gap-7"
 			>
 				<View className="flex flex-row justify-between items-start">
-					<Pressable
-						onPress={() => router.back()}
-						className="w-2/5 gap-4"
-					>
-						<Image
-							source={require("@/assets/icons/arrow_back.svg")}
-							style={{ width: 32, height: 32 }}
-						/>
-						<Text className="text-3xl text-white font-poppins">
+					<View className="flex justify-start items-start gap-4">
+						<BackButton />
+						<Text className="w-3/4 text-3xl text-wrap text-white font-poppins">
 							{sectionName}
 						</Text>
-					</Pressable>
+					</View>
 
 					<Pressable
 						className="rounded-full px-5 py-5 bg-slate-gray"
