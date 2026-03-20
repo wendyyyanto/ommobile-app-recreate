@@ -1,32 +1,18 @@
 import BackButton from "@/components/ui/BackButton";
-import { useState } from "react";
+import { TabEnum } from "@/constants/enums";
+import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
+import TeachingTab from "@/features/teaching/TeachingTab";
+import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
+import { useTeachingStore } from "@/stores/teachingStore";
+import { useLocalSearchParams } from "expo-router";
 import { ImageBackground, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TabLayout } from "tamagui";
 
 const backgroundImage = require("@/assets/images/background.png");
 
 const TeachingDetail = () => {
-	const [tabState, setTabState] = useState<{
-		currentTab: string;
-		/**
-		 * Layout of the Tab user might intend to select (hovering / focusing)
-		 */
-		intentAt: TabLayout | null;
-		/**
-		 * Layout of the Tab user selected
-		 */
-		activeAt: TabLayout | null;
-		/**
-		 * Used to get the direction of activation for animating the active indicator
-		 */
-		prevActiveAt: TabLayout | null;
-	}>({
-		activeAt: null,
-		currentTab: "tab1",
-		intentAt: null,
-		prevActiveAt: null
-	});
+	const { activeTab } = useTeachingStore();
+	const { teachingId } = useLocalSearchParams();
 
 	return (
 		<ImageBackground
@@ -35,8 +21,15 @@ const TeachingDetail = () => {
 			resizeMode="cover"
 		>
 			<SafeAreaView edges={["top", "bottom"]} className="flex-1 px-4">
-				<View className="flex flex-row justify-between items-start">
+				<View className="flex gap-8">
 					<BackButton />
+
+					<TeachingTab />
+				</View>
+
+				<View className="mt-20">
+					{activeTab === TabEnum.AUDIO && <TeachingAudioTab />}
+					{activeTab === TabEnum.VIDEO && <TeachingVideoTab />}
 				</View>
 			</SafeAreaView>
 		</ImageBackground>

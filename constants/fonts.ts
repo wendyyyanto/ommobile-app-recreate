@@ -14,6 +14,11 @@ const fonts = {
 		fontFamily: "Poppins_400Regular",
 		color: "white"
 	},
+	caption2White: {
+		fontSize: 13,
+		fontFamily: "Poppins_400Regular",
+		color: "white"
+	},
 	body1White: {
 		fontSize: 14,
 		fontFamily: "Poppins_400Regular",

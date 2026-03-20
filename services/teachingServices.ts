@@ -32,6 +32,20 @@ export const getTeachings = async (
 	}
 };
 
+export const getTeachingDetails = async (
+	teachingId: string,
+	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
+) => {
+	try {
+		const response = await axios.get(`/teaching/${teachingId}`);
+		onSuccess(response.data);
+	} catch (error) {
+		onError(error);
+	} finally {
+		onFulfilled();
+	}
+};
+
 export const getSearchTeachings = async (
 	params: GetSearchTeachingsParams,
 	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams

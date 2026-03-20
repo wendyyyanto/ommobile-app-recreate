@@ -1,15 +1,16 @@
 import fonts from "@/constants/fonts";
+import useTeachingCard from "@/hooks/useTeachingCard";
 import { Teaching } from "@/types/teaching";
 import { getImageSource } from "@/utils/imageHelper";
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
 const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
+	const { handleTeachingCardPress } = useTeachingCard();
 	return (
 		<Pressable
 			className="flex-1 text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl"
-			onPress={() => router.push(`/teachings/${teaching.id}`)}
+			onPress={() => handleTeachingCardPress(teaching.id)}
 		>
 			<Image
 				source={getImageSource(teaching.thumbnailUrl)}
