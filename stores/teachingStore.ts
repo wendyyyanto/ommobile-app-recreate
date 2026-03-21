@@ -1,5 +1,5 @@
 import { TabEnum } from "@/constants/enums";
-import { Teaching } from "@/types/teaching";
+import { Teaching, TeachingDetails } from "@/types/teaching";
 import { create } from "zustand";
 
 interface TeachingState {
@@ -13,7 +13,7 @@ interface TeachingState {
 	isLoadingSearchTeachings: boolean;
 	searchQuery: string;
 	activeTab: TabEnum;
-	teachingDetails: Teaching | null;
+	teachingDetails: TeachingDetails | null;
 	isLoadingTeachingDetails: boolean;
 	setLatestTeachings: (latestTeachings: Teaching[]) => void;
 	setPopularTeachings: (popularTeachings: Teaching[]) => void;
@@ -25,7 +25,7 @@ interface TeachingState {
 	setIsLoadingSearchTeachings: (isLoadingSearchTeachings: boolean) => void;
 	setSearchQuery: (searchQuery: string) => void;
 	setActiveTab: (activeTab: TabEnum) => void;
-	setTeachingDetails: (teachingDetails: Teaching) => void;
+	setTeachingDetails: (teachingDetails: TeachingDetails) => void;
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) => void;
 }
 
@@ -60,7 +60,8 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 		set({ isLoadingSearchTeachings }),
 	setSearchQuery: (searchQuery: string) => set({ searchQuery }),
 	setActiveTab: (activeTab: TabEnum) => set({ activeTab }),
-	setTeachingDetails: (teachingDetails: Teaching) => set({ teachingDetails }),
+	setTeachingDetails: (teachingDetails: TeachingDetails) =>
+		set({ teachingDetails }),
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) =>
 		set({ isLoadingTeachingDetails })
 }));

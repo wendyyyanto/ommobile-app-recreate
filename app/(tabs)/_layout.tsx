@@ -4,7 +4,7 @@ import {
 	Poppins_600SemiBold,
 	useFonts
 } from "@expo-google-fonts/poppins";
-import { SplashScreen, Tabs, usePathname } from "expo-router";
+import { router, SplashScreen, Tabs, usePathname } from "expo-router";
 
 import fonts from "@/constants/fonts";
 import "@/styles/global.css";
@@ -83,6 +83,12 @@ export default function RootLayout() {
 			/>
 			<Tabs.Screen
 				name="teachings"
+				listeners={{
+					tabPress: (e) => {
+						e.preventDefault();
+						router.replace("/teachings");
+					}
+				}}
 				options={{
 					title: "Teachings",
 					tabBarIcon: ({ focused }) =>
@@ -102,6 +108,12 @@ export default function RootLayout() {
 			/>
 			<Tabs.Screen
 				name="notifications"
+				listeners={{
+					tabPress: (e) => {
+						e.preventDefault();
+						router.replace("/notifications");
+					}
+				}}
 				options={{
 					title: "Notifications",
 					tabBarIcon: ({ focused }) =>

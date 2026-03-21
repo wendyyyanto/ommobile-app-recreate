@@ -2,6 +2,7 @@ import fonts from "@/constants/fonts";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
+import TeachingAudioPlayer from "./TeachingAudioPlayer";
 
 const TeachingAudioTab = () => {
 	const { teachingDetails, isLoadingTeachingDetails } = useTeachingStore();
@@ -26,7 +27,7 @@ const TeachingAudioTab = () => {
 				}}
 				contentFit="cover"
 			/>
-			<View>
+			<View className="gap-2">
 				<Text
 					style={[
 						fonts.caption2White,
@@ -36,10 +37,21 @@ const TeachingAudioTab = () => {
 					{teachingDetails?.book} {teachingDetails?.chapters}{" "}
 					{`: ${teachingDetails?.verses}`}
 				</Text>
-				<Text className="text-white text-3xl font-semibold">
+				<Text
+					style={{
+						fontSize: 20,
+						color: "white",
+						fontWeight: 600
+					}}
+				>
 					{teachingDetails?.title}
 				</Text>
+				<Text style={[fonts.caption2White, { textAlign: "center" }]}>
+					{teachingDetails?.teacher ?? "Unknown Teacher"}
+				</Text>
 			</View>
+
+			<TeachingAudioPlayer audioUrl={teachingDetails?.audioUrl!} />
 		</View>
 	);
 };

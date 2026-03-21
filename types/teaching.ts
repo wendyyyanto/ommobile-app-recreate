@@ -10,4 +10,11 @@ type Teaching = {
 	thumbnailUrl: string;
 };
 
-export type { Teaching };
+type TeachingDetails = Teaching & {
+	audioUrl: string;
+	videoUrl?: string;
+	pdfUrl?: string;
+	pptUrl?: string;
+};
+
+export type { Teaching, TeachingDetails };

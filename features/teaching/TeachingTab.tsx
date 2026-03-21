@@ -27,8 +27,8 @@ const TeachingTab = () => {
 				>
 					<Text
 						style={[
-							{ color: colors.slateGray },
 							fonts.body1White,
+							{ color: colors.slateGray },
 							activeTab === TabEnum.AUDIO && {
 								color: colors.white
 							}
