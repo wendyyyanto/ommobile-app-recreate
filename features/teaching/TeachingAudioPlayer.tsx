@@ -1,3 +1,4 @@
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import useTeachingAudioPlayer from "@/hooks/useTeachingAudioPlayer";
 import { formatDuration } from "@/utils/timeHelper";
@@ -20,9 +21,10 @@ const TeachingAudioPlayer = () => {
 		handleChangePlaybackRate
 	} = useTeachingAudioPlayer();
 
-	if (!status.isLoaded && !status.duration) {
-		return <Text className="text-white">Loading audio...</Text>;
-	}
+	if (!status.isLoaded && !status.duration)
+		return (
+			<LoadingSpinner label="Please wait while we load the audio ..." />
+		);
 
 	return (
 		<View className="w-full">

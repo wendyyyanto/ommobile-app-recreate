@@ -1,3 +1,4 @@
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import fonts from "@/constants/fonts";
 import useNotification from "@/hooks/useNotification";
 import { useNotificationStore } from "@/stores/notificationStore";
@@ -8,6 +9,13 @@ const Notifications = () => {
 	const { notificationList, isLoadingNotificationList } =
 		useNotificationStore();
 	const notificationHook = useNotification();
+
+	if (isLoadingNotificationList)
+		return (
+			<View className="h-full w-full justify-center items-center">
+				<LoadingSpinner />
+			</View>
+		);
 
 	return (
 		<ImageBackground
@@ -20,11 +28,7 @@ const Notifications = () => {
 					<Text className="text-4xl text-white font-poppins">
 						Notifications
 					</Text>
-					{isLoadingNotificationList ? (
-						<Text className="text-white font-poppins">
-							Loading...
-						</Text>
-					) : notificationList?.length === 0 ? (
+					{notificationList?.length === 0 ? (
 						<ImageBackground
 							imageStyle={{ transform: [{ scale: 1.5 }] }}
 							source={require("@/assets/images/notif_empty.png")}

@@ -1,3 +1,4 @@
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import fonts from "@/constants/fonts";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
@@ -8,13 +9,7 @@ const TeachingAudioTab = () => {
 	const { teachingDetails, isLoadingTeachingDetails } = useTeachingStore();
 
 	if (isLoadingTeachingDetails) {
-		return (
-			<View className="justify-center items-center">
-				<Text className="text-white text-lg font-semibold">
-					Loading...
-				</Text>
-			</View>
-		);
+		return <LoadingSpinner />;
 	}
 
 	return (
