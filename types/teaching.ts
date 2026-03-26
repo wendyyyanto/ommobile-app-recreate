@@ -11,6 +11,7 @@ type Teaching = {
 };
 
 type TeachingDetails = Teaching & {
+	youtubeId?: string;
 	audioUrl: string;
 	videoUrl?: string;
 	pdfUrl?: string;
