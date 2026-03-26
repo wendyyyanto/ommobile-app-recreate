@@ -6,7 +6,10 @@ const colors = {
 	lightSteelGray: "#A3A1A1",
 	charcoalBlue: "#171F2A",
 	slateGray: "#4B5A6F",
-	charcoalSlate: "#364458"
+	slateGrayBlue: "#3D4D61",
+	charcoalSlate: "#364458",
+	steelBlue: "#3C70A5",
+	lightBlue: "#60CFFF"
 };
 
 export default colors;

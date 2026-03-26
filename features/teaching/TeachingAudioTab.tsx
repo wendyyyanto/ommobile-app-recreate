@@ -51,7 +51,7 @@ const TeachingAudioTab = () => {
 				</Text>
 			</View>
 
-			<TeachingAudioPlayer audioUrl={teachingDetails?.audioUrl!} />
+			<TeachingAudioPlayer />
 		</View>
 	);
 };
