@@ -1,6 +1,7 @@
 import BackButton from "@/components/ui/BackButton";
 import TeachingCard from "@/components/ui/TeachingCard";
 import fonts from "@/constants/fonts";
+import SectionBookFilterDropdown from "@/features/section/SectionBookFilterDropdown";
 import useTeachingSection from "@/hooks/useTeachingSection";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
@@ -109,6 +110,8 @@ const TeachingsSection = () => {
 						</View>
 					</ScrollView>
 				</View>
+
+				<SectionBookFilterDropdown />
 			</SafeAreaView>
 		</ImageBackground>
 	);
