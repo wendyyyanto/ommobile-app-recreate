@@ -1,8 +1,10 @@
 import BackButton from "@/components/ui/BackButton";
 import TeachingCard from "@/components/ui/TeachingCard";
+import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import SectionBookFilterDropdown from "@/features/section/SectionBookFilterDropdown";
 import useTeachingSection from "@/hooks/useTeachingSection";
+import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
@@ -10,6 +12,7 @@ import {
 	ImageBackground,
 	Pressable,
 	ScrollView,
+	StyleSheet,
 	Text,
 	View
 } from "react-native";
@@ -20,6 +23,7 @@ const backgroundImage = require("@/assets/images/background.png");
 const TeachingsSection = () => {
 	const { name: sectionName, sectionId } = useLocalSearchParams();
 	const { isLoadingSectionTeachings, sectionTeachings } = useTeachingStore();
+	const { setIsFilterByBookOpen } = useTeachingFilterStore();
 	const teachingHook = useTeachingSection({
 		sectionName: sectionName as string
 	});
@@ -36,11 +40,8 @@ const TeachingsSection = () => {
 
 	return (
 		<ImageBackground source={backgroundImage} className="flex-1">
-			<SafeAreaView
-				edges={["top", "bottom"]}
-				className="flex-1 px-4 gap-7"
-			>
-				<View className="flex flex-row justify-between items-start">
+			<SafeAreaView edges={["top", "bottom"]} className="flex-1 gap-7">
+				<View className="px-4 flex flex-row justify-between items-start">
 					<View className="flex justify-start items-start gap-4">
 						<BackButton />
 						<Text className="w-3/4 text-3xl text-wrap text-white font-poppins">
@@ -59,10 +60,15 @@ const TeachingsSection = () => {
 					</Pressable>
 				</View>
 
-				<View className="flex flex-row gap-4">
+				<View className="px-4 flex flex-row gap-4">
 					{(sectionId === "new-testament" ||
 						sectionId === "old-testament") && (
-						<Pressable className="basis-2/5 flex-1 flex flex-row justify-between items-center border border-slate-gray-blue rounded-full px-4">
+						<Pressable
+							style={styles.filterButton}
+							onPress={() => {
+								setIsFilterByBookOpen(true);
+							}}
+						>
 							<Text className="text-white font-poppins">
 								All Books
 							</Text>
@@ -72,7 +78,7 @@ const TeachingsSection = () => {
 							/>
 						</Pressable>
 					)}
-					<Pressable className="basis-2/5 flex-1 flex flex-row justify-between items-center border border-slate-gray-blue rounded-full px-4 py-3">
+					<Pressable style={styles.filterButton}>
 						<View className="flex flex-row items-center">
 							<Image
 								source={require("@/assets/icons/filter.svg")}
@@ -89,9 +95,12 @@ const TeachingsSection = () => {
 					</Pressable>
 				</View>
 
-				<View className="flex-1 gap-3">
+				<View className="px-4 flex-1 gap-3">
 					<Text style={fonts.subtitle1White}>Latest Teachings</Text>
-					<ScrollView showsVerticalScrollIndicator={false}>
+					<ScrollView
+						showsVerticalScrollIndicator={false}
+						className="flex-1"
+					>
 						<View className="flex-1 gap-4 relative">
 							{sectionTeachings?.length > 0 ? (
 								sectionTeachings?.map((teaching) => (
@@ -109,12 +118,27 @@ const TeachingsSection = () => {
 							)}
 						</View>
 					</ScrollView>
-				</View>
 
-				<SectionBookFilterDropdown />
+					<SectionBookFilterDropdown />
+				</View>
 			</SafeAreaView>
 		</ImageBackground>
 	);
 };
+
+const styles = StyleSheet.create({
+	filterButton: {
+		flex: 1,
+		flexBasis: "40%",
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		borderWidth: 1,
+		borderColor: colors.slateGrayBlue,
+		borderRadius: 100,
+		paddingHorizontal: 16,
+		paddingVertical: 12
+	}
+});
 
 export default TeachingsSection;

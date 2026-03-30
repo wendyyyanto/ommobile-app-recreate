@@ -4,4 +4,15 @@ type RequestHandlerParams = {
 	onFulfilled?: () => void;
 };
 
-export { RequestHandlerParams };
+type GetDropdownsPayload = {
+	entity: string;
+	attributes: string[];
+	filters?: DropdownFilters;
+};
+
+type DropdownFilters = {
+	include?: any;
+	exclude?: any;
+};
+
+export { GetDropdownsPayload, RequestHandlerParams };
