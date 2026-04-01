@@ -3,6 +3,7 @@ import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import SectionBookFilterDropdown from "@/features/section/SectionBookFilterDropdown";
+import SectionOtherFilterDropdown from "@/features/section/SectionOtherFilterDropdown";
 import useTeachingSection from "@/hooks/useTeachingSection";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
@@ -23,7 +24,8 @@ const backgroundImage = require("@/assets/images/background.png");
 const TeachingsSection = () => {
 	const { name: sectionName, sectionId } = useLocalSearchParams();
 	const { isLoadingSectionTeachings, sectionTeachings } = useTeachingStore();
-	const { setIsFilterByBookOpen } = useTeachingFilterStore();
+	const { setIsFilterByBookOpen, setIsFilterByOtherOpen } =
+		useTeachingFilterStore();
 	const teachingHook = useTeachingSection({
 		sectionName: sectionName as string
 	});
@@ -78,7 +80,12 @@ const TeachingsSection = () => {
 							/>
 						</Pressable>
 					)}
-					<Pressable style={styles.filterButton}>
+					<Pressable
+						style={styles.filterButton}
+						onPress={() => {
+							setIsFilterByOtherOpen(true);
+						}}
+					>
 						<View className="flex flex-row items-center">
 							<Image
 								source={require("@/assets/icons/filter.svg")}
@@ -120,6 +127,7 @@ const TeachingsSection = () => {
 					</ScrollView>
 
 					<SectionBookFilterDropdown />
+					<SectionOtherFilterDropdown />
 				</View>
 			</SafeAreaView>
 		</ImageBackground>

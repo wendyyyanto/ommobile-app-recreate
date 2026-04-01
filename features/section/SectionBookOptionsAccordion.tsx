@@ -45,8 +45,13 @@ const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 						<>
 							<Text style={fonts.body1White}>{book.name}</Text>
 							<Square
-								transparent
-								rotate={open ? "180deg" : "0deg"}
+								style={{
+									transform: open
+										? "rotate(180deg)"
+										: "rotate(0deg)",
+									transition: "300ms",
+									backgroundColor: "transparent"
+								}}
 							>
 								<Image
 									source={require("@/assets/icons/chevron_Down.svg")}

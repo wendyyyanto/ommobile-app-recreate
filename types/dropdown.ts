@@ -3,4 +3,10 @@ type DropdownOptions = {
 	name: string;
 };
 
-export { DropdownOptions };
+type FilterOtherOptions = {
+	events?: any;
+	teachers?: any;
+	years?: any;
+};
+
+export { DropdownOptions, FilterOtherOptions };

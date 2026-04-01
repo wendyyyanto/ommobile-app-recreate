@@ -1,4 +1,4 @@
-import { DropdownOptions } from "@/types/dropdown";
+import { DropdownOptions, FilterOtherOptions } from "@/types/dropdown";
 import { create } from "zustand";
 
 type SelectedBook = {
@@ -12,11 +12,18 @@ interface TeachingFilterState {
 	bookOptions: DropdownOptions[];
 	selectedBook: SelectedBook | null;
 	bookChapters: DropdownOptions[];
+	filterOtherOptions: FilterOtherOptions | null;
 	setIsFilterByBookOpen: (isFilterByBookOpen: boolean) => void;
 	setIsFilterByOtherOpen: (isFilterByOtherOpen: boolean) => void;
 	setBookOptions: (bookOptions: DropdownOptions[]) => void;
 	setSelectedBook: (selectedBook: SelectedBook | null) => void;
 	setBookChapters: (bookChapters: DropdownOptions[]) => void;
+	setFilterOtherOptions: (
+		filterOtherOptions:
+			| FilterOtherOptions
+			| null
+			| ((prev: FilterOtherOptions | null) => FilterOtherOptions | null)
+	) => void;
 }
 
 export const useTeachingFilterStore = create<TeachingFilterState>()((set) => ({
@@ -25,6 +32,7 @@ export const useTeachingFilterStore = create<TeachingFilterState>()((set) => ({
 	bookOptions: [],
 	selectedBook: null,
 	bookChapters: [],
+	filterOtherOptions: null,
 	setIsFilterByBookOpen: (isFilterByBookOpen: boolean) =>
 		set({ isFilterByBookOpen }),
 	setIsFilterByOtherOpen: (isFilterByOtherOpen: boolean) =>
@@ -32,5 +40,12 @@ export const useTeachingFilterStore = create<TeachingFilterState>()((set) => ({
 	setBookOptions: (bookOptions: DropdownOptions[]) => set({ bookOptions }),
 	setSelectedBook: (selectedBook: SelectedBook | null) =>
 		set({ selectedBook }),
-	setBookChapters: (bookChapters: DropdownOptions[]) => set({ bookChapters })
+	setBookChapters: (bookChapters: DropdownOptions[]) => set({ bookChapters }),
+	setFilterOtherOptions: (filterOtherOptions) =>
+		set((state) => ({
+			filterOtherOptions:
+				typeof filterOtherOptions === "function"
+					? filterOtherOptions(state.filterOtherOptions)
+					: filterOtherOptions
+		}))
 }));
