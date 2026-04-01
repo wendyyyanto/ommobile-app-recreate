@@ -10,12 +10,14 @@ import { Pressable, Text, View } from "react-native";
 import SectionBookOptionsAccordion from "./SectionBookOptionsAccordion";
 
 const SectionBookFilterDropdown = () => {
-	const {
-		isFilterByBookOpen,
-		bookOptions,
-		setIsFilterByBookOpen,
-		setBookOptions
-	} = useTeachingFilterStore();
+	const isFilterByBookOpen = useTeachingFilterStore(
+		(s) => s.isFilterByBookOpen
+	);
+	const bookOptions = useTeachingFilterStore((s) => s.bookOptions);
+	const setIsFilterByBookOpen = useTeachingFilterStore(
+		(s) => s.setIsFilterByBookOpen
+	);
+	const setBookOptions = useTeachingFilterStore((s) => s.setBookOptions);
 
 	const bottomSheetRef = useRef<BottomSheet>(null);
 

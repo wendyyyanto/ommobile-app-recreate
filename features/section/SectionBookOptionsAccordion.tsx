@@ -4,18 +4,31 @@ import useFilterBook from "@/hooks/useFilterBook";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { DropdownOptions } from "@/types/dropdown";
 import { Image } from "expo-image";
+import { memo, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Accordion, Square } from "tamagui";
 
-const SectionBookOptionsAccordion = ({
+const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 	book,
 	totalChapters
 }: {
 	book: DropdownOptions;
 	totalChapters: number;
-}) => {
-	const { selectedBook } = useTeachingFilterStore();
-	const { handleChapterPress, handleOnAccordionClosed } = useFilterBook();
+}) {
+	const selectedBookEntry = useTeachingFilterStore((state) =>
+		state.selectedBook.find((item) => item.bookName === book.name)
+	);
+	const { handleChapterPress } = useFilterBook();
+
+	const selectedChapterSet = useMemo(
+		() => new Set(selectedBookEntry?.chapters ?? []),
+		[selectedBookEntry]
+	);
+
+	const chapterNumbers = useMemo(
+		() => Array.from({ length: totalChapters }, (_, index) => index + 1),
+		[totalChapters]
+	);
 
 	return (
 		<Accordion type="multiple">
@@ -46,8 +59,6 @@ const SectionBookOptionsAccordion = ({
 				</Accordion.Trigger>
 				<Accordion.HeightAnimator>
 					<Accordion.Content
-						transition="300ms"
-						exitStyle={{ opacity: 0 }}
 						style={{
 							backgroundColor: colors.black
 						}}
@@ -59,45 +70,36 @@ const SectionBookOptionsAccordion = ({
 								gap: 12
 							}}
 						>
-							{Array.from({ length: totalChapters }).map(
-								(_, index) => (
-									<Pressable
-										key={index}
-										style={{
-											flexBasis: "16.66%",
-											justifyContent: "center",
-											alignItems: "center",
-											borderRadius: 8,
-											backgroundColor: selectedBook
-												.find(
-													(item) =>
-														item.bookName ===
-														book.name
-												)
-												?.chapters.includes(index + 1)
-												? colors.lightBlue
-												: colors.darkerGray,
-											paddingVertical: 16
-										}}
-										onPress={() => {
-											handleChapterPress(
-												book.name,
-												index + 1
-											);
-										}}
-									>
-										<Text style={fonts.body1White}>
-											{index + 1}
-										</Text>
-									</Pressable>
-								)
-							)}
+							{chapterNumbers.map((chapter) => (
+								<Pressable
+									key={chapter}
+									style={{
+										flexBasis: "16.66%",
+										justifyContent: "center",
+										alignItems: "center",
+										borderRadius: 8,
+										backgroundColor: selectedChapterSet.has(
+											chapter
+										)
+											? colors.slateGray
+											: colors.darkerGray,
+										paddingVertical: 16
+									}}
+									onPress={() => {
+										handleChapterPress(book.name, chapter);
+									}}
+								>
+									<Text style={fonts.body1White}>
+										{chapter}
+									</Text>
+								</Pressable>
+							))}
 						</View>
 					</Accordion.Content>
 				</Accordion.HeightAnimator>
 			</Accordion.Item>
 		</Accordion>
 	);
-};
+});
 
 export default SectionBookOptionsAccordion;
