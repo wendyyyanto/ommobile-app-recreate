@@ -1,27 +1,29 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import useFilterBook from "@/hooks/useFilterBook";
 import { getDropdowns } from "@/services/dropdownServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
-import { DropdownOptions } from "@/types/dropdown";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import SectionBookOptionsAccordion from "./SectionBookOptionsAccordion";
 
 const SectionBookFilterDropdown = () => {
-	const isFilterByBookOpen = useTeachingFilterStore(
-		(s) => s.isFilterByBookOpen
-	);
-	const bookOptions = useTeachingFilterStore((s) => s.bookOptions);
-	const setIsFilterByBookOpen = useTeachingFilterStore(
-		(s) => s.setIsFilterByBookOpen
-	);
-	const setBookOptions = useTeachingFilterStore((s) => s.setBookOptions);
+	const {
+		bookOptions,
+		bookChapters,
+		selectedBook,
+		setIsFilterByBookOpen,
+		setBookOptions,
+		setBookChapters,
+		isFilterByBookOpen
+	} = useTeachingFilterStore();
+
+	const { handleSelectAllChapters, handleFilterTeachingByBook } =
+		useFilterBook();
 
 	const bottomSheetRef = useRef<BottomSheet>(null);
-
-	const [chapters, setChapters] = useState<DropdownOptions[]>([]);
 
 	useEffect(() => {
 		getDropdowns(
@@ -46,16 +48,14 @@ const SectionBookFilterDropdown = () => {
 			},
 			{
 				onSuccess: (data) => {
-					setChapters(data.data);
+					setBookChapters(data.data);
 				},
 				onError: (error) => {
 					console.log(error);
 				}
 			}
 		);
-
-		return () => {};
-	}, []);
+	}, [setBookOptions, setBookChapters]);
 
 	useEffect(() => {
 		if (isFilterByBookOpen) {
@@ -83,7 +83,7 @@ const SectionBookFilterDropdown = () => {
 					style={[fonts.body1White, { color: colors.lightBlue }]}
 				></Text>
 				<Text style={[fonts.subtitle1White]}>Books</Text>
-				<Pressable onPress={() => bottomSheetRef.current?.close()}>
+				<Pressable onPress={() => setIsFilterByBookOpen(false)}>
 					<Image
 						source={require("@/assets/icons/close.svg")}
 						style={{ width: 40, height: 40 }}
@@ -94,8 +94,8 @@ const SectionBookFilterDropdown = () => {
 				{bookOptions?.length > 0 &&
 					bookOptions?.map((book) => {
 						const totalChapters =
-							chapters.length > 0 &&
-							chapters?.find(
+							bookChapters.length > 0 &&
+							bookChapters?.find(
 								(chapter) => chapter.id === book.name
 							)?.name;
 
@@ -108,6 +108,69 @@ const SectionBookFilterDropdown = () => {
 						);
 					})}
 			</BottomSheetScrollView>
+
+			{selectedBook && (
+				<View className="sticky bottom-0 left-0 right-0 justify-center items-center flex-row bg-black py-4 gap-10">
+					<Pressable
+						onPress={() => {
+							const totalChapters =
+								bookChapters.length > 0 &&
+								bookChapters?.find(
+									(chapter) =>
+										chapter.id === selectedBook.bookName
+								)?.name;
+
+							return handleSelectAllChapters(
+								Number(totalChapters)
+							);
+						}}
+					>
+						<Text
+							style={[
+								fonts.body1White,
+								{ color: colors.lightBlue, textAlign: "center" }
+							]}
+						>
+							Select All Chapters
+						</Text>
+					</Pressable>
+					<Pressable
+						className="bg-white rounded-full p-4 flex-row items-center justify-center"
+						onPress={(e) => {
+							e.preventDefault();
+							setIsFilterByBookOpen(false);
+							handleFilterTeachingByBook(
+								selectedBook.bookName,
+								selectedBook.chapters
+							);
+						}}
+					>
+						<Text
+							style={[
+								fonts.body1White,
+								{ color: colors.black, textAlign: "center" }
+							]}
+						>
+							Show {selectedBook.bookName.slice(0, 3)}{" "}
+							{selectedBook.chapters.length === 1
+								? selectedBook.chapters[0]
+								: `${selectedBook.chapters[0]} - ${
+										selectedBook.chapters[
+											selectedBook.chapters.length - 1
+										]
+									}`}
+						</Text>
+						<Image
+							source={require("@/assets/icons/chevron_right.svg")}
+							tintColor={colors.black}
+							style={{
+								width: 24,
+								height: 24
+							}}
+						/>
+					</Pressable>
+				</View>
+			)}
 		</BottomSheet>
 	);
 };

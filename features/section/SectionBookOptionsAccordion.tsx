@@ -16,7 +16,7 @@ const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 	totalChapters: number;
 }) {
 	const selectedBookEntry = useTeachingFilterStore((state) =>
-		state.selectedBook.find((item) => item.bookName === book.name)
+		state.selectedBook?.bookName === book.name ? state.selectedBook : null
 	);
 	const { handleChapterPress } = useFilterBook();
 
@@ -46,7 +46,6 @@ const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 							<Text style={fonts.body1White}>{book.name}</Text>
 							<Square
 								transparent
-								transition="quick"
 								rotate={open ? "180deg" : "0deg"}
 							>
 								<Image

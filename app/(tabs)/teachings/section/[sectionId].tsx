@@ -28,7 +28,7 @@ const TeachingsSection = () => {
 		sectionName: sectionName as string
 	});
 
-	if (isLoadingSectionTeachings) {
+	if (isLoadingSectionTeachings && sectionTeachings.length === 0) {
 		return (
 			<View className="flex-1 justify-center items-center">
 				<Text className="text-black text-lg font-semibold">
