@@ -1,4 +1,5 @@
 import BackButton from "@/components/ui/BackButton";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
@@ -26,18 +27,12 @@ const TeachingsSection = () => {
 	const { isLoadingSectionTeachings, sectionTeachings } = useTeachingStore();
 	const { setIsFilterByBookOpen, setIsFilterByOtherOpen } =
 		useTeachingFilterStore();
-	const teachingHook = useTeachingSection({
+	const { handleCloseSectionTeachings } = useTeachingSection({
 		sectionName: sectionName as string
 	});
 
 	if (isLoadingSectionTeachings && sectionTeachings.length === 0) {
-		return (
-			<View className="flex-1 justify-center items-center">
-				<Text className="text-black text-lg font-semibold">
-					Loading...
-				</Text>
-			</View>
-		);
+		return <LoadingSpinner />;
 	}
 
 	return (
@@ -45,9 +40,9 @@ const TeachingsSection = () => {
 			<SafeAreaView edges={["top", "bottom"]} className="flex-1 gap-7">
 				<View className="px-4 flex flex-row justify-between items-start">
 					<View className="flex justify-start items-start gap-4">
-						<BackButton />
-						<Text className="w-3/4 text-3xl text-wrap text-white font-poppins">
-							{sectionName}
+						<BackButton onPress={handleCloseSectionTeachings} />
+						<Text className="text-3xl text-wrap text-white font-poppins">
+							{(sectionName as string).split(" ").join("\n")}
 						</Text>
 					</View>
 
@@ -69,6 +64,7 @@ const TeachingsSection = () => {
 							style={styles.filterButton}
 							onPress={() => {
 								setIsFilterByBookOpen(true);
+								setIsFilterByOtherOpen(false);
 							}}
 						>
 							<Text className="text-white font-poppins">
@@ -84,6 +80,7 @@ const TeachingsSection = () => {
 						style={styles.filterButton}
 						onPress={() => {
 							setIsFilterByOtherOpen(true);
+							setIsFilterByBookOpen(false);
 						}}
 					>
 						<View className="flex flex-row items-center">
@@ -109,7 +106,9 @@ const TeachingsSection = () => {
 						className="flex-1"
 					>
 						<View className="flex-1 gap-4 relative">
-							{sectionTeachings?.length > 0 ? (
+							{isLoadingSectionTeachings ? (
+								<LoadingSpinner />
+							) : sectionTeachings?.length > 0 ? (
 								sectionTeachings?.map((teaching) => (
 									<TeachingCard
 										key={teaching.id}

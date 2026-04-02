@@ -1,10 +1,9 @@
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import { Pressable } from "react-native";
 
-const BackButton = () => {
+const BackButton = ({ onPress }: { onPress: () => void }) => {
 	return (
-		<Pressable onPress={() => router.back()}>
+		<Pressable onPress={onPress}>
 			<Image
 				source={require("@/assets/icons/arrow_back.svg")}
 				style={{ width: 32, height: 32 }}

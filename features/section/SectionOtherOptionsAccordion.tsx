@@ -1,5 +1,6 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { DropdownOptions } from "@/types/dropdown";
 import { capitalizeText } from "@/utils/textHelper";
 import { Image } from "expo-image";
@@ -13,6 +14,10 @@ const SectionOtherOptionsAccordion = ({
 	name: string;
 	options: DropdownOptions[];
 }) => {
+	const { setSelectedFilter, selectedFilter } = useTeachingFilterStore();
+
+	console.log(selectedFilter);
+
 	return (
 		<Accordion type="multiple">
 			<Accordion.Item value={name}>
@@ -58,9 +63,41 @@ const SectionOtherOptionsAccordion = ({
 								className="flex-row items-center gap-4"
 							>
 								<Checkbox
+									checked={
+										selectedFilter?.[name]
+											? selectedFilter?.[name]?.includes(
+													option.name
+												)
+											: false
+									}
 									style={{
 										backgroundColor: "transparent",
 										overflow: "hidden"
+									}}
+									onCheckedChange={(checked) => {
+										if (!checked) {
+											setSelectedFilter(
+												(prevState: any) => ({
+													...prevState,
+													[name]: prevState?.[
+														name
+													]?.filter(
+														(item: string) =>
+															item !== option.name
+													)
+												})
+											);
+											return;
+										}
+										setSelectedFilter((prevState: any) => ({
+											...prevState,
+											[name]: prevState?.[name]?.length
+												? [
+														...prevState[name],
+														option.name
+													]
+												: [option.name]
+										}));
 									}}
 								>
 									<Checkbox.Indicator>

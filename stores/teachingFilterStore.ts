@@ -13,6 +13,7 @@ interface TeachingFilterState {
 	selectedBook: SelectedBook | null;
 	bookChapters: DropdownOptions[];
 	filterOtherOptions: FilterOtherOptions | null;
+	selectedFilter: any;
 	setIsFilterByBookOpen: (isFilterByBookOpen: boolean) => void;
 	setIsFilterByOtherOpen: (isFilterByOtherOpen: boolean) => void;
 	setBookOptions: (bookOptions: DropdownOptions[]) => void;
@@ -24,6 +25,7 @@ interface TeachingFilterState {
 			| null
 			| ((prev: FilterOtherOptions | null) => FilterOtherOptions | null)
 	) => void;
+	setSelectedFilter: (selectedFilter: any) => void;
 }
 
 export const useTeachingFilterStore = create<TeachingFilterState>()((set) => ({
@@ -33,6 +35,7 @@ export const useTeachingFilterStore = create<TeachingFilterState>()((set) => ({
 	selectedBook: null,
 	bookChapters: [],
 	filterOtherOptions: null,
+	selectedFilter: null,
 	setIsFilterByBookOpen: (isFilterByBookOpen: boolean) =>
 		set({ isFilterByBookOpen }),
 	setIsFilterByOtherOpen: (isFilterByOtherOpen: boolean) =>
@@ -47,5 +50,12 @@ export const useTeachingFilterStore = create<TeachingFilterState>()((set) => ({
 				typeof filterOtherOptions === "function"
 					? filterOtherOptions(state.filterOtherOptions)
 					: filterOtherOptions
+		})),
+	setSelectedFilter: (selectedFilter) =>
+		set((state) => ({
+			selectedFilter:
+				typeof selectedFilter === "function"
+					? selectedFilter(state.selectedFilter)
+					: selectedFilter
 		}))
 }));

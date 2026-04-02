@@ -10,10 +10,15 @@ import { Pressable, Text, View } from "react-native";
 import SectionOtherOptionsAccordion from "./SectionOtherOptionsAccordion";
 
 const SectionOtherFilterDropdown = () => {
-	const { isFilterByOtherOpen, setIsFilterByOtherOpen, filterOtherOptions } =
-		useTeachingFilterStore();
+	const {
+		isFilterByOtherOpen,
+		setIsFilterByOtherOpen,
+		filterOtherOptions,
+		setSelectedFilter,
+		selectedFilter
+	} = useTeachingFilterStore();
 
-	useFilterOther();
+	const { handleFilterTeaching } = useFilterOther();
 
 	const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -21,9 +26,10 @@ const SectionOtherFilterDropdown = () => {
 		if (isFilterByOtherOpen) {
 			bottomSheetRef.current?.expand();
 		} else {
+			setSelectedFilter(null);
 			bottomSheetRef.current?.close();
 		}
-	}, [isFilterByOtherOpen]);
+	}, [isFilterByOtherOpen, setSelectedFilter]);
 
 	return (
 		<BottomSheet
@@ -64,6 +70,43 @@ const SectionOtherFilterDropdown = () => {
 						/>
 					))}
 			</BottomSheetScrollView>
+
+			{selectedFilter && (
+				<View className="sticky bottom-0 left-0 right-0 justify-center items-center flex-row bg-black py-4 gap-10 px-10">
+					<Pressable
+						className="flex-1"
+						onPress={() => {
+							setSelectedFilter(null);
+						}}
+					>
+						<Text
+							style={[
+								fonts.body1White,
+								{ color: colors.lightBlue, textAlign: "center" }
+							]}
+						>
+							Reset Filters
+						</Text>
+					</Pressable>
+					<Pressable
+						className="bg-white rounded-full p-4 flex-row flex-1 items-center justify-center"
+						onPress={(e) => {
+							e.preventDefault();
+							setIsFilterByOtherOpen(false);
+							handleFilterTeaching(selectedFilter);
+						}}
+					>
+						<Text
+							style={[
+								fonts.body1White,
+								{ color: colors.black, textAlign: "center" }
+							]}
+						>
+							Apply Filters
+						</Text>
+					</Pressable>
+				</View>
+			)}
 		</BottomSheet>
 	);
 };

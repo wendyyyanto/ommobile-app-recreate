@@ -1,5 +1,7 @@
 import { getTeachings } from "@/services/teachingServices";
+import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { router } from "expo-router";
 import { useEffect } from "react";
 
 type UseTeachingSectionParams = {
@@ -13,12 +15,10 @@ const useTeachingSection = ({
 	limit = 10,
 	sectionName
 }: UseTeachingSectionParams) => {
-	const {
-		setSectionTeachings,
-		sectionTeachings,
-		isLoadingSectionTeachings,
-		setIsLoadingSectionTeachings
-	} = useTeachingStore();
+	const { setSectionTeachings, setIsLoadingSectionTeachings } =
+		useTeachingStore();
+	const { setIsFilterByBookOpen, setIsFilterByOtherOpen } =
+		useTeachingFilterStore();
 
 	useEffect(() => {
 		setIsLoadingSectionTeachings(true);
@@ -41,7 +41,13 @@ const useTeachingSection = ({
 		);
 	}, []);
 
-	return {};
+	const handleCloseSectionTeachings = () => {
+		setIsFilterByBookOpen(false);
+		setIsFilterByOtherOpen(false);
+		router.back();
+	};
+
+	return { handleCloseSectionTeachings };
 };
 
 export default useTeachingSection;

@@ -1,9 +1,14 @@
 import { getDropdowns } from "@/services/dropdownServices";
+import { getTeachings } from "@/services/teachingServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
-import { useEffect } from "react";
+import { useTeachingStore } from "@/stores/teachingStore";
+import { useCallback, useEffect } from "react";
 
 const useFilterOther = () => {
 	const { setFilterOtherOptions } = useTeachingFilterStore();
+	const { setIsLoadingSectionTeachings, setSectionTeachings } =
+		useTeachingStore();
+
 	useEffect(() => {
 		const dropdownEntities = [
 			{
@@ -39,7 +44,34 @@ const useFilterOther = () => {
 		return () => {};
 	}, [setFilterOtherOptions]);
 
-	return {};
+	const handleFilterTeaching = useCallback(
+		(selectedFilter: any) => {
+			setIsLoadingSectionTeachings(true);
+
+			getTeachings(
+				{
+					page: 1,
+					limit: 10,
+					teacher: selectedFilter.teachers?.join(","),
+					year: selectedFilter.years?.join(","),
+					event: selectedFilter.events?.join(",")
+				},
+				{
+					onSuccess: (data) => {
+						setIsLoadingSectionTeachings(false);
+						setSectionTeachings(data.data);
+					},
+					onError: (error) => {
+						console.log(error);
+						setIsLoadingSectionTeachings(false);
+					}
+				}
+			);
+		},
+		[setIsLoadingSectionTeachings, setSectionTeachings]
+	);
+
+	return { handleFilterTeaching };
 };
 
 export default useFilterOther;

@@ -17,7 +17,8 @@ const SectionBookFilterDropdown = () => {
 		setIsFilterByBookOpen,
 		setBookOptions,
 		setBookChapters,
-		isFilterByBookOpen
+		isFilterByBookOpen,
+		setSelectedBook
 	} = useTeachingFilterStore();
 
 	const { handleSelectAllChapters, handleFilterTeachingByBook } =
@@ -61,6 +62,7 @@ const SectionBookFilterDropdown = () => {
 		if (isFilterByBookOpen) {
 			bottomSheetRef.current?.expand();
 		} else {
+			setSelectedBook(null);
 			bottomSheetRef.current?.close();
 		}
 	}, [isFilterByBookOpen]);
@@ -110,8 +112,9 @@ const SectionBookFilterDropdown = () => {
 			</BottomSheetScrollView>
 
 			{selectedBook && (
-				<View className="sticky bottom-0 left-0 right-0 justify-center items-center flex-row bg-black py-4 gap-10">
+				<View className="sticky bottom-0 left-0 right-0 justify-center items-center flex-row bg-black py-4 px-10 gap-10">
 					<Pressable
+						className="flex-1"
 						onPress={() => {
 							const totalChapters =
 								bookChapters.length > 0 &&
@@ -135,7 +138,7 @@ const SectionBookFilterDropdown = () => {
 						</Text>
 					</Pressable>
 					<Pressable
-						className="bg-white rounded-full p-4 flex-row items-center justify-center"
+						className="bg-white rounded-full p-4 flex-row flex-1 items-center justify-center"
 						onPress={(e) => {
 							e.preventDefault();
 							setIsFilterByBookOpen(false);
