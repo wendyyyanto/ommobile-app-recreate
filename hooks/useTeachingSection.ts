@@ -92,7 +92,6 @@ const useTeachingSection = ({
 			sectionTeachingsPagination.page <
 			sectionTeachingsPagination.totalPages
 		) {
-			console.log(sectionTeachingsPagination);
 			let params: GetTeachingParams = {
 				page: sectionTeachingsPagination.page + 1,
 				limit: sectionTeachingsPagination.limit,
@@ -119,8 +118,6 @@ const useTeachingSection = ({
 					params.chapters = selectedBook.chapters.join(",");
 				}
 			}
-
-			console.log(params);
 
 			setIsLoadMoreSectionTeachings(true);
 			getTeachings(params, {
