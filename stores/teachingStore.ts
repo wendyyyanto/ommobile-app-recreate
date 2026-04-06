@@ -1,4 +1,5 @@
 import { TabEnum } from "@/constants/enums";
+import { Pagination } from "@/types/request";
 import { Teaching, TeachingDetails } from "@/types/teaching";
 import { create } from "zustand";
 
@@ -15,6 +16,8 @@ interface TeachingState {
 	activeTab: TabEnum;
 	teachingDetails: TeachingDetails | null;
 	isLoadingTeachingDetails: boolean;
+	isLoadMoreSectionTeachings: boolean;
+	sectionTeachingsPagination: Pagination;
 	setLatestTeachings: (latestTeachings: Teaching[]) => void;
 	setPopularTeachings: (popularTeachings: Teaching[]) => void;
 	setSectionTeachings: (sectionTeachings: Teaching[]) => void;
@@ -27,6 +30,12 @@ interface TeachingState {
 	setActiveTab: (activeTab: TabEnum) => void;
 	setTeachingDetails: (teachingDetails: TeachingDetails) => void;
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) => void;
+	setIsLoadMoreSectionTeachings: (
+		isLoadMoreSectionTeachings: boolean
+	) => void;
+	setSectionTeachingsPagination: (
+		sectionTeachingsPagination: Pagination
+	) => void;
 }
 
 export const useTeachingStore = create<TeachingState>()((set) => ({
@@ -42,6 +51,12 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	activeTab: TabEnum.AUDIO,
 	teachingDetails: null,
 	isLoadingTeachingDetails: false,
+	isLoadMoreSectionTeachings: false,
+	sectionTeachingsPagination: {
+		page: 1,
+		limit: 10,
+		totalPages: 1
+	},
 	setLatestTeachings: (latestTeachings: Teaching[]) =>
 		set({ latestTeachings }),
 	setPopularTeachings: (popularTeachings: Teaching[]) =>
@@ -63,5 +78,9 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	setTeachingDetails: (teachingDetails: TeachingDetails) =>
 		set({ teachingDetails }),
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) =>
-		set({ isLoadingTeachingDetails })
+		set({ isLoadingTeachingDetails }),
+	setIsLoadMoreSectionTeachings: (isLoadMoreSectionTeachings: boolean) =>
+		set({ isLoadMoreSectionTeachings }),
+	setSectionTeachingsPagination: (sectionTeachingsPagination: Pagination) =>
+		set({ sectionTeachingsPagination })
 }));

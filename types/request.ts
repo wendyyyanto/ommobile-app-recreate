@@ -15,4 +15,10 @@ type DropdownFilters = {
 	exclude?: any;
 };
 
-export { GetDropdownsPayload, RequestHandlerParams };
+type Pagination = {
+	page: number;
+	limit: number;
+	totalPages: number;
+};
+
+export { GetDropdownsPayload, Pagination, RequestHandlerParams };

@@ -29,7 +29,6 @@ const useSearchTeachings = () => {
 			},
 			{
 				onSuccess: (data) => {
-					console.log(data.data);
 					setSearchTeachings(data.data);
 					setIsLoadingSearchTeachings(false);
 				},

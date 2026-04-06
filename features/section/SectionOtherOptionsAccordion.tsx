@@ -16,8 +16,6 @@ const SectionOtherOptionsAccordion = ({
 }) => {
 	const { setSelectedFilter, selectedFilter } = useTeachingFilterStore();
 
-	console.log(selectedFilter);
-
 	return (
 		<Accordion type="multiple">
 			<Accordion.Item value={name}>

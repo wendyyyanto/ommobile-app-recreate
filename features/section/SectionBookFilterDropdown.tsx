@@ -62,7 +62,6 @@ const SectionBookFilterDropdown = () => {
 		if (isFilterByBookOpen) {
 			bottomSheetRef.current?.expand();
 		} else {
-			setSelectedBook(null);
 			bottomSheetRef.current?.close();
 		}
 	}, [isFilterByBookOpen]);

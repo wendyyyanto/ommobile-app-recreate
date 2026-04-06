@@ -18,4 +18,15 @@ type TeachingDetails = Teaching & {
 	pptUrl?: string;
 };
 
-export type { Teaching, TeachingDetails };
+type GetTeachingParams = {
+	page?: number;
+	limit?: number;
+	chapters?: string;
+	book?: string;
+	teacher?: string;
+	year?: string;
+	category?: string;
+	event?: string;
+};
+
+export type { GetTeachingParams, Teaching, TeachingDetails };

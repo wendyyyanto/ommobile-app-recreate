@@ -1,16 +1,6 @@
 import axios from "@/constants/axios";
 import { RequestHandlerParams } from "@/types/request";
-
-type GetTeachingParams = {
-	page?: number;
-	limit?: number;
-	chapters?: string;
-	book?: string;
-	teacher?: string;
-	year?: string;
-	category?: string;
-	event?: string;
-};
+import { GetTeachingParams } from "@/types/teaching";
 
 type GetSearchTeachingsParams = {
 	page?: number;

@@ -26,7 +26,6 @@ const SectionOtherFilterDropdown = () => {
 		if (isFilterByOtherOpen) {
 			bottomSheetRef.current?.expand();
 		} else {
-			setSelectedFilter(null);
 			bottomSheetRef.current?.close();
 		}
 	}, [isFilterByOtherOpen, setSelectedFilter]);

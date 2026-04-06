@@ -13,6 +13,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import {
 	ImageBackground,
 	Pressable,
+	RefreshControl,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -24,15 +25,29 @@ const backgroundImage = require("@/assets/images/background.png");
 
 const TeachingsSection = () => {
 	const { name: sectionName, sectionId } = useLocalSearchParams();
-	const { isLoadingSectionTeachings, sectionTeachings } = useTeachingStore();
+	const {
+		isLoadingSectionTeachings,
+		sectionTeachings,
+		isLoadMoreSectionTeachings
+	} = useTeachingStore();
 	const { setIsFilterByBookOpen, setIsFilterByOtherOpen } =
 		useTeachingFilterStore();
-	const { handleCloseSectionTeachings } = useTeachingSection({
+	const {
+		handleCloseSectionTeachings,
+		handleRefreshSectionTeachings,
+		handleLoadMoreSectionTeachings
+	} = useTeachingSection({
 		sectionName: sectionName as string
 	});
 
 	if (isLoadingSectionTeachings && sectionTeachings.length === 0) {
-		return <LoadingSpinner />;
+		return (
+			<ImageBackground source={backgroundImage} className="flex-1">
+				<View className="flex-1 justify-center items-center">
+					<LoadingSpinner />
+				</View>
+			</ImageBackground>
+		);
 	}
 
 	return (
@@ -102,19 +117,48 @@ const TeachingsSection = () => {
 				<View className="px-4 flex-1 gap-3">
 					<Text style={fonts.subtitle1White}>Latest Teachings</Text>
 					<ScrollView
+						refreshControl={
+							<RefreshControl
+								refreshing={isLoadingSectionTeachings}
+								onRefresh={handleRefreshSectionTeachings}
+							/>
+						}
 						showsVerticalScrollIndicator={false}
 						className="flex-1"
+						onMomentumScrollEnd={(e) => {
+							const {
+								layoutMeasurement,
+								contentOffset,
+								contentSize
+							} = e.nativeEvent;
+							const isNearBottom =
+								layoutMeasurement.height + contentOffset.y >=
+								contentSize.height - 32;
+							if (isNearBottom) {
+								handleLoadMoreSectionTeachings();
+							}
+						}}
+						scrollEventThrottle={700}
 					>
-						<View className="flex-1 gap-4 relative">
+						<View className="flex-1 gap-4 relative pb-8">
 							{isLoadingSectionTeachings ? (
-								<LoadingSpinner />
+								<View className="absolute left-1/2 top-56 -translate-x-1/2 -translate-y-1/2">
+									<LoadingSpinner />
+								</View>
 							) : sectionTeachings?.length > 0 ? (
-								sectionTeachings?.map((teaching) => (
-									<TeachingCard
-										key={teaching.id}
-										teaching={teaching}
-									/>
-								))
+								<>
+									{sectionTeachings?.map(
+										(teaching, index) => (
+											<TeachingCard
+												key={index}
+												teaching={teaching}
+											/>
+										)
+									)}
+									{isLoadMoreSectionTeachings && (
+										<LoadingSpinner label="Loading more teachings..." />
+									)}
+								</>
 							) : (
 								<View className="flex-1 justify-center items-center">
 									<Text style={fonts.caption1White}>
