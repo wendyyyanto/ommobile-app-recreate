@@ -1,10 +1,12 @@
 import BackButton from "@/components/ui/BackButton";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import useSearchTeachings from "@/hooks/useSearchTeachings";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import {
 	ImageBackground,
 	ScrollView,
@@ -15,8 +17,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SearchTeaching = () => {
-	const { searchTeachings, isLoadingSearchTeachings, searchQuery } =
-		useTeachingStore();
+	const {
+		searchTeachings,
+		isLoadingSearchTeachings,
+		searchQuery,
+		setSearchQuery,
+		setSearchTeachings
+	} = useTeachingStore();
 	const { handleSearchTeachings } = useSearchTeachings();
 
 	const backgroundImage =
@@ -35,7 +42,13 @@ const SearchTeaching = () => {
 				className="flex-1 px-4 gap-7"
 			>
 				<View className="flex flex-row justify-start items-center gap-4">
-					<BackButton />
+					<BackButton
+						onPress={() => {
+							setSearchQuery("");
+							setSearchTeachings([]);
+							router.back();
+						}}
+					/>
 					<Text style={fonts.body2White}>Search</Text>
 				</View>
 				<View
@@ -58,7 +71,13 @@ const SearchTeaching = () => {
 					/>
 				</View>
 
-				{searchTeachings?.length > 0 ? (
+				{isLoadingSearchTeachings ? (
+					<View className="flex-1 justify-center items-center">
+						<LoadingSpinner
+							label={`Searching for "${searchQuery}"...`}
+						/>
+					</View>
+				) : searchTeachings?.length > 0 ? (
 					<ScrollView showsVerticalScrollIndicator={false}>
 						<View className="flex-1 gap-4">
 							{searchTeachings?.map((teaching) => (

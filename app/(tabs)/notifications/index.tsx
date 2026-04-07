@@ -2,19 +2,34 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import fonts from "@/constants/fonts";
 import useNotification from "@/hooks/useNotification";
 import { useNotificationStore } from "@/stores/notificationStore";
-import { ImageBackground, ScrollView, Text, View } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
+import {
+	ImageBackground,
+	Pressable,
+	ScrollView,
+	Text,
+	View
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Notifications = () => {
 	const { notificationList, isLoadingNotificationList } =
 		useNotificationStore();
-	const notificationHook = useNotification();
+
+	useNotification();
 
 	if (isLoadingNotificationList)
 		return (
-			<View className="h-full w-full justify-center items-center">
-				<LoadingSpinner />
-			</View>
+			<ImageBackground
+				source={require("@/assets/images/background_notification.png")}
+				resizeMode="cover"
+				className="flex-1"
+			>
+				<View className="h-full w-full justify-center items-center">
+					<LoadingSpinner label="Loading notifications..." />
+				</View>
+			</ImageBackground>
 		);
 
 	return (
@@ -25,9 +40,25 @@ const Notifications = () => {
 		>
 			<SafeAreaView edges={["top"]} className="flex-1 px-4">
 				<View className="flex-1">
-					<Text className="text-4xl text-white font-poppins">
-						Notifications
-					</Text>
+					<View className="flex-row justify-between items-center">
+						<Text className="text-4xl text-white font-poppins">
+							Notifications
+						</Text>
+
+						<Pressable
+							hitSlop={12}
+							className="z-10"
+							onPress={() =>
+								router.push("/notifications/settings")
+							}
+						>
+							<Ionicons
+								name="settings-outline"
+								size={24}
+								color="white"
+							/>
+						</Pressable>
+					</View>
 					{notificationList?.length === 0 ? (
 						<ImageBackground
 							imageStyle={{ transform: [{ scale: 1.5 }] }}

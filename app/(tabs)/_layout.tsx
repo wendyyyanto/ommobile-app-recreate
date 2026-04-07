@@ -20,7 +20,7 @@ SplashScreen.preventAutoHideAsync();
 const tabBarIconSize = { width: 18, height: 18, marginBottom: 6 };
 
 export default function RootLayout() {
-	const [fontsLoaded] = useFonts({
+	const [fontsLoaded, fontError] = useFonts({
 		Poppins_400Regular,
 		Poppins_500Medium,
 		Poppins_600SemiBold
@@ -38,12 +38,10 @@ export default function RootLayout() {
 	};
 
 	useEffect(() => {
-		if (fontsLoaded) {
+		if (fontsLoaded || fontError) {
 			SplashScreen.hideAsync();
 		}
 	}, [fontsLoaded]);
-
-	if (!fontsLoaded) return null;
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
