@@ -1,5 +1,9 @@
 import { useTeachingStore } from "@/stores/teachingStore";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import {
+	setAudioModeAsync,
+	useAudioPlayer,
+	useAudioPlayerStatus
+} from "expo-audio";
 import { useEffect, useState } from "react";
 
 const useTeachingAudioPlayer = () => {
@@ -15,6 +19,14 @@ const useTeachingAudioPlayer = () => {
 	const status = useAudioPlayerStatus(player);
 
 	useEffect(() => {
+		setAudioModeAsync({
+			playsInSilentMode: true,
+			shouldPlayInBackground: true,
+			interruptionMode: "doNotMix"
+		});
+	}, []);
+
+	useEffect(() => {
 		if (status.isLoaded) {
 			setDuration(status.duration ?? 0);
 		}
@@ -28,15 +40,37 @@ const useTeachingAudioPlayer = () => {
 
 	const handlePlayPause = () => {
 		if (status.playing) {
-			player.pause();
+			handlePause();
 		} else {
-			player.play();
+			handlePlay();
 		}
+	};
+
+	const handlePlay = () => {
+		player.play();
+		player.setActiveForLockScreen(
+			true,
+			{
+				title: teachingDetails?.title,
+				artist: teachingDetails?.teacher,
+				albumTitle: teachingDetails?.book,
+				artworkUrl: teachingDetails?.thumbnailUrl
+			},
+			{
+				showSeekBackward: true,
+				showSeekForward: true
+			}
+		);
+	};
+
+	const handlePause = () => {
+		player.pause();
+		player.setActiveForLockScreen(false);
 	};
 
 	const handleSeekTo = (time: number) => {
 		player.seekTo(time);
-		player.play();
+		handlePlay();
 	};
 
 	const handleSlideMove = (time: number) => {

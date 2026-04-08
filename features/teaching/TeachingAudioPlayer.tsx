@@ -36,7 +36,7 @@ const TeachingAudioPlayer = () => {
 					marginBottom: 18
 				}}
 				size="$2"
-				defaultValue={[status.currentTime ?? 0]}
+				value={[currentTime ?? 0]}
 				max={status.duration ?? 0}
 				step={1}
 				onSlideEnd={(e, value) => handleSeekTo(value)}
