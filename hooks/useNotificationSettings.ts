@@ -1,22 +1,11 @@
-import { getOneSignalSegments } from "@/services/oneSignalServices";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { useEffect } from "react";
 import { OneSignal } from "react-native-onesignal";
 
 const useNotificationSettings = () => {
-	const { setNotificationSegments, setUserNotificationTags } =
-		useNotificationStore();
+	const { setUserNotificationTags } = useNotificationStore();
 
 	useEffect(() => {
-		getOneSignalSegments({
-			onSuccess: (data) => {
-				setNotificationSegments(data.segments);
-			},
-			onError: (error) => {
-				console.log(error);
-			}
-		});
-
 		OneSignal.User.getTags().then((tags) => {
 			setUserNotificationTags(tags as any);
 		});
