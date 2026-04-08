@@ -6,6 +6,7 @@ import { getOneSignalSegments } from "@/services/oneSignalServices";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { router } from "expo-router";
 import { useEffect } from "react";
+import { OneSignal } from "react-native-onesignal";
 
 const useNotification = () => {
 	const {
@@ -13,7 +14,8 @@ const useNotification = () => {
 		setIsLoadingNotificationList,
 		setNotificationSegments,
 		setNotificationDetail,
-		setIsLoadingNotificationDetail
+		setIsLoadingNotificationDetail,
+		setUserNotificationTags
 	} = useNotificationStore();
 
 	useEffect(() => {
@@ -37,6 +39,10 @@ const useNotification = () => {
 				console.log(error);
 				setIsLoadingNotificationList(false);
 			}
+		});
+
+		OneSignal.User.getTags().then((tags) => {
+			setUserNotificationTags(tags as any);
 		});
 	}, []);
 

@@ -1,14 +1,11 @@
 import BackButton from "@/components/ui/BackButton";
 import fonts from "@/constants/fonts";
 import NotificationSwitch from "@/features/notification/NotificationSwitch";
-import useNotificationSettings from "@/hooks/useNotificationSettings";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const NotificationSettings = () => {
-	useNotificationSettings();
-
 	const { notificationSegments, userNotificationTags } =
 		useNotificationStore();
 

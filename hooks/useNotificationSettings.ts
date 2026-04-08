@@ -1,25 +1,25 @@
 import { useNotificationStore } from "@/stores/notificationStore";
-import { useEffect } from "react";
 import { OneSignal } from "react-native-onesignal";
 
 const useNotificationSettings = () => {
-	const { setUserNotificationTags } = useNotificationStore();
-
-	useEffect(() => {
-		OneSignal.User.getTags().then((tags) => {
-			setUserNotificationTags(tags as any);
-		});
-
-		return () => {};
-	}, []);
+	const { userNotificationTags, setUserNotificationTags } =
+		useNotificationStore();
 
 	const handleCheckedChange = (checked: boolean, label: string) => {
 		const parseTagName = label.toLowerCase().replace(/ /g, "_");
 
 		if (checked) {
 			OneSignal.User.addTag(parseTagName, "active");
+			setUserNotificationTags({
+				...userNotificationTags,
+				[parseTagName]: "active"
+			});
 		} else {
 			OneSignal.User.removeTag(parseTagName);
+			setUserNotificationTags({
+				...userNotificationTags,
+				[parseTagName]: "inactive"
+			});
 		}
 	};
 
