@@ -7,12 +7,15 @@ import {
 import { router, SplashScreen, Tabs, usePathname } from "expo-router";
 import { TamaguiProvider } from "tamagui";
 
+import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import "@/styles/global.css";
 import config from "@/tamagui.config";
 import { Image } from "expo-image";
 import { useEffect } from "react";
+import { Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { LogLevel, OneSignal } from "react-native-onesignal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
@@ -38,10 +41,15 @@ export default function RootLayout() {
 	};
 
 	useEffect(() => {
+		OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+		OneSignal.initialize(
+			process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string
+		);
+		OneSignal.Notifications.requestPermission(true);
 		if (fontsLoaded || fontError) {
 			SplashScreen.hideAsync();
 		}
-	}, [fontsLoaded]);
+	}, [fontsLoaded, fontError]);
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
@@ -69,6 +77,24 @@ export default function RootLayout() {
 						name="index"
 						options={{
 							title: "Home",
+							tabBarLabel: ({ focused }) => (
+								<Text
+									numberOfLines={2}
+									adjustsFontSizeToFit
+									minimumFontScale={0.8}
+									style={[
+										fonts.caption1White,
+										{
+											color: focused
+												? colors.lightBlue
+												: colors.white
+										}
+									]}
+									className="text-center"
+								>
+									Home
+								</Text>
+							),
 							tabBarIcon: ({ focused }) =>
 								focused ? (
 									<Image
@@ -94,6 +120,24 @@ export default function RootLayout() {
 						}}
 						options={{
 							title: "Teachings",
+							tabBarLabel: ({ focused }) => (
+								<Text
+									numberOfLines={2}
+									adjustsFontSizeToFit
+									minimumFontScale={0.8}
+									style={[
+										fonts.caption1White,
+										{
+											color: focused
+												? colors.lightBlue
+												: colors.white
+										}
+									]}
+									className="text-center"
+								>
+									Teachings
+								</Text>
+							),
 							tabBarIcon: ({ focused }) =>
 								focused ? (
 									<Image
@@ -119,6 +163,24 @@ export default function RootLayout() {
 						}}
 						options={{
 							title: "Notifications",
+							tabBarLabel: ({ focused }) => (
+								<Text
+									numberOfLines={2}
+									adjustsFontSizeToFit
+									minimumFontScale={0.8}
+									style={[
+										fonts.caption1White,
+										{
+											color: focused
+												? colors.lightBlue
+												: colors.white
+										}
+									]}
+									className="text-center"
+								>
+									Notifications
+								</Text>
+							),
 							tabBarIcon: ({ focused }) =>
 								focused ? (
 									<Image

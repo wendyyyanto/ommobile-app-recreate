@@ -1,24 +1,16 @@
 import BackButton from "@/components/ui/BackButton";
 import fonts from "@/constants/fonts";
 import NotificationSwitch from "@/features/notification/NotificationSwitch";
+import useNotificationSettings from "@/hooks/useNotificationSettings";
+import { useNotificationStore } from "@/stores/notificationStore";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const NotificationSettings = () => {
-	const notificationSettingsList = [
-		{
-			name: "MG Turby",
-			checked: false
-		},
-		{
-			name: "MG Starling",
-			checked: true
-		},
-		{
-			name: "MG Tenggiri",
-			checked: false
-		}
-	];
+	useNotificationSettings();
+
+	const { notificationSegments, userNotificationTags } =
+		useNotificationStore();
 
 	return (
 		<SafeAreaView edges={["top"]} className="flex-1 px-4 bg-black gap-8">
@@ -31,13 +23,21 @@ const NotificationSettings = () => {
 			</Text>
 
 			<View className="gap-4">
-				{notificationSettingsList.map((setting) => (
-					<NotificationSwitch
-						defaultChecked={setting.checked}
-						key={setting.name}
-						label={setting.name}
-					/>
-				))}
+				{notificationSegments.map((setting) => {
+					const parseTagName = setting.name
+						.toLowerCase()
+						.replace(/ /g, "_");
+					const isChecked =
+						userNotificationTags?.[parseTagName] === "active";
+
+					return (
+						<NotificationSwitch
+							checked={isChecked}
+							key={setting.name}
+							label={setting.name}
+						/>
+					);
+				})}
 			</View>
 		</SafeAreaView>
 	);

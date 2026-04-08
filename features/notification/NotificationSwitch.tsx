@@ -1,23 +1,26 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import useNotificationSettings from "@/hooks/useNotificationSettings";
 import { Text, View } from "react-native";
 import { Switch } from "tamagui";
 
 const NotificationSwitch = ({
 	label,
-	defaultChecked = false
+	checked
 }: {
 	label: string;
-	defaultChecked: boolean;
+	checked: boolean;
 }) => {
+	const { handleCheckedChange } = useNotificationSettings();
+
 	return (
 		<View className="flex-row justify-between items-center">
 			<Text style={fonts.subtitle1White}>{label}</Text>
 			<Switch
-				defaultChecked={defaultChecked as any}
-				onCheckedChange={(checked) => {
-					console.log(checked);
-				}}
+				defaultChecked={checked as any}
+				onCheckedChange={(checked) =>
+					handleCheckedChange(checked, label)
+				}
 				backgroundColor={colors.darkerGray as any}
 				activeStyle={{
 					backgroundColor: colors.offBlack
