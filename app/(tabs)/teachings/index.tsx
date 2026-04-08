@@ -1,9 +1,11 @@
 import TeachingCard from "@/components/ui/TeachingCard";
 import fonts from "@/constants/fonts";
+import TeachingPageSkeleton from "@/features/skeletons/TeachingPageSkeleton";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { MotiView } from "moti";
 import { useEffect } from "react";
 import {
 	ImageBackground,
@@ -48,15 +50,7 @@ const Teachings = () => {
 		{ name: "Workshop", id: "workshop" }
 	];
 
-	if (isLoadingPopularTeachings) {
-		return (
-			<View className="flex-1 justify-center items-center">
-				<Text className="text-black text-lg font-semibold">
-					Loading...
-				</Text>
-			</View>
-		);
-	}
+	if (isLoadingPopularTeachings) return <TeachingPageSkeleton />;
 
 	return (
 		<ImageBackground
@@ -65,7 +59,10 @@ const Teachings = () => {
 			resizeMode="cover"
 		>
 			<SafeAreaView edges={["top"]} className="flex-1">
-				<View className="flex-1 px-4 font-poppins">
+				<MotiView
+					transition={{ type: "spring" }}
+					className="flex-1 px-4 font-poppins"
+				>
 					<View className="flex-row justify-between items-start mb-6">
 						<Text className="text-3xl w-2/5 text-white font-poppins">
 							Bible Teachings
@@ -129,7 +126,7 @@ const Teachings = () => {
 							</View>
 						</ScrollView>
 					</View>
-				</View>
+				</MotiView>
 			</SafeAreaView>
 		</ImageBackground>
 	);

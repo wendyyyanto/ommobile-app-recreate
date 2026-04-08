@@ -1,6 +1,6 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import NotificationPageSkeleton from "@/features/skeletons/NotificationPageSkeleton";
 import useNotification from "@/hooks/useNotification";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { formatDate } from "@/utils/timeHelper";
@@ -21,18 +21,7 @@ const Notifications = () => {
 
 	const { handleNotificationItemPressed } = useNotification();
 
-	if (isLoadingNotificationList)
-		return (
-			<ImageBackground
-				source={require("@/assets/images/background_notification.png")}
-				resizeMode="cover"
-				className="flex-1"
-			>
-				<View className="h-full w-full justify-center items-center">
-					<LoadingSpinner label="Loading notifications..." />
-				</View>
-			</ImageBackground>
-		);
+	if (isLoadingNotificationList) return <NotificationPageSkeleton />;
 
 	return (
 		<ImageBackground

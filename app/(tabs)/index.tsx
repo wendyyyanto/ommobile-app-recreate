@@ -1,6 +1,7 @@
 import TeachingCard from "@/components/ui/TeachingCard";
 import fonts from "@/constants/fonts";
 import AnnouncementCarousel from "@/features/home/AnnouncementCarousel";
+import HomePageSkeleton from "@/features/skeletons/HomePageSkeleton";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Link } from "expo-router";
@@ -37,15 +38,7 @@ export default function Index() {
 		return () => {};
 	}, []);
 
-	if (isLoadingLatestTeachings) {
-		return (
-			<View className="flex-1 justify-center items-center">
-				<Text className="text-black text-lg font-semibold">
-					Loading...
-				</Text>
-			</View>
-		);
-	}
+	if (isLoadingLatestTeachings) return <HomePageSkeleton />;
 
 	return (
 		<ImageBackground
