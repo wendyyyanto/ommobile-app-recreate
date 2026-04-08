@@ -5,4 +5,11 @@ type Notification = {
 	eventDate: string;
 };
 
-export type { Notification };
+type NotificationDetail = {
+	title: string;
+	fullMessage: string;
+	imageUrl: string;
+	eventDate: string;
+};
+
+export type { Notification, NotificationDetail };

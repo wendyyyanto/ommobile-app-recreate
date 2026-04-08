@@ -15,3 +15,17 @@ export const getNotifications = async ({
 		onFulfilled();
 	}
 };
+
+export const getNotificationDetail = async (
+	notificationId: number,
+	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
+) => {
+	try {
+		const response = await axios.get(`/notifications/${notificationId}`);
+		onSuccess(response.data);
+	} catch (error) {
+		onError(error);
+	} finally {
+		onFulfilled();
+	}
+};

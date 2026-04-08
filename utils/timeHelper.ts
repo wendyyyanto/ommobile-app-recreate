@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const formatDuration = (totalSeconds?: number) => {
 	if (!totalSeconds || Number.isNaN(totalSeconds)) return "0:00";
 
@@ -13,4 +15,8 @@ export const formatDuration = (totalSeconds?: number) => {
 	}
 
 	return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+};
+
+export const formatDate = (date: string, format: string = "MM-DD-YYYY") => {
+	return moment(date).format(format);
 };

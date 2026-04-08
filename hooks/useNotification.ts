@@ -1,13 +1,19 @@
-import { getNotifications } from "@/services/notificationServices";
+import {
+	getNotificationDetail,
+	getNotifications
+} from "@/services/notificationServices";
 import { getOneSignalSegments } from "@/services/oneSignalServices";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { router } from "expo-router";
 import { useEffect } from "react";
 
 const useNotification = () => {
 	const {
 		setNotificationList,
 		setIsLoadingNotificationList,
-		setNotificationSegments
+		setNotificationSegments,
+		setNotificationDetail,
+		setIsLoadingNotificationDetail
 	} = useNotificationStore();
 
 	useEffect(() => {
@@ -34,7 +40,25 @@ const useNotification = () => {
 		});
 	}, []);
 
-	return {};
+	const handleNotificationItemPressed = (notificationId: number) => {
+		setNotificationDetail(null);
+		setIsLoadingNotificationDetail(true);
+
+		router.push(`/notifications/${notificationId}`);
+
+		getNotificationDetail(notificationId, {
+			onSuccess: (data) => {
+				setNotificationDetail(data);
+				setIsLoadingNotificationDetail(false);
+			},
+			onError: (error) => {
+				console.log(error);
+				setIsLoadingNotificationDetail(false);
+			}
+		});
+	};
+
+	return { handleNotificationItemPressed };
 };
 
 export default useNotification;

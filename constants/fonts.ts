@@ -4,6 +4,11 @@ const fonts = {
 		fontFamily: "Poppins_500Medium",
 		color: "white"
 	},
+	subtitle2White: {
+		fontSize: 14,
+		fontFamily: "Poppins_500Medium",
+		color: "white"
+	},
 	caption1Grey: {
 		fontSize: 12,
 		fontFamily: "Poppins_400Regular",

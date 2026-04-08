@@ -1,7 +1,9 @@
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import useNotification from "@/hooks/useNotification";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { formatDate } from "@/utils/timeHelper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import {
@@ -17,7 +19,7 @@ const Notifications = () => {
 	const { notificationList, isLoadingNotificationList } =
 		useNotificationStore();
 
-	useNotification();
+	const { handleNotificationItemPressed } = useNotification();
 
 	if (isLoadingNotificationList)
 		return (
@@ -40,7 +42,7 @@ const Notifications = () => {
 		>
 			<SafeAreaView edges={["top"]} className="flex-1 px-4">
 				<View className="flex-1">
-					<View className="flex-row justify-between items-center">
+					<View className="flex-row justify-between items-center mb-10">
 						<Text className="text-4xl text-white font-poppins">
 							Notifications
 						</Text>
@@ -84,9 +86,37 @@ const Notifications = () => {
 					) : (
 						<ScrollView>
 							{notificationList?.map((notification) => (
-								<Text key={notification.id}>
-									{notification.title}
-								</Text>
+								<Pressable
+									key={notification.id}
+									className="mb-4"
+									onPress={() => {
+										handleNotificationItemPressed(
+											notification.id
+										);
+									}}
+								>
+									<Text
+										style={[
+											fonts.subtitle2White,
+											{ fontWeight: "500" }
+										]}
+									>
+										{notification.title}
+									</Text>
+									<Text style={[fonts.caption1Grey]}>
+										{formatDate(
+											notification.eventDate,
+											"MMM Do, YYYY"
+										)}
+									</Text>
+									<View
+										style={{
+											borderWidth: 0.5,
+											borderColor: colors.darkGray,
+											marginTop: 16
+										}}
+									/>
+								</Pressable>
 							))}
 						</ScrollView>
 					)}
