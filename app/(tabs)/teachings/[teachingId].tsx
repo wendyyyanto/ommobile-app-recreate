@@ -6,6 +6,7 @@ import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { handleDownloadFile } from "@/utils/fileHelper";
 import { Image } from "expo-image";
 import {
 	ImageBackground,
@@ -19,7 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const backgroundImage = require("@/assets/images/background.png");
 
 const TeachingDetail = () => {
-	const { activeTab } = useTeachingStore();
+	const { activeTab, teachingDetails } = useTeachingStore();
 
 	return (
 		<ImageBackground
@@ -40,7 +41,20 @@ const TeachingDetail = () => {
 				</View>
 
 				<View className="flex-row justify-between items-center mt-20 gap-4">
-					<Pressable style={styles.downloadButton}>
+					<Pressable
+						style={styles.downloadButton}
+						onPress={() => {
+							if (
+								teachingDetails?.pdfUrl !== "" ||
+								teachingDetails?.pptUrl !== ""
+							) {
+								handleDownloadFile(
+									teachingDetails?.pdfUrl ||
+										teachingDetails?.pptUrl!
+								);
+							}
+						}}
+					>
 						<Image
 							source={require("@/assets/icons/download.svg")}
 							style={{ width: 16, height: 16 }}
