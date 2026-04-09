@@ -10,7 +10,8 @@
 		},
 		"preview": {
 			"android": {
-				"buildType": "apk"
+				"buildType": "apk",
+				"environment": "production"
 			},
 			"ios": {
 				"simulator": false
@@ -18,7 +19,8 @@
 		},
 		"production": {
 			"android": {
-				"buildType": "app-bundle"
+				"buildType": "app-bundle",
+				"environment": "production"
 			},
 			"ios": {
 				"simulator": false

@@ -13,20 +13,31 @@
 			"bundleIdentifier": "com.anonymous.ommobileapp",
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false,
-				"UIBackgroundModes": ["remote-notification"]
+				"UIBackgroundModes": [
+					"remote-notification",
+					"remote-notification"
+				]
 			},
 			"entitlements": {
 				"aps-environment": "development",
 				"com.apple.security.application-groups": [
+					"group.${ios.bundleIdentifier}.onesignal",
 					"group.${ios.bundleIdentifier}.onesignal"
 				]
 			}
 		},
 		"android": {
+			"versionCode": 1200,
 			"icon": "./assets/images/app_icon.png",
 			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false,
-			"package": "com.anonymous.ommobileapp"
+			"package": "com.anonymous.ommobileapp",
+			"permissions": [
+				"android.permission.RECORD_AUDIO",
+				"android.permission.MODIFY_AUDIO_SETTINGS",
+				"android.permission.RECORD_AUDIO",
+				"android.permission.MODIFY_AUDIO_SETTINGS"
+			]
 		},
 		"web": {
 			"bundler": "metro",
@@ -67,6 +78,35 @@
 		"experiments": {
 			"typedRoutes": true,
 			"reactCompiler": true
+		},
+		"extra": {
+			"router": {},
+			"eas": {
+				"build": {
+					"experimental": {
+						"ios": {
+							"appExtensions": [
+								{
+									"targetName": "OneSignalNotificationServiceExtension",
+									"bundleIdentifier": "com.anonymous.ommobileapp.OneSignalNotificationServiceExtension",
+									"entitlements": {
+										"com.apple.security.application-groups": [
+											"group.com.anonymous.ommobileapp.onesignal"
+										]
+									}
+								}
+							]
+						}
+					}
+				},
+				"projectId": "90251ff0-811a-441a-af8f-b27a0f9f463f"
+			}
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/90251ff0-811a-441a-af8f-b27a0f9f463f"
 		}
 	}
 }
