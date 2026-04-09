@@ -65,8 +65,8 @@ export default function Index() {
 						<AnnouncementCarousel />
 
 						<View className="flex flex-1 gap-2">
-							<View className="flex flex-1 flex-row justify-between items-center">
-								<Text style={fonts.subtitle1White}>
+							<View className="w-full flex-row justify-between items-center">
+								<Text style={[fonts.subtitle1White]}>
 									Latest Teachings
 								</Text>
 								<Link
