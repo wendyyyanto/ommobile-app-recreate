@@ -4,9 +4,15 @@ import AnnouncementCarousel from "@/features/home/AnnouncementCarousel";
 import HomePageSkeleton from "@/features/skeletons/HomePageSkeleton";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import { useEffect } from "react";
-import { ImageBackground, ScrollView, Text, View } from "react-native";
+import {
+	ImageBackground,
+	Pressable,
+	ScrollView,
+	Text,
+	View
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const backgroundImage = require("@/assets/images/background.png");
@@ -65,18 +71,24 @@ export default function Index() {
 						<AnnouncementCarousel />
 
 						<View className="flex flex-1 gap-2">
-							<View className="flex flex-1 flex-row justify-between items-center">
-								<Text style={fonts.subtitle1White}>
+							<View className="flex-1 flex-row justify-between items-center">
+								<Text
+									style={fonts.subtitle1White}
+									className="pr-3 flex-1"
+								>
 									Latest Teachings
 								</Text>
-								<Link
-									href="/teachings"
-									className="bg-charcoal-blue rounded-full px-4 py-2"
+								<Pressable
+									className="bg-charcoal-blue rounded-full py-2 w-1/4"
+									onPress={() => router.push("/teachings")}
 								>
-									<Text style={fonts.caption1White}>
+									<Text
+										style={fonts.caption1White}
+										className="text-center"
+									>
 										Browse All
 									</Text>
-								</Link>
+								</Pressable>
 							</View>
 							<View className="flex flex-1 gap-4">
 								{latestTeachings?.length > 0 &&

@@ -17,6 +17,7 @@ import { Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LogLevel, OneSignal } from "react-native-onesignal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -198,6 +199,7 @@ export default function RootLayout() {
 					/>
 				</Tabs>
 			</TamaguiProvider>
+			<Toast />
 		</GestureHandlerRootView>
 	);
 }
