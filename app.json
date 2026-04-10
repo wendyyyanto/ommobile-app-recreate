@@ -13,6 +13,8 @@
 			"bundleIdentifier": "com.anonymous.ommobileapp",
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false,
+				"LSSupportsOpeningDocumentsInPlace": true,
+				"UIFileSharingEnabled": true,
 				"UIBackgroundModes": [
 					"remote-notification",
 					"remote-notification"

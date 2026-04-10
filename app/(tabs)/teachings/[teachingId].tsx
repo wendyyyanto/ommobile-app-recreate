@@ -16,6 +16,7 @@ import {
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const backgroundImage = require("@/assets/images/background.png");
 
@@ -45,13 +46,28 @@ const TeachingDetail = () => {
 						style={styles.downloadButton}
 						onPress={() => {
 							if (
-								teachingDetails?.pdfUrl !== "" ||
-								teachingDetails?.pptUrl !== ""
+								(teachingDetails?.pdfUrl !== "" &&
+									teachingDetails?.pdfUrl !== null) ||
+								(teachingDetails?.pptUrl !== "" &&
+									teachingDetails?.pptUrl !== null)
 							) {
+								Toast.show({
+									type: "info",
+									text1: "Downloading file...",
+									text2: "Please wait while we download the file...",
+									visibilityTime: 6000
+								});
 								handleDownloadFile(
 									teachingDetails?.pdfUrl ||
 										teachingDetails?.pptUrl!
 								);
+							} else {
+								Toast.show({
+									type: "error",
+									text1: "No file to download",
+									text2: "The audio of this teaching is not available, please contact our support team.",
+									visibilityTime: 6000
+								});
 							}
 						}}
 					>
@@ -61,7 +77,30 @@ const TeachingDetail = () => {
 						/>
 						<Text style={fonts.caption2White}>Download File</Text>
 					</Pressable>
-					<Pressable style={styles.downloadButton}>
+					<Pressable
+						style={styles.downloadButton}
+						onPress={() => {
+							if (
+								teachingDetails?.audioUrl !== "" ||
+								teachingDetails?.videoUrl !== null
+							) {
+								Toast.show({
+									type: "info",
+									text1: "Downloading file...",
+									text2: "It might take a few minutes to finish the download, please wait...",
+									visibilityTime: 6000
+								});
+								handleDownloadFile(teachingDetails?.audioUrl!);
+							} else {
+								Toast.show({
+									type: "error",
+									text1: "No file to download",
+									text2: "The audio of this teaching is not available, please contact our support team.",
+									visibilityTime: 6000
+								});
+							}
+						}}
+					>
 						<Image
 							source={require("@/assets/icons/audio.svg")}
 							style={{ width: 16, height: 16 }}
