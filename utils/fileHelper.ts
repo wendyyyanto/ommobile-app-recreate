@@ -1,12 +1,13 @@
-import { Directory, File, Paths } from "expo-file-system";
+import { Dirs, FileSystem } from "react-native-file-access";
 
 export const handleDownloadFile = async (url: string) => {
-	const destination = new Directory(Paths.cache, "omteaching-resources");
-
 	try {
-		const output = await File.downloadFileAsync(url, destination);
-		console.log(output.info());
-		console.log(output.uri);
+		await FileSystem.fetch(url, {
+			path:
+				Dirs.DocumentDir +
+				"/omteaching-resources/" +
+				url.split("/").pop()
+		});
 	} catch (error) {
 		console.error(error);
 	}
