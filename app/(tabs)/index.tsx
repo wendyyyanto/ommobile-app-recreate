@@ -36,7 +36,7 @@ export default function Index() {
 		);
 
 		return () => {};
-	}, []);
+	}, [setIsLoadingLatestTeachings, setLatestTeachings]);
 
 	if (isLoadingLatestTeachings) return <HomePageSkeleton />;
 
@@ -67,16 +67,14 @@ export default function Index() {
 						<View className="flex flex-1 gap-2">
 							<View className="w-full flex-row justify-between items-center">
 								<Text
-									style={[
-										fonts.subtitle1White,
-										{ maxWidth: "50%" }
-									]}
+									style={fonts.subtitle1White}
+									className="flex-1 pr-3"
 								>
 									Latest Teachings
 								</Text>
 								<Link
 									href="/teachings"
-									className="bg-charcoal-blue rounded-full px-4 py-2 max-w-[50%]"
+									className="bg-charcoal-blue rounded-full px-4 py-2 shrink-0"
 								>
 									<Text style={fonts.caption1White}>
 										Browse All
