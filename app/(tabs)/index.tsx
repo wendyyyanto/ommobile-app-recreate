@@ -65,13 +65,18 @@ export default function Index() {
 						<AnnouncementCarousel />
 
 						<View className="flex flex-1 gap-2">
-							<View className="flex flex-1 flex-row justify-between items-center">
-								<Text style={fonts.subtitle1White}>
+							<View className="w-full flex-row justify-between items-center">
+								<Text
+									style={[
+										fonts.subtitle1White,
+										{ maxWidth: "50%" }
+									]}
+								>
 									Latest Teachings
 								</Text>
 								<Link
 									href="/teachings"
-									className="bg-charcoal-blue rounded-full px-4 py-2"
+									className="bg-charcoal-blue rounded-full px-4 py-2 max-w-[50%]"
 								>
 									<Text style={fonts.caption1White}>
 										Browse All
