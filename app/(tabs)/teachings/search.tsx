@@ -63,6 +63,7 @@ const SearchTeaching = () => {
 						style={{ width: 14, height: 14 }}
 					/>
 					<TextInput
+						className="flex-1"
 						placeholder="Search teachings..."
 						placeholderTextColor={colors.lightSteelGray}
 						style={[fonts.body1White]}
