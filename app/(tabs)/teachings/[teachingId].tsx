@@ -23,6 +23,8 @@ const backgroundImage = require("@/assets/images/background.png");
 const TeachingDetail = () => {
 	const { activeTab, teachingDetails } = useTeachingStore();
 
+	console.log(teachingDetails);
+
 	return (
 		<ImageBackground
 			source={backgroundImage}
@@ -46,10 +48,8 @@ const TeachingDetail = () => {
 						style={styles.downloadButton}
 						onPress={() => {
 							if (
-								(teachingDetails?.pdfUrl !== "" &&
-									teachingDetails?.pdfUrl !== null) ||
-								(teachingDetails?.pptUrl !== "" &&
-									teachingDetails?.pptUrl !== null)
+								teachingDetails?.pdfUrl ||
+								teachingDetails?.pptUrl
 							) {
 								Toast.show({
 									type: "info",
@@ -58,8 +58,9 @@ const TeachingDetail = () => {
 									visibilityTime: 6000
 								});
 								handleDownloadFile(
-									teachingDetails?.pdfUrl ||
-										teachingDetails?.pptUrl!
+									teachingDetails?.pdfUrl
+										? teachingDetails?.pdfUrl
+										: teachingDetails?.pptUrl!
 								);
 							} else {
 								Toast.show({

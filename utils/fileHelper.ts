@@ -31,13 +31,24 @@ function uniqueFileName(base: string): string {
 	return `${base}-${Date.now()}`;
 }
 
+function normalizeDownloadUrl(rawUrl: string): string {
+	try {
+		// URL normalizes illegal path characters (e.g. spaces) into valid encoding.
+		return new URL(rawUrl).toString();
+	} catch {
+		// Fallback for partial or already-decoded URLs.
+		return encodeURI(rawUrl.trim());
+	}
+}
+
 export const handleDownloadFile = async (url: string): Promise<void> => {
-	const fileName = uniqueFileName(fileNameFromUrl(url));
+	const downloadUrl = normalizeDownloadUrl(url);
+	const fileName = uniqueFileName(fileNameFromUrl(downloadUrl));
 
 	try {
 		if (Platform.OS === "android") {
 			const tempFile = new File(Paths.cache, fileName);
-			const downloaded = await File.downloadFileAsync(url, tempFile);
+			const downloaded = await File.downloadFileAsync(downloadUrl, tempFile);
 			const srcPath = fileUriToPlainPath(downloaded.uri);
 			try {
 				await RNFileSystem.cpExternal(srcPath, fileName, "downloads");
@@ -54,9 +65,9 @@ export const handleDownloadFile = async (url: string): Promise<void> => {
 		}
 
 		const outFile = new File(Paths.document, fileName);
-		await File.downloadFileAsync(url, outFile);
+		await File.downloadFileAsync(downloadUrl, outFile);
 		return;
-	} catch (error) {
+	} catch {
 		Toast.show({
 			type: "error",
 			text1: "Failed to download file",
