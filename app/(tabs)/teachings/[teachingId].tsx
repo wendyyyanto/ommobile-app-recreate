@@ -23,8 +23,6 @@ const backgroundImage = require("@/assets/images/background.png");
 const TeachingDetail = () => {
 	const { activeTab, teachingDetails } = useTeachingStore();
 
-	console.log(teachingDetails);
-
 	return (
 		<ImageBackground
 			source={backgroundImage}
