@@ -3,6 +3,7 @@ import fonts from "@/constants/fonts";
 import useFilterBook from "@/hooks/useFilterBook";
 import { getDropdowns } from "@/services/dropdownServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
+import { useTeachingStore } from "@/stores/teachingStore";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import { useEffect, useRef } from "react";
@@ -20,7 +21,7 @@ const SectionBookFilterDropdown = () => {
 		isFilterByBookOpen,
 		setSelectedBook
 	} = useTeachingFilterStore();
-
+	const { sectionName } = useTeachingStore();
 	const { handleSelectAllChapters, handleFilterTeachingByBook } =
 		useFilterBook();
 
@@ -30,7 +31,12 @@ const SectionBookFilterDropdown = () => {
 		getDropdowns(
 			{
 				entity: "books",
-				attributes: ["id", "bookName"]
+				attributes: ["id", "bookName"],
+				filters: {
+					include: {
+						testament: [sectionName]
+					}
+				}
 			},
 			{
 				onSuccess: (data) => {
@@ -45,7 +51,15 @@ const SectionBookFilterDropdown = () => {
 		getDropdowns(
 			{
 				entity: "books",
-				attributes: ["bookName", "totalChapters"]
+				attributes: ["bookName", "totalChapters"],
+				filters: {
+					include: {
+						testament:
+							sectionName === "new-testament"
+								? ["New Testament"]
+								: ["Old Testament"]
+					}
+				}
 			},
 			{
 				onSuccess: (data) => {

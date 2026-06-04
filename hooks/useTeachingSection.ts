@@ -22,7 +22,8 @@ const useTeachingSection = ({
 		setIsLoadMoreSectionTeachings,
 		sectionTeachingsPagination,
 		sectionTeachings,
-		setSectionTeachingsPagination
+		setSectionTeachingsPagination,
+		setSectionName
 	} = useTeachingStore();
 	const {
 		setIsFilterByBookOpen,
@@ -35,6 +36,7 @@ const useTeachingSection = ({
 
 	useEffect(() => {
 		setIsLoadingSectionTeachings(true);
+		setSectionName(sectionName);
 		getTeachings(
 			{
 				page: 1,

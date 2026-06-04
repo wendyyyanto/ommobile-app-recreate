@@ -18,6 +18,7 @@ interface TeachingState {
 	isLoadingTeachingDetails: boolean;
 	isLoadMoreSectionTeachings: boolean;
 	sectionTeachingsPagination: Pagination;
+	sectionName: string;
 	setLatestTeachings: (latestTeachings: Teaching[]) => void;
 	setPopularTeachings: (popularTeachings: Teaching[]) => void;
 	setSectionTeachings: (sectionTeachings: Teaching[]) => void;
@@ -36,6 +37,7 @@ interface TeachingState {
 	setSectionTeachingsPagination: (
 		sectionTeachingsPagination: Pagination
 	) => void;
+	setSectionName: (sectionName: string) => void;
 }
 
 export const useTeachingStore = create<TeachingState>()((set) => ({
@@ -43,6 +45,7 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	popularTeachings: [],
 	sectionTeachings: [],
 	searchTeachings: [],
+	sectionName: "",
 	isLoadingLatestTeachings: false,
 	isLoadingPopularTeachings: false,
 	isLoadingSectionTeachings: false,
@@ -82,5 +85,6 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	setIsLoadMoreSectionTeachings: (isLoadMoreSectionTeachings: boolean) =>
 		set({ isLoadMoreSectionTeachings }),
 	setSectionTeachingsPagination: (sectionTeachingsPagination: Pagination) =>
-		set({ sectionTeachingsPagination })
+		set({ sectionTeachingsPagination }),
+	setSectionName: (sectionName: string) => set({ sectionName })
 }));
