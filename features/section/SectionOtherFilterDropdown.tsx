@@ -5,7 +5,7 @@ import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { DropdownOptions, FilterOtherOptions } from "@/types/dropdown";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import SectionOtherOptionsAccordion from "./SectionOtherOptionsAccordion";
 
@@ -18,6 +18,8 @@ const SectionOtherFilterDropdown = () => {
 		selectedFilter
 	} = useTeachingFilterStore();
 
+	const [showFilterCTA, setShowFilterCTA] = useState(false);
+
 	const { handleFilterTeaching } = useFilterOther();
 
 	const bottomSheetRef = useRef<BottomSheet>(null);
@@ -29,6 +31,16 @@ const SectionOtherFilterDropdown = () => {
 			bottomSheetRef.current?.close();
 		}
 	}, [isFilterByOtherOpen, setSelectedFilter]);
+
+	useEffect(() => {
+		Object.keys(selectedFilter).forEach((key) => {
+			if (selectedFilter[key].length > 0) {
+				setShowFilterCTA(true);
+			} else {
+				setShowFilterCTA(false);
+			}
+		});
+	}, [selectedFilter]);
 
 	return (
 		<BottomSheet
@@ -70,7 +82,7 @@ const SectionOtherFilterDropdown = () => {
 					))}
 			</BottomSheetScrollView>
 
-			{selectedFilter && (
+			{showFilterCTA && (
 				<View className="sticky bottom-0 left-0 right-0 justify-center items-center flex-row bg-black py-4 gap-10 px-10">
 					<Pressable
 						className="flex-1"
