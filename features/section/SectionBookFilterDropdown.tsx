@@ -18,8 +18,7 @@ const SectionBookFilterDropdown = () => {
 		setIsFilterByBookOpen,
 		setBookOptions,
 		setBookChapters,
-		isFilterByBookOpen,
-		setSelectedBook
+		isFilterByBookOpen
 	} = useTeachingFilterStore();
 	const { sectionName } = useTeachingStore();
 	const { handleSelectAllChapters, handleFilterTeachingByBook } =
@@ -54,10 +53,7 @@ const SectionBookFilterDropdown = () => {
 				attributes: ["bookName", "totalChapters"],
 				filters: {
 					include: {
-						testament:
-							sectionName === "new-testament"
-								? ["New Testament"]
-								: ["Old Testament"]
+						testament: [sectionName]
 					}
 				}
 			},

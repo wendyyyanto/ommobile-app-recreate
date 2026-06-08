@@ -33,13 +33,15 @@ const SectionOtherFilterDropdown = () => {
 	}, [isFilterByOtherOpen, setSelectedFilter]);
 
 	useEffect(() => {
-		Object.keys(selectedFilter).forEach((key) => {
-			if (selectedFilter[key].length > 0) {
-				setShowFilterCTA(true);
-			} else {
-				setShowFilterCTA(false);
-			}
-		});
+		if (!selectedFilter) {
+			setShowFilterCTA(false);
+			return;
+		}
+
+		const hasActiveFilters = Object.values(selectedFilter).some(
+			(values) => Array.isArray(values) && values.length > 0
+		);
+		setShowFilterCTA(hasActiveFilters);
 	}, [selectedFilter]);
 
 	return (

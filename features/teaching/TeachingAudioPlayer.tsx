@@ -64,49 +64,64 @@ const TeachingAudioPlayer = () => {
 			</View>
 
 			<View className="flex-row justify-between items-center mt-5">
-				<View className="w-11 h-11" />
-
-				<View className="flex-row justify-center items-center gap-8">
-					<Pressable onPress={() => handleSeekTo(currentTime - 15)}>
-						<Image
-							source={require("@/assets/icons/backward_15s.svg")}
-							style={seekIconStyle}
+				{status.isBuffering ? (
+					<View className="flex-1 justify-center items-center">
+						<LoadingSpinner
+							label="Buffering audio ..."
+							size={70}
+							styleProps={{ opacity: 0.3 }}
 						/>
-					</Pressable>
-					<Pressable onPress={handlePlayPause}>
-						{status.playing ? (
-							<Image
-								source={require("@/assets/icons/pause.svg")}
-								style={playPauseIconStyle}
-							/>
-						) : (
-							<Image
-								source={require("@/assets/icons/play.svg")}
-								style={playPauseIconStyle}
-							/>
-						)}
-					</Pressable>
-					<Pressable onPress={() => handleSeekTo(currentTime + 30)}>
-						<Image
-							source={require("@/assets/icons/forward_30s.svg")}
-							style={seekIconStyle}
-						/>
-					</Pressable>
-				</View>
+					</View>
+				) : (
+					<>
+						<View className="w-11 h-11" />
+						<View className="flex-row justify-center items-center gap-8">
+							<Pressable
+								onPress={() => handleSeekTo(currentTime - 15)}
+							>
+								<Image
+									source={require("@/assets/icons/backward_15s.svg")}
+									style={seekIconStyle}
+								/>
+							</Pressable>
+							<Pressable onPress={handlePlayPause}>
+								{status.playing ? (
+									<Image
+										source={require("@/assets/icons/pause.svg")}
+										style={playPauseIconStyle}
+									/>
+								) : (
+									<Image
+										source={require("@/assets/icons/play.svg")}
+										style={playPauseIconStyle}
+									/>
+								)}
+							</Pressable>
+							<Pressable
+								onPress={() => handleSeekTo(currentTime + 30)}
+							>
+								<Image
+									source={require("@/assets/icons/forward_30s.svg")}
+									style={seekIconStyle}
+								/>
+							</Pressable>
+						</View>
 
-				<Pressable
-					style={{
-						width: 48,
-						height: 48,
-						backgroundColor: colors.slateGray,
-						borderRadius: 8,
-						alignItems: "center",
-						justifyContent: "center"
-					}}
-					onPress={handleChangePlaybackRate}
-				>
-					<Text className="text-white ">{playbackRate}x</Text>
-				</Pressable>
+						<Pressable
+							style={{
+								width: 48,
+								height: 48,
+								backgroundColor: colors.slateGray,
+								borderRadius: 8,
+								alignItems: "center",
+								justifyContent: "center"
+							}}
+							onPress={handleChangePlaybackRate}
+						>
+							<Text className="text-white ">{playbackRate}x</Text>
+						</Pressable>
+					</>
+				)}
 			</View>
 		</View>
 	);

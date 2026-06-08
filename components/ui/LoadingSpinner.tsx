@@ -1,13 +1,21 @@
 import fonts from "@/constants/fonts";
 import LottieView from "lottie-react-native";
-import { Text, View } from "react-native";
+import { StyleProp, Text, View, ViewStyle } from "react-native";
 
-const LoadingSpinner = ({ label = "Loading ..." }: { label?: string }) => {
+const LoadingSpinner = ({
+	label = "Loading ...",
+	size = 100,
+	styleProps
+}: {
+	label?: string;
+	size?: number;
+	styleProps?: StyleProp<ViewStyle>;
+}) => {
 	return (
 		<View className="justify-center items-center">
 			<LottieView
 				source={require("@/assets/animations/loading.json")}
-				style={{ width: 100, height: 100 }}
+				style={{ width: size, height: size, ...(styleProps as object) }}
 				autoPlay
 				loop
 			/>
