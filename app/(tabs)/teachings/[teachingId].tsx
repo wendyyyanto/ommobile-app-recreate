@@ -6,6 +6,7 @@ import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { handleDownloadFile } from "@/utils/fileHelper";
 import { Image } from "expo-image";
 import {
 	ImageBackground,
@@ -15,11 +16,12 @@ import {
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const backgroundImage = require("@/assets/images/background.png");
 
 const TeachingDetail = () => {
-	const { activeTab } = useTeachingStore();
+	const { activeTab, teachingDetails } = useTeachingStore();
 
 	return (
 		<ImageBackground
@@ -40,14 +42,65 @@ const TeachingDetail = () => {
 				</View>
 
 				<View className="flex-row justify-between items-center mt-20 gap-4">
-					<Pressable style={styles.downloadButton}>
+					<Pressable
+						style={styles.downloadButton}
+						onPress={() => {
+							if (
+								(teachingDetails?.pdfUrl !== "" &&
+									teachingDetails?.pdfUrl !== null) ||
+								(teachingDetails?.pptUrl !== "" &&
+									teachingDetails?.pptUrl !== null)
+							) {
+								Toast.show({
+									type: "info",
+									text1: "Downloading file...",
+									text2: "Please wait while we download the file...",
+									visibilityTime: 6000
+								});
+								handleDownloadFile(
+									teachingDetails?.pdfUrl ||
+										teachingDetails?.pptUrl!
+								);
+							} else {
+								Toast.show({
+									type: "error",
+									text1: "No file to download",
+									text2: "The audio of this teaching is not available, please contact our support team.",
+									visibilityTime: 6000
+								});
+							}
+						}}
+					>
 						<Image
 							source={require("@/assets/icons/download.svg")}
 							style={{ width: 16, height: 16 }}
 						/>
 						<Text style={fonts.caption2White}>Download File</Text>
 					</Pressable>
-					<Pressable style={styles.downloadButton}>
+					<Pressable
+						style={styles.downloadButton}
+						onPress={() => {
+							if (
+								teachingDetails?.audioUrl !== "" ||
+								teachingDetails?.videoUrl !== null
+							) {
+								Toast.show({
+									type: "info",
+									text1: "Downloading file...",
+									text2: "It might take a few minutes to finish the download, please wait...",
+									visibilityTime: 6000
+								});
+								handleDownloadFile(teachingDetails?.audioUrl!);
+							} else {
+								Toast.show({
+									type: "error",
+									text1: "No file to download",
+									text2: "The audio of this teaching is not available, please contact our support team.",
+									visibilityTime: 6000
+								});
+							}
+						}}
+					>
 						<Image
 							source={require("@/assets/icons/audio.svg")}
 							style={{ width: 16, height: 16 }}
