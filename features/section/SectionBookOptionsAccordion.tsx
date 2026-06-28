@@ -4,9 +4,24 @@ import useFilterBook from "@/hooks/useFilterBook";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { DropdownOptions } from "@/types/dropdown";
 import { Image } from "expo-image";
-import { memo, useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
-import { Accordion, Square } from "tamagui";
+import { memo, useMemo, useState } from "react";
+import {
+	LayoutAnimation,
+	Platform,
+	Pressable,
+	Text,
+	UIManager,
+	View
+} from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming
+} from "react-native-reanimated";
+
+if (Platform.OS === "android") {
+	UIManager.setLayoutAnimationEnabledExperimental?.(true);
+}
 
 const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 	book,
@@ -15,6 +30,9 @@ const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 	book: DropdownOptions;
 	totalChapters: number;
 }) {
+	const [open, setOpen] = useState(false);
+	const rotation = useSharedValue(0);
+
 	const selectedBookEntry = useTeachingFilterStore((state) =>
 		state.selectedBook?.bookName === book.name ? state.selectedBook : null
 	);
@@ -30,79 +48,78 @@ const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 		[totalChapters]
 	);
 
+	const chevronStyle = useAnimatedStyle(() => ({
+		transform: [{ rotate: `${rotation.value}deg` }]
+	}));
+
+	const toggle = () => {
+		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		const next = !open;
+		setOpen(next);
+		rotation.value = withTiming(next ? 180 : 0, { duration: 300 });
+	};
+
 	return (
-		<Accordion type="multiple">
-			<Accordion.Item value={book.id}>
-				<Accordion.Trigger
+		<View className="px-4">
+			<Pressable
+				onPress={toggle}
+				style={{
+					backgroundColor: colors.black,
+					flexDirection: "row",
+					justifyContent: "space-between",
+					alignItems: "center",
+					paddingVertical: 12
+				}}
+			>
+				<Text style={fonts.body1White}>{book.name}</Text>
+				<Animated.View style={chevronStyle}>
+					<Image
+						source={require("@/assets/icons/chevron_Down.svg")}
+						style={{ width: 32, height: 32 }}
+					/>
+				</Animated.View>
+			</Pressable>
+
+			{open && (
+				<View
 					style={{
 						backgroundColor: colors.black,
-						flexDirection: "row",
-						justifyContent: "space-between",
-						alignItems: "center"
+						paddingBottom: 12
 					}}
 				>
-					{({ open }: { open: boolean }) => (
-						<>
-							<Text style={fonts.body1White}>{book.name}</Text>
-							<Square
-								style={{
-									transform: open
-										? "rotate(180deg)"
-										: "rotate(0deg)",
-									transition: "300ms",
-									backgroundColor: "transparent"
-								}}
-							>
-								<Image
-									source={require("@/assets/icons/chevron_Down.svg")}
-									style={{ width: 32, height: 32 }}
-								/>
-							</Square>
-						</>
-					)}
-				</Accordion.Trigger>
-				<Accordion.HeightAnimator>
-					<Accordion.Content
+					<View
 						style={{
-							backgroundColor: colors.black
+							flexDirection: "row",
+							flexWrap: "wrap",
+							gap: 12
 						}}
 					>
-						<View
-							style={{
-								flexDirection: "row",
-								flexWrap: "wrap",
-								gap: 12
-							}}
-						>
-							{chapterNumbers.map((chapter) => (
-								<Pressable
-									key={chapter}
-									style={{
-										flexBasis: "16.66%",
-										justifyContent: "center",
-										alignItems: "center",
-										borderRadius: 8,
-										backgroundColor: selectedChapterSet.has(
-											chapter
-										)
-											? colors.slateGray
-											: colors.darkerGray,
-										paddingVertical: 16
-									}}
-									onPress={() => {
-										handleChapterPress(book.name, chapter);
-									}}
-								>
-									<Text style={fonts.body1White}>
-										{chapter}
-									</Text>
-								</Pressable>
-							))}
-						</View>
-					</Accordion.Content>
-				</Accordion.HeightAnimator>
-			</Accordion.Item>
-		</Accordion>
+						{chapterNumbers.map((chapter) => (
+							<Pressable
+								key={chapter}
+								style={{
+									flexBasis: "16.66%",
+									justifyContent: "center",
+									alignItems: "center",
+									borderRadius: 8,
+									backgroundColor: selectedChapterSet.has(
+										chapter
+									)
+										? colors.slateGray
+										: colors.darkerGray,
+									paddingVertical: 16
+								}}
+								onPress={() => {
+									handleChapterPress(book.name, chapter);
+								}}
+							>
+								<Text style={fonts.body1White}>{chapter}</Text>
+							</Pressable>
+						))}
+					</View>
+				</View>
+			)}
+		</View>
 	);
 });
 

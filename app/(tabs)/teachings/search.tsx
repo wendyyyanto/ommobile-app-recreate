@@ -66,6 +66,7 @@ const SearchTeaching = () => {
 						placeholder="Search teachings..."
 						placeholderTextColor={colors.lightSteelGray}
 						style={[fonts.body1White]}
+						className="w-full"
 						textAlignVertical="center"
 						onChangeText={handleSearchTeachings}
 					/>

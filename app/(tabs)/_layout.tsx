@@ -5,19 +5,19 @@ import {
 	useFonts
 } from "@expo-google-fonts/poppins";
 import { router, SplashScreen, Tabs, usePathname } from "expo-router";
-import { TamaguiProvider } from "tamagui";
 
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import "@/styles/global.css";
-import config from "@/tamagui.config";
+import Constants from "expo-constants";
 import { Image } from "expo-image";
 import { useEffect } from "react";
 import { Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { LogLevel, OneSignal } from "react-native-onesignal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+
+const isExpoGo = Constants.executionEnvironment === "storeClient";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -42,11 +42,14 @@ export default function RootLayout() {
 	};
 
 	useEffect(() => {
-		OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-		OneSignal.initialize(
-			process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string
-		);
-		OneSignal.Notifications.requestPermission(true);
+		if (!isExpoGo) {
+			const { OneSignal, LogLevel } = require("react-native-onesignal");
+			OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+			OneSignal.initialize(
+				process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string
+			);
+			OneSignal.Notifications.requestPermission(true);
+		}
 		if (fontsLoaded || fontError) {
 			SplashScreen.hideAsync();
 		}
@@ -54,8 +57,7 @@ export default function RootLayout() {
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<TamaguiProvider config={config} defaultTheme="light">
-				<Tabs
+			<Tabs
 					screenOptions={{
 						headerTransparent: true,
 						headerShadowVisible: false,
@@ -197,8 +199,7 @@ export default function RootLayout() {
 							headerShown: false
 						}}
 					/>
-				</Tabs>
-			</TamaguiProvider>
+			</Tabs>
 			<Toast />
 		</GestureHandlerRootView>
 	);
