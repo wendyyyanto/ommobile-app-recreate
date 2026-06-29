@@ -1,11 +1,5 @@
 import { File, Paths } from "expo-file-system";
-import { Platform } from "react-native";
-import { FileSystem as RNFileSystem } from "react-native-file-access";
 import Toast from "react-native-toast-message";
-
-function fileUriToPlainPath(uri: string): string {
-	return decodeURIComponent(uri.replace(/^file:\/{2,3}/, ""));
-}
 
 function sanitizeFileName(name: string): string {
 	const cleaned = name.replace(/[/\\?%*:|"<>]/g, "_").trim();
@@ -35,27 +29,14 @@ export const handleDownloadFile = async (url: string): Promise<void> => {
 	const fileName = uniqueFileName(fileNameFromUrl(url));
 
 	try {
-		if (Platform.OS === "android") {
-			const tempFile = new File(Paths.cache, fileName);
-			const downloaded = await File.downloadFileAsync(url, tempFile);
-			const srcPath = fileUriToPlainPath(downloaded.uri);
-			try {
-				await RNFileSystem.cpExternal(srcPath, fileName, "downloads");
-				Toast.show({
-					type: "success",
-					text1: "File downloaded successfully",
-					text2: "Check your download folder to access the file",
-					visibilityTime: 6000
-				});
-				return;
-			} finally {
-				await RNFileSystem.unlink(srcPath).catch(() => {});
-			}
-		}
-
 		const outFile = new File(Paths.document, fileName);
 		await File.downloadFileAsync(url, outFile);
-		return;
+		Toast.show({
+			type: "success",
+			text1: "File downloaded successfully",
+			text2: "Access the file from your Files app",
+			visibilityTime: 6000
+		});
 	} catch (error) {
 		Toast.show({
 			type: "error",

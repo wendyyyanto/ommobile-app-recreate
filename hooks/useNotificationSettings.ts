@@ -1,5 +1,7 @@
 import { useNotificationStore } from "@/stores/notificationStore";
-import { OneSignal } from "react-native-onesignal";
+import Constants from "expo-constants";
+
+const isExpoGo = Constants.executionEnvironment === "storeClient";
 
 const useNotificationSettings = () => {
 	const { userNotificationTags, setUserNotificationTags } =
@@ -8,19 +10,19 @@ const useNotificationSettings = () => {
 	const handleCheckedChange = (checked: boolean, label: string) => {
 		const parseTagName = label.toLowerCase().replace(/ /g, "_");
 
-		if (checked) {
-			OneSignal.User.addTag(parseTagName, "active");
-			setUserNotificationTags({
-				...userNotificationTags,
-				[parseTagName]: "active"
-			});
-		} else {
-			OneSignal.User.removeTag(parseTagName);
-			setUserNotificationTags({
-				...userNotificationTags,
-				[parseTagName]: "inactive"
-			});
+		if (!isExpoGo) {
+			const { OneSignal } = require("react-native-onesignal");
+			if (checked) {
+				OneSignal.User.addTag(parseTagName, "active");
+			} else {
+				OneSignal.User.removeTag(parseTagName);
+			}
 		}
+
+		setUserNotificationTags({
+			...userNotificationTags,
+			[parseTagName]: checked ? "active" : "inactive"
+		});
 	};
 
 	return { handleCheckedChange };

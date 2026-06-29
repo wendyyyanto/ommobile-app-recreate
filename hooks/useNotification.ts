@@ -4,9 +4,11 @@ import {
 } from "@/services/notificationServices";
 import { getOneSignalSegments } from "@/services/oneSignalServices";
 import { useNotificationStore } from "@/stores/notificationStore";
+import Constants from "expo-constants";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { OneSignal } from "react-native-onesignal";
+
+const isExpoGo = Constants.executionEnvironment === "storeClient";
 
 const useNotification = () => {
 	const {
@@ -41,9 +43,12 @@ const useNotification = () => {
 			}
 		});
 
-		OneSignal.User.getTags().then((tags) => {
-			setUserNotificationTags(tags as any);
-		});
+		if (!isExpoGo) {
+			const { OneSignal } = require("react-native-onesignal");
+			OneSignal.User.getTags().then((tags: any) => {
+				setUserNotificationTags(tags);
+			});
+		}
 	}, []);
 
 	const handleNotificationItemPressed = (notificationId: number) => {
