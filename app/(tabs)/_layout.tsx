@@ -1,34 +1,16 @@
-import {
-	Poppins_400Regular,
-	Poppins_500Medium,
-	Poppins_600SemiBold,
-	useFonts
-} from "@expo-google-fonts/poppins";
-import { router, SplashScreen, Tabs, usePathname } from "expo-router";
+import { router, Tabs, usePathname } from "expo-router";
 
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
-import "@/styles/global.css";
-import Constants from "expo-constants";
 import { Image } from "expo-image";
 import { useEffect } from "react";
 import { Text } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { LogLevel, OneSignal } from "react-native-onesignal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
-
-const isExpoGo = Constants.executionEnvironment === "storeClient";
-
-SplashScreen.preventAutoHideAsync();
 
 const tabBarIconSize = { width: 18, height: 18, marginBottom: 6 };
 
-export default function RootLayout() {
-	const [fontsLoaded, fontError] = useFonts({
-		Poppins_400Regular,
-		Poppins_500Medium,
-		Poppins_600SemiBold
-	});
+export default function TabsLayout() {
 	const insets = useSafeAreaInsets();
 	const pathname = usePathname();
 	const tabBarRootRoutes = ["/", "/teachings", "/notifications"];
@@ -42,22 +24,15 @@ export default function RootLayout() {
 	};
 
 	useEffect(() => {
-		if (!isExpoGo) {
-			const { OneSignal, LogLevel } = require("react-native-onesignal");
-			OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-			OneSignal.initialize(
-				process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string
-			);
-			OneSignal.Notifications.requestPermission(true);
-		}
-		if (fontsLoaded || fontError) {
-			SplashScreen.hideAsync();
-		}
-	}, [fontsLoaded, fontError]);
+		OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+		OneSignal.initialize(
+			process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string
+		);
+		OneSignal.Notifications.requestPermission(true);
+	}, []);
 
 	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
-			<Tabs
+		<Tabs
 					screenOptions={{
 						headerTransparent: true,
 						headerShadowVisible: false,
@@ -200,7 +175,5 @@ export default function RootLayout() {
 						}}
 					/>
 			</Tabs>
-			<Toast />
-		</GestureHandlerRootView>
 	);
 }
