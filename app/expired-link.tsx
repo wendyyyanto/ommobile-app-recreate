@@ -2,35 +2,19 @@ import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
 import { Dimensions, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-// Matches the glow's scale/position measured from the design mockup:
-// displayed at ~1.54x the screen width, centered horizontally, flush top.
 const GLOW_IMAGE_SIZE = SCREEN_WIDTH * 1.54;
 
-const RESEND_SECONDS = 3;
-
-export default function CheckEmailScreen() {
+export default function ExpiredLinkScreen() {
 	const { email } = useLocalSearchParams<{ email?: string }>();
-	const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
-
-	useEffect(() => {
-		if (secondsLeft <= 0) {
-			// router.replace({ pathname: "/expired-link", params: { email } });
-			router.replace("/login-loading");
-		}
-		const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
-
-		return () => clearTimeout(timer);
-	}, [secondsLeft]);
 
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.black }}>
 			<Image
-				source={require("@/assets/images/email.png")}
+				source={require("@/assets/images/expired.png")}
 				style={{
 					position: "absolute",
 					top: 0,
@@ -66,32 +50,21 @@ export default function CheckEmailScreen() {
 								}
 							]}
 						>
-							We&apos;ve sent a secure sign-in link to{"\n"}
-							{email}
+							Your sign-in link has expired.{"\n"}
+							Please request a new one.
 						</Text>
 
 						<View style={{ alignItems: "center", gap: 24 }}>
 							<Pressable
-								disabled={secondsLeft > 0}
-								onPress={() => setSecondsLeft(RESEND_SECONDS)}
+								onPress={() =>
+									router.replace({
+										pathname: "/check-email",
+										params: { email }
+									})
+								}
 							>
-								<Text
-									style={[
-										fonts.body1White,
-										{
-											color:
-												secondsLeft > 0
-													? colors.lightSteelGray
-													: colors.white
-										}
-									]}
-								>
+								<Text style={fonts.subtitle1White}>
 									Resend link
-									<Text style={fonts.body1White}>
-										{secondsLeft > 0
-											? `  ${secondsLeft}`
-											: ""}
-									</Text>
 								</Text>
 							</Pressable>
 							<Pressable onPress={() => router.replace("/login")}>

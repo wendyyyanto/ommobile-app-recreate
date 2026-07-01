@@ -76,12 +76,6 @@ export default function LoginScreen() {
 							value={email}
 							onChangeText={(text) => {
 								setEmail(text);
-								if (text.trim() !== "" && email.trim() === "") {
-									router.replace({
-										pathname: "/check-email",
-										params: { email: text.trim() }
-									});
-								}
 							}}
 							placeholder="Email address"
 							placeholderTextColor={colors.lightSteelGray}
