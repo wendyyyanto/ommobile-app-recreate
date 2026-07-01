@@ -145,7 +145,7 @@ export default function RegisterScreen() {
 								alignItems: "center",
 								width: "100%"
 							}}
-							onPress={() => {}}
+							onPress={() => router.push("/register-success")}
 						>
 							<Text
 								style={{
