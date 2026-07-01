@@ -2,6 +2,7 @@ import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useState } from "react";
 import {
 	KeyboardAvoidingView,
 	Platform,
@@ -13,6 +14,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
+	const [email, setEmail] = useState("");
+
 	return (
 		<SafeAreaView
 			style={{ flex: 1, backgroundColor: colors.black }}
@@ -70,6 +73,8 @@ export default function LoginScreen() {
 							style={{ width: 14, height: 14 }}
 						/>
 						<TextInput
+							value={email}
+							onChangeText={setEmail}
 							placeholder="Email address"
 							placeholderTextColor={colors.lightSteelGray}
 							style={{
@@ -95,7 +100,11 @@ export default function LoginScreen() {
 								opacity: 1,
 								width: "100%"
 							}}
-							onPress={() => router.replace("/(tabs)")}
+							onPress={() =>
+								email.trim() === ""
+									? router.push("/account-not-found")
+									: router.replace("/(tabs)")
+							}
 						>
 							<Text
 								style={{
