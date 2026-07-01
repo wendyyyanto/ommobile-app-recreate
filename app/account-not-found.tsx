@@ -18,7 +18,7 @@ export default function AccountNotFoundScreen() {
 				source={require("@/assets/images/search_noresult.png")}
 				style={{
 					position: "absolute",
-					top: 0,
+					top: 35,
 					left: (SCREEN_WIDTH - GLOW_IMAGE_SIZE) / 2,
 					width: GLOW_IMAGE_SIZE,
 					height: GLOW_IMAGE_SIZE
@@ -55,7 +55,10 @@ export default function AccountNotFoundScreen() {
 						<Text
 							style={[
 								fonts.body1White,
-								{ color: colors.lightSteelGray, textAlign: "center" }
+								{
+									color: colors.lightSteelGray,
+									textAlign: "center"
+								}
 							]}
 						>
 							No account found for this email.
