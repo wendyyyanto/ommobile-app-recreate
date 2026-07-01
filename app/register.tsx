@@ -70,9 +70,9 @@ export default function RegisterScreen() {
 								}
 							]}
 						>
-							Your registration will be reviewed by our administrator.
-							Once approved, you&apos;ll receive a confirmation email
-							with instructions to sign in.
+							Your registration will be reviewed by our
+							administrator. Once approved, you&apos;ll receive a
+							confirmation email with instructions to sign in.
 						</Text>
 					</View>
 
@@ -145,7 +145,7 @@ export default function RegisterScreen() {
 								alignItems: "center",
 								width: "100%"
 							}}
-							onPress={() => router.push("/register-success")}
+							onPress={() => router.replace("/register-success")}
 						>
 							<Text
 								style={{

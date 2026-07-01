@@ -74,7 +74,15 @@ export default function LoginScreen() {
 						/>
 						<TextInput
 							value={email}
-							onChangeText={setEmail}
+							onChangeText={(text) => {
+								setEmail(text);
+								if (text.trim() !== "" && email.trim() === "") {
+									router.replace({
+										pathname: "/check-email",
+										params: { email: text.trim() }
+									});
+								}
+							}}
 							placeholder="Email address"
 							placeholderTextColor={colors.lightSteelGray}
 							style={{
@@ -103,7 +111,10 @@ export default function LoginScreen() {
 							onPress={() =>
 								email.trim() === ""
 									? router.push("/account-not-found")
-									: router.replace("/(tabs)")
+									: router.push({
+											pathname: "/check-email",
+											params: { email: email.trim() }
+										})
 							}
 						>
 							<Text
