@@ -2,16 +2,30 @@ import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { ImageBackground, Pressable, Text, View } from "react-native";
+import { Dimensions, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+// Measured from the design: the glow graphic renders at ~1.54x the screen
+// width (overflowing/cropping left and right), centered horizontally and
+// flush with the very top of the screen.
+const GLOW_IMAGE_SIZE = SCREEN_WIDTH * 1.54;
 
 export default function AccountNotFoundScreen() {
 	return (
-		<ImageBackground
-			source={require("@/assets/images/search_noresult.png")}
-			style={{ flex: 1, backgroundColor: colors.black }}
-			resizeMode="contain"
-		>
+		<View style={{ flex: 1, backgroundColor: colors.black }}>
+			<Image
+				source={require("@/assets/images/search_noresult.png")}
+				style={{
+					position: "absolute",
+					top: 0,
+					left: (SCREEN_WIDTH - GLOW_IMAGE_SIZE) / 2,
+					width: GLOW_IMAGE_SIZE,
+					height: GLOW_IMAGE_SIZE
+				}}
+				contentFit="contain"
+			/>
+
 			<SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
 				<View
 					style={{
@@ -62,6 +76,6 @@ export default function AccountNotFoundScreen() {
 					</View>
 				</View>
 			</SafeAreaView>
-		</ImageBackground>
+		</View>
 	);
 }
