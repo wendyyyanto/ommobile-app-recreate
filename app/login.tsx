@@ -110,7 +110,7 @@ export default function LoginScreen() {
 
 						<Pressable
 							style={{ alignItems: "center" }}
-							onPress={() => {}}
+							onPress={() => router.push("/register")}
 						>
 							<Text
 								style={{
