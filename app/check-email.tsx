@@ -11,7 +11,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 // displayed at ~1.54x the screen width, centered horizontally, flush top.
 const GLOW_IMAGE_SIZE = SCREEN_WIDTH * 1.54;
 
-const RESEND_SECONDS = 3;
+const RESEND_SECONDS = 59;
 
 export default function CheckEmailScreen() {
 	const { email } = useLocalSearchParams<{ email?: string }>();
@@ -19,8 +19,8 @@ export default function CheckEmailScreen() {
 
 	useEffect(() => {
 		if (secondsLeft <= 0) {
-			// router.replace({ pathname: "/expired-link", params: { email } });
-			router.replace("/login-loading");
+			router.replace({ pathname: "/expired-link", params: { email } });
+			// router.replace("/login-loading");
 		}
 		const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
 
