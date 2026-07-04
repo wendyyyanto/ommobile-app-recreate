@@ -8,6 +8,7 @@ import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { handleDownloadFile } from "@/utils/fileHelper";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import {
 	ImageBackground,
 	Pressable,
@@ -51,16 +52,25 @@ const TeachingDetail = () => {
 								(teachingDetails?.pptUrl !== "" &&
 									teachingDetails?.pptUrl !== null)
 							) {
-								Toast.show({
-									type: "info",
-									text1: "Downloading file...",
-									text2: "Please wait while we download the file...",
-									visibilityTime: 6000
+								// Toast.show({
+								// 	type: "info",
+								// 	text1: "Downloading file...",
+								// 	text2: "Please wait while we download the file...",
+								// 	visibilityTime: 6000
+								// });
+								// handleDownloadFile(
+								// 	teachingDetails?.pdfUrl ||
+								// 		teachingDetails?.pptUrl!
+								// );
+
+								router.push({
+									pathname: "/teachings/pdf-viewer",
+									params: {
+										source:
+											teachingDetails?.pdfUrl ||
+											teachingDetails?.pptUrl!
+									}
 								});
-								handleDownloadFile(
-									teachingDetails?.pdfUrl ||
-										teachingDetails?.pptUrl!
-								);
 							} else {
 								Toast.show({
 									type: "error",

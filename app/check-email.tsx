@@ -11,7 +11,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 // displayed at ~1.54x the screen width, centered horizontally, flush top.
 const GLOW_IMAGE_SIZE = SCREEN_WIDTH * 1.54;
 
-const RESEND_SECONDS = 59;
+const RESEND_SECONDS = 3;
 
 export default function CheckEmailScreen() {
 	const { email } = useLocalSearchParams<{ email?: string }>();
