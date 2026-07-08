@@ -19,8 +19,8 @@ export default function CheckEmailScreen() {
 
 	useEffect(() => {
 		if (secondsLeft <= 0) {
-			router.replace({ pathname: "/expired-link", params: { email } });
-			// router.replace("/login-loading");
+			// router.replace({ pathname: "/expired-link", params: { email } });
+			router.replace("/login-loading");
 		}
 		const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
 

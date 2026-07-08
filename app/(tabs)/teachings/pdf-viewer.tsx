@@ -7,6 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 function PdfViewer() {
 	const { source } = useLocalSearchParams();
 
+	console.log(source);
+
 	return (
 		<SafeAreaView style={styles.container} edges={["top", "bottom"]}>
 			<View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
@@ -14,6 +16,7 @@ function PdfViewer() {
 			</View>
 			<Pdf
 				source={{ uri: source as string }}
+				trustAllCerts={false}
 				onLoadComplete={(numberOfPages) => {
 					console.log(`Number of pages: ${numberOfPages}`);
 				}}
