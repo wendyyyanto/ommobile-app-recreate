@@ -25,6 +25,23 @@ function uniqueFileName(base: string): string {
 	return `${base}-${Date.now()}`;
 }
 
+export const downloadFileToCache = async (url: string): Promise<string> => {
+	const fileName = fileNameFromUrl(url);
+	const destination = new File(Paths.cache, fileName);
+	const downloadedFile = await File.downloadFileAsync(url, destination, {
+		idempotent: true
+	});
+	return downloadedFile.uri;
+};
+
+export const deleteCachedFile = (uri: string): void => {
+	try {
+		new File(uri).delete();
+	} catch {
+		/* best-effort cleanup */
+	}
+};
+
 export const handleDownloadFile = async (url: string): Promise<void> => {
 	const fileName = uniqueFileName(fileNameFromUrl(url));
 

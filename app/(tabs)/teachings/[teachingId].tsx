@@ -2,13 +2,14 @@ import BackButton from "@/components/ui/BackButton";
 import colors from "@/constants/colors";
 import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
+import PdfViewer from "@/features/teaching/PdfViewer";
 import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { handleDownloadFile } from "@/utils/fileHelper";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { useState } from "react";
 import {
 	ImageBackground,
 	Pressable,
@@ -23,6 +24,16 @@ const backgroundImage = require("@/assets/images/background.png");
 
 const TeachingDetail = () => {
 	const { activeTab, teachingDetails } = useTeachingStore();
+	const [pdfSource, setPdfSource] = useState<string | null>(null);
+
+	if (pdfSource) {
+		return (
+			<PdfViewer
+				source="https://assets.organic-ministry.org/Bible%20Teaching%20(New)/Perjanjian%20Baru/1.%20Matius/2026/Mat%2019.13-29%20-%20What%20must%20I%20Do%20%3F%20-%20Weje%20(2026).pdf"
+				onClose={() => setPdfSource(null)}
+			/>
+		);
+	}
 
 	return (
 		<ImageBackground
@@ -52,25 +63,10 @@ const TeachingDetail = () => {
 								(teachingDetails?.pptUrl !== "" &&
 									teachingDetails?.pptUrl !== null)
 							) {
-								// Toast.show({
-								// 	type: "info",
-								// 	text1: "Downloading file...",
-								// 	text2: "Please wait while we download the file...",
-								// 	visibilityTime: 6000
-								// });
-								// handleDownloadFile(
-								// 	teachingDetails?.pdfUrl ||
-								// 		teachingDetails?.pptUrl!
-								// );
-
-								router.push({
-									pathname: "/teachings/pdf-viewer",
-									params: {
-										source:
-											teachingDetails?.pdfUrl ||
-											teachingDetails?.pptUrl!
-									}
-								});
+								setPdfSource(
+									teachingDetails?.pdfUrl ||
+										teachingDetails?.pptUrl!
+								);
 							} else {
 								Toast.show({
 									type: "error",
