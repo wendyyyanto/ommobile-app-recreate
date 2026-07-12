@@ -1,11 +1,11 @@
 import BackButton from "@/components/ui/BackButton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { deleteCachedFile, downloadFileToCache } from "@/utils/fileHelper";
+import { showErrorToast } from "@/utils/toastHelper";
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Pdf from "react-native-pdf";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
 
 const PdfViewer = ({
 	source,
@@ -35,12 +35,10 @@ const PdfViewer = ({
 			})
 			.catch(() => {
 				if (cancelled) return;
-				Toast.show({
-					type: "error",
-					text1: "Failed to load file",
-					text2: "Something went wrong while downloading the file, please try again later or contact support",
-					visibilityTime: 6000
-				});
+				showErrorToast(
+					"Failed to load file",
+					"Something went wrong while downloading the file, please try again later or contact support"
+				);
 				onCloseRef.current();
 			});
 

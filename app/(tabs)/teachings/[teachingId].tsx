@@ -8,6 +8,7 @@ import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { handleDownloadFile } from "@/utils/fileHelper";
+import { showErrorToast, showInfoToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
 import { useState } from "react";
 import {
@@ -18,7 +19,6 @@ import {
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
 
 const backgroundImage = require("@/assets/images/background.png");
 
@@ -28,10 +28,7 @@ const TeachingDetail = () => {
 
 	if (pdfSource) {
 		return (
-			<PdfViewer
-				source="https://assets.organic-ministry.org/Bible%20Teaching%20(New)/Perjanjian%20Baru/1.%20Matius/2026/Mat%2019.13-29%20-%20What%20must%20I%20Do%20%3F%20-%20Weje%20(2026).pdf"
-				onClose={() => setPdfSource(null)}
-			/>
+			<PdfViewer source={pdfSource} onClose={() => setPdfSource(null)} />
 		);
 	}
 
@@ -68,12 +65,10 @@ const TeachingDetail = () => {
 										teachingDetails?.pptUrl!
 								);
 							} else {
-								Toast.show({
-									type: "error",
-									text1: "No file to download",
-									text2: "The audio of this teaching is not available, please contact our support team.",
-									visibilityTime: 6000
-								});
+								showErrorToast(
+									"No file to download",
+									"The audio of this teaching is not available, please contact our support team."
+								);
 							}
 						}}
 					>
@@ -90,20 +85,16 @@ const TeachingDetail = () => {
 								teachingDetails?.audioUrl !== "" ||
 								teachingDetails?.videoUrl !== null
 							) {
-								Toast.show({
-									type: "info",
-									text1: "Downloading file...",
-									text2: "It might take a few minutes to finish the download, please wait...",
-									visibilityTime: 6000
-								});
+								showInfoToast(
+									"Downloading file...",
+									"It might take a few minutes to finish the download, please wait..."
+								);
 								handleDownloadFile(teachingDetails?.audioUrl!);
 							} else {
-								Toast.show({
-									type: "error",
-									text1: "No file to download",
-									text2: "The audio of this teaching is not available, please contact our support team.",
-									visibilityTime: 6000
-								});
+								showErrorToast(
+									"No file to download",
+									"The audio of this teaching is not available, please contact our support team."
+								);
 							}
 						}}
 					>

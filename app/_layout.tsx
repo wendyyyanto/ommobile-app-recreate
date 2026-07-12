@@ -28,11 +28,11 @@ export default function RootLayout() {
 	return (
 		<GestureHandlerRootView style={{ flex: 1, backgroundColor: "black" }}>
 			<Stack
-					screenOptions={{
-						headerShown: false,
-						contentStyle: { backgroundColor: "black" }
-					}}
-				/>
+				screenOptions={{
+					headerShown: false,
+					contentStyle: { backgroundColor: "black" }
+				}}
+			/>
 			<Toast />
 		</GestureHandlerRootView>
 	);

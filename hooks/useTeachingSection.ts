@@ -1,7 +1,7 @@
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
-import { GetTeachingParams } from "@/types/teaching";
+import { GetTeachingParams, Teaching } from "@/types/teaching";
 import { router } from "expo-router";
 import { useEffect } from "react";
 
@@ -33,57 +33,44 @@ const useTeachingSection = ({
 		setSelectedFilter
 	} = useTeachingFilterStore();
 
-	useEffect(() => {
-		setIsLoadingSectionTeachings(true);
-		getTeachings(
-			{
-				page: 1,
-				limit: 10,
-				category: sectionName
+	const fetchSectionTeachings = (
+		params: GetTeachingParams,
+		setIsLoading: (isLoading: boolean) => void,
+		merge: (existing: Teaching[], incoming: Teaching[]) => Teaching[]
+	) => {
+		setIsLoading(true);
+		getTeachings(params, {
+			onSuccess: (data) => {
+				setSectionTeachings(merge(sectionTeachings, data.data));
+				setSectionTeachingsPagination({
+					page: data.pagination.page,
+					limit: data.pagination.limit,
+					totalPages: data.pagination.totalPages
+				});
+				setIsLoading(false);
 			},
-			{
-				onSuccess: (data) => {
-					setSectionTeachings(data.data);
-					setSectionTeachingsPagination({
-						page: data.pagination.page,
-						limit: data.pagination.limit,
-						totalPages: data.pagination.totalPages
-					});
-					setIsLoadingSectionTeachings(false);
-				},
-				onError: (error) => {
-					console.log(error);
-					setIsLoadingSectionTeachings(false);
-				}
+			onError: (error) => {
+				console.log(error);
+				setIsLoading(false);
 			}
+		});
+	};
+
+	useEffect(() => {
+		fetchSectionTeachings(
+			{ page: 1, limit: 10, category: sectionName },
+			setIsLoadingSectionTeachings,
+			(_, incoming) => incoming
 		);
 	}, []);
 
 	const handleRefreshSectionTeachings = () => {
 		setSelectedBook(null);
 		setSelectedFilter(null);
-		setIsLoadingSectionTeachings(true);
-		getTeachings(
-			{
-				page: 1,
-				limit: 10,
-				category: sectionName
-			},
-			{
-				onSuccess: (data) => {
-					setSectionTeachings(data.data);
-					setSectionTeachingsPagination({
-						page: data.pagination.page,
-						limit: data.pagination.limit,
-						totalPages: data.pagination.totalPages
-					});
-					setIsLoadingSectionTeachings(false);
-				},
-				onError: (error) => {
-					console.log(error);
-					setIsLoadingSectionTeachings(false);
-				}
-			}
+		fetchSectionTeachings(
+			{ page: 1, limit: 10, category: sectionName },
+			setIsLoadingSectionTeachings,
+			(_, incoming) => incoming
 		);
 	};
 
@@ -119,22 +106,11 @@ const useTeachingSection = ({
 				}
 			}
 
-			setIsLoadMoreSectionTeachings(true);
-			getTeachings(params, {
-				onSuccess: (data) => {
-					setSectionTeachings([...sectionTeachings, ...data.data]);
-					setSectionTeachingsPagination({
-						page: data.pagination.page,
-						limit: data.pagination.limit,
-						totalPages: data.pagination.totalPages
-					});
-					setIsLoadMoreSectionTeachings(false);
-				},
-				onError: (error) => {
-					console.log(error);
-					setIsLoadMoreSectionTeachings(false);
-				}
-			});
+			fetchSectionTeachings(
+				params,
+				setIsLoadMoreSectionTeachings,
+				(existing, incoming) => [...existing, ...incoming]
+			);
 		}
 	};
 

@@ -1,15 +1,15 @@
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { TabEnum } from "@/constants/enums";
-import fonts from "@/constants/fonts";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import {
 	Directions,
 	Gesture,
 	GestureDetector
 } from "react-native-gesture-handler";
 import TeachingAudioPlayer from "./TeachingAudioPlayer";
+import TeachingMetadata from "./TeachingMetadata";
 
 const TeachingAudioTab = () => {
 	const { teachingDetails, isLoadingTeachingDetails, setActiveTab } =
@@ -37,31 +37,7 @@ const TeachingAudioTab = () => {
 					}}
 					contentFit="cover"
 				/>
-				<View className="gap-2">
-					<Text
-						style={[
-							fonts.caption2White,
-							{ marginTop: 30, textAlign: "center" }
-						]}
-					>
-						{teachingDetails?.book} {teachingDetails?.chapters}{" "}
-						{`: ${teachingDetails?.verses}`}
-					</Text>
-					<Text
-						style={{
-							fontSize: 20,
-							color: "white",
-							fontWeight: 600
-						}}
-					>
-						{teachingDetails?.title}
-					</Text>
-					<Text
-						style={[fonts.caption2White, { textAlign: "center" }]}
-					>
-						{teachingDetails?.teacher ?? "Unknown Teacher"}
-					</Text>
-				</View>
+				<TeachingMetadata teachingDetails={teachingDetails} />
 
 				<TeachingAudioPlayer />
 			</View>

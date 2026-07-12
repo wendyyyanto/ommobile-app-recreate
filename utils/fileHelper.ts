@@ -1,5 +1,5 @@
 import { File, Paths } from "expo-file-system";
-import Toast from "react-native-toast-message";
+import { showErrorToast, showSuccessToast } from "./toastHelper";
 
 function sanitizeFileName(name: string): string {
 	const cleaned = name.replace(/[/\\?%*:|"<>]/g, "_").trim();
@@ -48,18 +48,14 @@ export const handleDownloadFile = async (url: string): Promise<void> => {
 	try {
 		const outFile = new File(Paths.document, fileName);
 		await File.downloadFileAsync(url, outFile);
-		Toast.show({
-			type: "success",
-			text1: "File downloaded successfully",
-			text2: "Access the file from your Files app",
-			visibilityTime: 6000
-		});
+		showSuccessToast(
+			"File downloaded successfully",
+			"Access the file from your Files app"
+		);
 	} catch (error) {
-		Toast.show({
-			type: "error",
-			text1: "Failed to download file",
-			text2: "Something went wrong while downloading the file, please try again later or contact support",
-			visibilityTime: 6000
-		});
+		showErrorToast(
+			"Failed to download file",
+			"Something went wrong while downloading the file, please try again later or contact support"
+		);
 	}
 };
