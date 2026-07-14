@@ -2,12 +2,15 @@ import BackButton from "@/components/ui/BackButton";
 import colors from "@/constants/colors";
 import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
+import PdfViewer from "@/features/teaching/PdfViewer";
 import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { handleDownloadFile } from "@/utils/fileHelper";
+import { showErrorToast, showInfoToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
+import { useState } from "react";
 import {
 	ImageBackground,
 	Pressable,
@@ -16,12 +19,18 @@ import {
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
 
 const backgroundImage = require("@/assets/images/background.png");
 
 const TeachingDetail = () => {
 	const { activeTab, teachingDetails } = useTeachingStore();
+	const [pdfSource, setPdfSource] = useState<string | null>(null);
+
+	if (pdfSource) {
+		return (
+			<PdfViewer source={pdfSource} onClose={() => setPdfSource(null)} />
+		);
+	}
 
 	return (
 		<ImageBackground
@@ -51,23 +60,15 @@ const TeachingDetail = () => {
 								(teachingDetails?.pptUrl !== "" &&
 									teachingDetails?.pptUrl !== null)
 							) {
-								Toast.show({
-									type: "info",
-									text1: "Downloading file...",
-									text2: "Please wait while we download the file...",
-									visibilityTime: 6000
-								});
-								handleDownloadFile(
+								setPdfSource(
 									teachingDetails?.pdfUrl ||
 										teachingDetails?.pptUrl!
 								);
 							} else {
-								Toast.show({
-									type: "error",
-									text1: "No file to download",
-									text2: "The audio of this teaching is not available, please contact our support team.",
-									visibilityTime: 6000
-								});
+								showErrorToast(
+									"No file to download",
+									"The audio of this teaching is not available, please contact our support team."
+								);
 							}
 						}}
 					>
@@ -84,20 +85,16 @@ const TeachingDetail = () => {
 								teachingDetails?.audioUrl !== "" ||
 								teachingDetails?.videoUrl !== null
 							) {
-								Toast.show({
-									type: "info",
-									text1: "Downloading file...",
-									text2: "It might take a few minutes to finish the download, please wait...",
-									visibilityTime: 6000
-								});
+								showInfoToast(
+									"Downloading file...",
+									"It might take a few minutes to finish the download, please wait..."
+								);
 								handleDownloadFile(teachingDetails?.audioUrl!);
 							} else {
-								Toast.show({
-									type: "error",
-									text1: "No file to download",
-									text2: "The audio of this teaching is not available, please contact our support team.",
-									visibilityTime: 6000
-								});
+								showErrorToast(
+									"No file to download",
+									"The audio of this teaching is not available, please contact our support team."
+								);
 							}
 						}}
 					>

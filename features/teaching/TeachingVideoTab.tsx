@@ -8,6 +8,7 @@ import {
 	GestureDetector
 } from "react-native-gesture-handler";
 import YoutubePlayer from "react-native-youtube-iframe";
+import TeachingMetadata from "./TeachingMetadata";
 
 const TeachingVideoTab = () => {
 	const { teachingDetails, setActiveTab } = useTeachingStore();
@@ -36,32 +37,7 @@ const TeachingVideoTab = () => {
 					contentScale={0.8}
 				/>
 
-				<View className="gap-2">
-					<Text
-						style={[
-							fonts.caption2White,
-							{ marginTop: 30, textAlign: "center" }
-						]}
-					>
-						{teachingDetails?.book} {teachingDetails?.chapters}{" "}
-						{`: ${teachingDetails?.verses}`}
-					</Text>
-					<Text
-						style={{
-							fontSize: 20,
-							color: "white",
-							fontWeight: 600,
-							textAlign: "center"
-						}}
-					>
-						{teachingDetails?.title}
-					</Text>
-					<Text
-						style={[fonts.caption2White, { textAlign: "center" }]}
-					>
-						{teachingDetails?.teacher ?? "Unknown Teacher"}
-					</Text>
-				</View>
+				<TeachingMetadata teachingDetails={teachingDetails} />
 			</View>
 		</GestureDetector>
 	);

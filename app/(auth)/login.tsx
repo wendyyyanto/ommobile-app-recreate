@@ -18,7 +18,7 @@ export default function LoginScreen() {
 				style={{
 					flex: 1,
 					paddingHorizontal: 24,
-					paddingTop: 140,
+					paddingTop: 72,
 					gap: 32
 				}}
 			>
@@ -81,7 +81,7 @@ export default function LoginScreen() {
 					/>
 				</View>
 
-				<View style={{ gap: 40, marginTop: 40 }}>
+				<View style={{ gap: 40 }}>
 					<Pressable
 						style={{
 							backgroundColor: colors.white,
