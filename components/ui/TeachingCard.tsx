@@ -9,7 +9,7 @@ const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 	const { handleTeachingCardPress } = useTeachingCard();
 	return (
 		<Pressable
-			className="flex-1 text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl"
+			className="flex-1 text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl border-dark-slate-blue border"
 			onPress={() => handleTeachingCardPress(teaching.id)}
 		>
 			<Image
