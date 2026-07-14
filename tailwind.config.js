@@ -16,7 +16,8 @@ module.exports = {
 				"slate-gray-blue": "#3D4D61",
 				"light-gray": "#D9D9D9",
 				"light-steel-gray": "#A3A1A1",
-				"darker-gray": "#2F2F2F"
+				"darker-gray": "#2F2F2F",
+				"dark-slate-blue": "#242D39"
 			},
 			fontFamily: {
 				poppins: [
