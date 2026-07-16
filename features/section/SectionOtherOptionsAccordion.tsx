@@ -5,23 +5,12 @@ import { DropdownOptions } from "@/types/dropdown";
 import { capitalizeText } from "@/utils/textHelper";
 import { Image } from "expo-image";
 import { useState } from "react";
-import {
-	LayoutAnimation,
-	Platform,
-	Pressable,
-	Text,
-	UIManager,
-	View
-} from "react-native";
+import { LayoutAnimation, Pressable, Text, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming
 } from "react-native-reanimated";
-
-if (Platform.OS === "android") {
-	UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 const SectionOtherOptionsAccordion = ({
 	name,

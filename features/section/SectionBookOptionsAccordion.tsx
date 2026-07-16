@@ -5,23 +5,12 @@ import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { DropdownOptions } from "@/types/dropdown";
 import { Image } from "expo-image";
 import { memo, useMemo, useState } from "react";
-import {
-	LayoutAnimation,
-	Platform,
-	Pressable,
-	Text,
-	UIManager,
-	View
-} from "react-native";
+import { LayoutAnimation, Pressable, Text, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming
 } from "react-native-reanimated";
-
-if (Platform.OS === "android") {
-	UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 	book,
