@@ -93,7 +93,7 @@ export default function Index() {
 
 						<AnnouncementCarousel />
 
-						<View className="flex flex-col gap-2">
+						<View className="flex flex-col gap-4">
 							<Text style={fonts.subtitle1White}>Resources</Text>
 							<View className="flex flex-row gap-3">
 								<Pressable
