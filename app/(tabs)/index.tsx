@@ -122,7 +122,14 @@ export default function Index() {
 										Biblical books to strengthen your faith.
 									</Text>
 								</Pressable>
-								<Pressable className="bg-charcoal-blue border-dark-slate-blue border rounded-3xl flex-1 p-4">
+								<Pressable
+									className="bg-charcoal-blue border-dark-slate-blue border rounded-3xl flex-1 p-4"
+									onPress={() => {
+										router.push(
+											"/(resources)/class-materials"
+										);
+									}}
+								>
 									<Image
 										source={require("@/assets/images/classmaterial.png")}
 										style={{
