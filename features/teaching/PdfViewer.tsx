@@ -2,6 +2,7 @@ import BackButton from "@/components/ui/BackButton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { deleteCachedFile, downloadFileToCache } from "@/utils/fileHelper";
 import { showErrorToast } from "@/utils/toastHelper";
+import * as ScreenOrientation from "expo-screen-orientation";
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Pdf from "react-native-pdf";
@@ -49,6 +50,16 @@ const PdfViewer = ({
 		};
 	}, [source]);
 
+	useEffect(() => {
+		ScreenOrientation.unlockAsync();
+
+		return () => {
+			ScreenOrientation.lockAsync(
+				ScreenOrientation.OrientationLock.PORTRAIT_UP
+			);
+		};
+	}, []);
+
 	return (
 		<SafeAreaView style={styles.container} edges={["top", "bottom"]}>
 			<View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
@@ -56,6 +67,7 @@ const PdfViewer = ({
 			</View>
 			{localPath ? (
 				<Pdf
+					enablePaging
 					source={{ uri: localPath }}
 					trustAllCerts={false}
 					onError={(error) => {
