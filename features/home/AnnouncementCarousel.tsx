@@ -2,6 +2,7 @@ import colors from "@/constants/colors";
 import { annoucementBanners } from "@/constants/placeholders";
 import { getAnnouncements } from "@/services/announcementServices";
 import { useAnnouncementStore } from "@/stores/announcementStore";
+import { Announcement } from "@/types/announcement";
 import { getImageSource } from "@/utils/imageHelper";
 import { Image } from "expo-image";
 import { useEffect, useRef } from "react";
@@ -24,10 +25,13 @@ const AnnouncementCarousel = () => {
 	useEffect(() => {
 		getAnnouncements({
 			onSuccess: (data) => {
-				if (data.length > 0) {
+				const isBannerExists = data.some(
+					(item: Announcement) => item.bannerUrl !== null
+				);
+				if (isBannerExists) {
 					setAnnouncementList(data);
 				} else {
-					setAnnouncementList(annoucementBanners);
+					setAnnouncementList(annoucementBanners as Announcement[]);
 				}
 			},
 			onError: (error) => {

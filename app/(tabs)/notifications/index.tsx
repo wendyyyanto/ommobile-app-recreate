@@ -90,12 +90,16 @@ const Notifications = () => {
 											{ fontWeight: "500" }
 										]}
 									>
-										{notification.title}
+										{notification.title} -{" "}
+										{formatDate(
+											notification.eventDate,
+											"MMMM Do, YYYY"
+										)}
 									</Text>
 									<Text style={[fonts.caption1Grey]}>
 										{formatDate(
-											notification.eventDate,
-											"MMM Do, YYYY"
+											notification.createdAt,
+											"MMMM Do, YYYY"
 										)}
 									</Text>
 									<View

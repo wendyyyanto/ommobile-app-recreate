@@ -3,6 +3,7 @@ type Notification = {
 	title: string;
 	teaser: string;
 	eventDate: string;
+	createdAt: string;
 };
 
 type NotificationDetail = {
@@ -10,6 +11,7 @@ type NotificationDetail = {
 	fullMessage: string;
 	imageUrl: string;
 	eventDate: string;
+	createdAt: string;
 };
 
 export type { Notification, NotificationDetail };
