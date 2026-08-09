@@ -11,7 +11,7 @@ const ebooksList = [
 		id: 1,
 		title: "Members of one another",
 		author: "Dennis Mccalum",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/members-of-one-another.pdf",
 		tags: ["Fellowship", "Love", "Body"]
 	},
@@ -19,7 +19,7 @@ const ebooksList = [
 		id: 2,
 		title: "How good is good enough",
 		author: "Andy Stanley",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/how-good-is-good-enough.pdf",
 		tags: ["Salvation", "Good deeds"]
 	},
@@ -27,7 +27,7 @@ const ebooksList = [
 		id: 3,
 		title: "The marriage builder",
 		author: "Dr Larry Crabb",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/the-marriage-builder.pdf",
 		tags: ["Marriage", "Relationship"]
 	},
@@ -35,7 +35,7 @@ const ebooksList = [
 		id: 4,
 		title: "Resolving everyday conflict",
 		author: "Ken Sande",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/resolving-everyday-conflict.pdf",
 		tags: ["Conflict", "Fellowship", "Body"]
 	},
@@ -43,7 +43,7 @@ const ebooksList = [
 		id: 5,
 		title: "The 5 love languages",
 		author: "Gary Chapman",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/the-5-love-languages.pdf",
 		tags: ["Love", "One another", "Fellowship"]
 	},
@@ -51,7 +51,7 @@ const ebooksList = [
 		id: 6,
 		title: "How good is good enough",
 		author: "Andy Stanley",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/how-good-is-good-enough-2.pdf",
 		tags: ["Salvation", "Good deeds"]
 	},
@@ -59,7 +59,7 @@ const ebooksList = [
 		id: 7,
 		title: "Resolving everyday conflict",
 		author: "Ken Sande",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/resolving-everyday-conflict.pdf",
 		tags: ["Conflict", "Fellowship", "Body"]
 	},
@@ -67,7 +67,7 @@ const ebooksList = [
 		id: 8,
 		title: "The 5 love languages",
 		author: "Gary Chapman",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/the-5-love-languages.pdf",
 		tags: ["Love", "One another", "Fellowship"]
 	},
@@ -75,7 +75,7 @@ const ebooksList = [
 		id: 9,
 		title: "How good is good enough",
 		author: "Andy Stanley",
-		coverImage: "https://ibb.co.com/Y4bssVmX",
+		coverImage: "https://i.ibb.co.com/V8KBNDD/image.png",
 		pdfUrl: "path/to/how-good-is-good-enough-2.pdf",
 		tags: ["Salvation", "Good deeds"]
 	}
