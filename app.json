@@ -3,7 +3,7 @@
 		"name": "OM Mobile",
 		"slug": "ommobile-app",
 		"owner": "organicministryapp",
-		"version": "1.2.2",
+		"version": "1.2.3",
 		"orientation": "portrait",
 		"icon": "./assets/images/app_icon.png",
 		"scheme": "ommobileapp",
@@ -30,7 +30,7 @@
 			}
 		},
 		"android": {
-			"versionCode": 1202,
+			"versionCode": 1203,
 			"icon": "./assets/images/app_icon.png",
 			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false,
