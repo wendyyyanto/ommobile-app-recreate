@@ -1,7 +1,14 @@
 import { File, Paths } from "expo-file-system";
 import { Platform } from "react-native";
-import { FileSystem as RNFileSystem } from "react-native-file-access";
+import type { FileSystem as RNFileSystemType } from "react-native-file-access";
 import Toast from "react-native-toast-message";
+
+// react-native-file-access resolves its native module while it is imported, so a
+// static import throws on any binary built without it and takes down every screen
+// importing this file. Load it lazily so a missing native module only fails the
+// download itself.
+const getNativeFileSystem = (): typeof RNFileSystemType =>
+	require("react-native-file-access").FileSystem;
 
 function fileUriToPlainPath(uri: string): string {
 	return decodeURIComponent(uri.replace(/^file:\/{2,3}/, ""));
@@ -36,6 +43,7 @@ export const handleDownloadFile = async (url: string): Promise<void> => {
 
 	try {
 		if (Platform.OS === "android") {
+			const RNFileSystem = getNativeFileSystem();
 			const tempFile = new File(Paths.cache, fileName);
 			const downloaded = await File.downloadFileAsync(url, tempFile);
 			const srcPath = fileUriToPlainPath(downloaded.uri);

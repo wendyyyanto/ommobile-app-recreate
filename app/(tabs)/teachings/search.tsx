@@ -7,8 +7,10 @@ import useSearchTeachings from "@/hooks/useSearchTeachings";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useRef } from "react";
 import {
 	ImageBackground,
+	Pressable,
 	ScrollView,
 	Text,
 	TextInput,
@@ -25,6 +27,7 @@ const SearchTeaching = () => {
 		setSearchTeachings
 	} = useTeachingStore();
 	const { handleSearchTeachings } = useSearchTeachings();
+	const searchInputRef = useRef<TextInput>(null);
 
 	const backgroundImage =
 		searchQuery.trim() !== "" && searchTeachings?.length === 0
@@ -51,25 +54,27 @@ const SearchTeaching = () => {
 					/>
 					<Text style={fonts.body2White}>Search</Text>
 				</View>
-				<View
+				<Pressable
 					className="flex-row items-center gap-2 py-2"
 					style={{
 						borderBottomWidth: 0.5,
 						borderColor: colors.lightSteelGray
 					}}
+					onPress={() => searchInputRef.current?.focus()}
 				>
 					<Image
 						source={require("@/assets/icons/search_icon.svg")}
 						style={{ width: 14, height: 14 }}
 					/>
 					<TextInput
+						ref={searchInputRef}
 						placeholder="Search teachings..."
 						placeholderTextColor={colors.lightSteelGray}
-						style={[fonts.body1White]}
+						style={[fonts.body1White, { flex: 1 }]}
 						textAlignVertical="center"
 						onChangeText={handleSearchTeachings}
 					/>
-				</View>
+				</Pressable>
 
 				{isLoadingSearchTeachings ? (
 					<View className="flex-1 justify-center items-center">

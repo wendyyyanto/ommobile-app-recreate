@@ -15,7 +15,11 @@ import { Image } from "expo-image";
 import { useEffect } from "react";
 import { Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { LogLevel, OneSignal } from "react-native-onesignal";
+import {
+	LogLevel,
+	OneSignal,
+	type NotificationClickEvent
+} from "react-native-onesignal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -51,6 +55,32 @@ export default function RootLayout() {
 			SplashScreen.hideAsync();
 		}
 	}, [fontsLoaded, fontError]);
+
+	useEffect(() => {
+		const handleNotificationClick = (event: NotificationClickEvent) => {
+			const data = event.notification.additionalData as
+				| { notificationId?: number | string; teachingId?: string }
+				| undefined;
+
+			if (data?.notificationId) {
+				router.push(`/notifications/${data.notificationId}`);
+			} else if (data?.teachingId) {
+				router.push(`/teachings/${data.teachingId}`);
+			}
+		};
+
+		OneSignal.Notifications.addEventListener(
+			"click",
+			handleNotificationClick
+		);
+
+		return () => {
+			OneSignal.Notifications.removeEventListener(
+				"click",
+				handleNotificationClick
+			);
+		};
+	}, []);
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>

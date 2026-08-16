@@ -5,6 +5,7 @@ import fonts from "@/constants/fonts";
 import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
+import useTeachingDetail from "@/hooks/useTeachingDetail";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { handleDownloadFile } from "@/utils/fileHelper";
 import { Image } from "expo-image";
@@ -22,6 +23,8 @@ const backgroundImage = require("@/assets/images/background.png");
 
 const TeachingDetail = () => {
 	const { activeTab, teachingDetails } = useTeachingStore();
+
+	useTeachingDetail();
 
 	return (
 		<ImageBackground
