@@ -1,6 +1,7 @@
 import BackButton from "@/components/ui/BackButton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import fonts from "@/constants/fonts";
+import useNotificationDetail from "@/hooks/useNotificationDetail";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { formatDate } from "@/utils/timeHelper";
 import { Image } from "expo-image";
@@ -10,6 +11,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const NotificationDetail = () => {
 	const { notificationDetail, isLoadingNotificationDetail } =
 		useNotificationStore();
+
+	useNotificationDetail();
 
 	if (isLoadingNotificationDetail) {
 		return (

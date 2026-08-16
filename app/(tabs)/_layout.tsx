@@ -1,17 +1,22 @@
-import { router, Tabs, useSegments } from "expo-router";
+import { router, Tabs, usePathname, useSegments } from "expo-router";
 
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { Image } from "expo-image";
 import { useEffect } from "react";
 import { Text } from "react-native";
-import { LogLevel, OneSignal } from "react-native-onesignal";
+import {
+	LogLevel,
+	OneSignal,
+	type NotificationClickEvent
+} from "react-native-onesignal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const tabBarIconSize = { width: 18, height: 18, marginBottom: 6 };
 
 export default function TabsLayout() {
 	const insets = useSafeAreaInsets();
+	const pathname = usePathname();
 	const segments = useSegments();
 	const shouldHideTabBar = segments.length > 2;
 	const baseTabBarStyle = {
@@ -28,6 +33,32 @@ export default function TabsLayout() {
 			process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string
 		);
 		OneSignal.Notifications.requestPermission(true);
+	}, []);
+
+	useEffect(() => {
+		const handleNotificationClick = (event: NotificationClickEvent) => {
+			const data = event.notification.additionalData as
+				| { notificationId?: number | string; teachingId?: string }
+				| undefined;
+
+			if (data?.notificationId) {
+				router.push(`/notifications/${data.notificationId}`);
+			} else if (data?.teachingId) {
+				router.push(`/teachings/${data.teachingId}`);
+			}
+		};
+
+		OneSignal.Notifications.addEventListener(
+			"click",
+			handleNotificationClick
+		);
+
+		return () => {
+			OneSignal.Notifications.removeEventListener(
+				"click",
+				handleNotificationClick
+			);
+		};
 	}, []);
 
 	return (

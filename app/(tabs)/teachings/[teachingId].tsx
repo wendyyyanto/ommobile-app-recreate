@@ -70,6 +70,8 @@ const TeachingDetail = () => {
 		if (availableFileUrl) downloadTeachingFile(availableFileUrl);
 	};
 
+	useTeachingDetail();
+
 	return (
 		<ImageBackground
 			source={backgroundImage}
