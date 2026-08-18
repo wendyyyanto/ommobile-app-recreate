@@ -12,7 +12,6 @@ const NotificationsLayout = () => {
 			}}
 		>
 			<Stack.Screen name="index" />
-			<Stack.Screen name="[notificationId]" />
 			<Stack.Screen name="settings" />
 		</Stack>
 	);

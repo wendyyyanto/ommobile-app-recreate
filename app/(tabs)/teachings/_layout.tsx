@@ -11,7 +11,6 @@ const TeachingsLayout = () => {
 		>
 			<Stack.Screen name="index" />
 			<Stack.Screen name="section/[sectionId]" />
-			<Stack.Screen name="[teachingId]" />
 			<Stack.Screen name="search" />
 		</Stack>
 	);
