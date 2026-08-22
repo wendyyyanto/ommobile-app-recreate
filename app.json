@@ -10,23 +10,20 @@
 		"userInterfaceStyle": "automatic",
 		"newArchEnabled": true,
 		"ios": {
-			"supportsTablet": true,
+			"supportsTablet": false,
 			"bundleIdentifier": "com.anonymous.ommobileapp",
+			"buildNumber": "1",
 			"associatedDomains": ["applinks:mobile.organic-ministry.org"],
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false,
 				"LSSupportsOpeningDocumentsInPlace": true,
 				"UIFileSharingEnabled": true,
-				"UIBackgroundModes": [
-					"remote-notification",
-					"remote-notification"
-				]
+				"UIBackgroundModes": ["remote-notification"]
 			},
 			"entitlements": {
-				"aps-environment": "development",
+				"aps-environment": "production",
 				"com.apple.security.application-groups": [
-					"group.${ios.bundleIdentifier}.onesignal",
-					"group.${ios.bundleIdentifier}.onesignal"
+					"group.com.anonymous.ommobileapp.onesignal"
 				]
 			}
 		},
@@ -56,8 +53,6 @@
 				}
 			],
 			"permissions": [
-				"android.permission.RECORD_AUDIO",
-				"android.permission.MODIFY_AUDIO_SETTINGS",
 				"android.permission.RECORD_AUDIO",
 				"android.permission.MODIFY_AUDIO_SETTINGS"
 			]
@@ -94,7 +89,7 @@
 			[
 				"onesignal-expo-plugin",
 				{
-					"mode": "development"
+					"mode": "production"
 				}
 			]
 		],
