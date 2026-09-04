@@ -89,9 +89,9 @@ const SearchTeaching = () => {
 								void handleLoadMoreSearchTeachings();
 							}
 						}}
-						scrollEventThrottle={400}
+						scrollEventThrottle={16}
 					>
-						<View className="flex-1 gap-4">
+						<View className="flex-1 gap-4 pb-40">
 							{searchTeachings?.map((teaching) => (
 								<TeachingCard
 									key={teaching.id}

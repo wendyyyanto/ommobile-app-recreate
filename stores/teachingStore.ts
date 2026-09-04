@@ -18,11 +18,9 @@ interface TeachingState {
 	teachingDetails: TeachingDetails | null;
 	isLoadingTeachingDetails: boolean;
 	isLoadMoreLatestTeachings: boolean;
-	isLoadMorePopularTeachings: boolean;
 	isLoadMoreSectionTeachings: boolean;
 	isLoadMoreSearchTeachings: boolean;
 	latestTeachingsPagination: Pagination;
-	popularTeachingsPagination: Pagination;
 	sectionTeachingsPagination: Pagination;
 	searchTeachingsPagination: Pagination;
 	setLatestTeachings: (latestTeachings: Teaching[]) => void;
@@ -38,18 +36,12 @@ interface TeachingState {
 	setTeachingDetails: (teachingDetails: TeachingDetails) => void;
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) => void;
 	setIsLoadMoreLatestTeachings: (isLoadMoreLatestTeachings: boolean) => void;
-	setIsLoadMorePopularTeachings: (
-		isLoadMorePopularTeachings: boolean
-	) => void;
 	setIsLoadMoreSectionTeachings: (
 		isLoadMoreSectionTeachings: boolean
 	) => void;
 	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) => void;
 	setLatestTeachingsPagination: (
 		latestTeachingsPagination: Pagination
-	) => void;
-	setPopularTeachingsPagination: (
-		popularTeachingsPagination: Pagination
 	) => void;
 	setSectionTeachingsPagination: (
 		sectionTeachingsPagination: Pagination
@@ -73,15 +65,9 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	teachingDetails: null,
 	isLoadingTeachingDetails: false,
 	isLoadMoreLatestTeachings: false,
-	isLoadMorePopularTeachings: false,
 	isLoadMoreSectionTeachings: false,
 	isLoadMoreSearchTeachings: false,
 	latestTeachingsPagination: {
-		page: 1,
-		limit: TEACHINGS_PAGE_SIZE,
-		totalPages: 1
-	},
-	popularTeachingsPagination: {
 		page: 1,
 		limit: TEACHINGS_PAGE_SIZE,
 		totalPages: 1
@@ -120,16 +106,12 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 		set({ isLoadingTeachingDetails }),
 	setIsLoadMoreLatestTeachings: (isLoadMoreLatestTeachings: boolean) =>
 		set({ isLoadMoreLatestTeachings }),
-	setIsLoadMorePopularTeachings: (isLoadMorePopularTeachings: boolean) =>
-		set({ isLoadMorePopularTeachings }),
 	setIsLoadMoreSectionTeachings: (isLoadMoreSectionTeachings: boolean) =>
 		set({ isLoadMoreSectionTeachings }),
 	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) =>
 		set({ isLoadMoreSearchTeachings }),
 	setLatestTeachingsPagination: (latestTeachingsPagination: Pagination) =>
 		set({ latestTeachingsPagination }),
-	setPopularTeachingsPagination: (popularTeachingsPagination: Pagination) =>
-		set({ popularTeachingsPagination }),
 	setSectionTeachingsPagination: (sectionTeachingsPagination: Pagination) =>
 		set({ sectionTeachingsPagination }),
 	setSearchTeachingsPagination: (searchTeachingsPagination: Pagination) =>
