@@ -64,7 +64,8 @@ const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 				<Accordion.HeightAnimator>
 					<Accordion.Content
 						style={{
-							backgroundColor: colors.black
+							backgroundColor: colors.black,
+							paddingTop: 0
 						}}
 					>
 						<View
