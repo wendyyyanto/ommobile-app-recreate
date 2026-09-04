@@ -1,12 +1,12 @@
 import TeachingCard from "@/components/ui/TeachingCard";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import TeachingPageSkeleton from "@/features/skeletons/TeachingPageSkeleton";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
-import { appendUniqueItems, isNearScrollEnd } from "@/utils/paginationHelper";
+import { Pagination } from "@/types/request";
+import { Teaching } from "@/types/teaching";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { MotiView } from "moti";
@@ -23,23 +23,35 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const backgroundImage = require("@/assets/images/background.png");
 
+type TeachingPage = {
+	data: Teaching[];
+	pagination: Pagination;
+};
+
+const fetchTeachingPage = (page: number) =>
+	new Promise<TeachingPage>((resolve, reject) => {
+		void getTeachings(
+			{ page, limit: TEACHINGS_PAGE_SIZE },
+			{
+				onSuccess: resolve,
+				onError: reject
+			}
+		);
+	});
+
 const Teachings = () => {
 	const {
 		setIsLoadingPopularTeachings,
 		popularTeachings,
 		isLoadingPopularTeachings,
-		setPopularTeachings,
-		isLoadMorePopularTeachings,
-		setIsLoadMorePopularTeachings,
-		setPopularTeachingsPagination
+		setPopularTeachings
 	} = useTeachingStore();
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const isRefreshingRef = useRef(false);
+	const totalPagesRef = useRef<number | null>(null);
 
 	const fetchPopularTeachings = useCallback(
 		async (isRefresh = false) => {
-			setIsLoadMorePopularTeachings(false);
-
 			if (isRefresh) {
 				isRefreshingRef.current = true;
 				setIsRefreshing(true);
@@ -47,33 +59,43 @@ const Teachings = () => {
 				setIsLoadingPopularTeachings(true);
 			}
 
-			await getTeachings(
-				{ page: 1, limit: TEACHINGS_PAGE_SIZE },
-				{
-					onSuccess: (data) => {
-						setPopularTeachings(data.data);
-						setPopularTeachingsPagination(data.pagination);
-					},
-					onError: (error) => {
-						console.log(error);
-					},
-					onFulfilled: () => {
-						if (isRefresh) {
-							isRefreshingRef.current = false;
-							setIsRefreshing(false);
-						} else {
-							setIsLoadingPopularTeachings(false);
-						}
-					}
+			try {
+				let selectedPage: TeachingPage | null = null;
+
+				if (totalPagesRef.current === null) {
+					selectedPage = await fetchTeachingPage(1);
+					totalPagesRef.current = Math.max(
+						1,
+						selectedPage.pagination.totalPages
+					);
 				}
-			);
+
+				const randomPage =
+					Math.floor(Math.random() * totalPagesRef.current) + 1;
+
+				if (randomPage !== 1 || selectedPage === null) {
+					selectedPage = await fetchTeachingPage(randomPage);
+				}
+
+				totalPagesRef.current = Math.max(
+					1,
+					selectedPage.pagination.totalPages
+				);
+				setPopularTeachings(
+					selectedPage.data.slice(0, TEACHINGS_PAGE_SIZE)
+				);
+			} catch (error) {
+				console.log(error);
+			} finally {
+				if (isRefresh) {
+					isRefreshingRef.current = false;
+					setIsRefreshing(false);
+				} else {
+					setIsLoadingPopularTeachings(false);
+				}
+			}
 		},
-		[
-			setIsLoadMorePopularTeachings,
-			setIsLoadingPopularTeachings,
-			setPopularTeachings,
-			setPopularTeachingsPagination
-		]
+		[setIsLoadingPopularTeachings, setPopularTeachings]
 	);
 
 	useEffect(() => {
@@ -83,56 +105,6 @@ const Teachings = () => {
 	const handleRefresh = useCallback(() => {
 		void fetchPopularTeachings(true);
 	}, [fetchPopularTeachings]);
-
-	const handleLoadMore = useCallback(async () => {
-		if (isRefreshingRef.current) return;
-
-		const {
-			isLoadMorePopularTeachings,
-			isLoadingPopularTeachings,
-			popularTeachingsPagination
-		} = useTeachingStore.getState();
-
-		if (
-			isLoadMorePopularTeachings ||
-			isLoadingPopularTeachings ||
-			popularTeachingsPagination.page >=
-				popularTeachingsPagination.totalPages
-		) {
-			return;
-		}
-
-		setIsLoadMorePopularTeachings(true);
-
-		await getTeachings(
-			{
-				page: popularTeachingsPagination.page + 1,
-				limit: TEACHINGS_PAGE_SIZE
-			},
-			{
-				onSuccess: (data) => {
-					const state = useTeachingStore.getState();
-
-					if (!state.isLoadMorePopularTeachings) return;
-
-					setPopularTeachings(
-						appendUniqueItems(state.popularTeachings, data.data)
-					);
-					setPopularTeachingsPagination(data.pagination);
-				},
-				onError: (error) => {
-					console.log(error);
-				},
-				onFulfilled: () => {
-					setIsLoadMorePopularTeachings(false);
-				}
-			}
-		);
-	}, [
-		setIsLoadMorePopularTeachings,
-		setPopularTeachings,
-		setPopularTeachingsPagination
-	]);
 
 	const teachingCategories = [
 		{ name: "New Testament", id: "new-testament" },
@@ -207,12 +179,6 @@ const Teachings = () => {
 							contentContainerStyle={{ flexGrow: 1 }}
 							showsVerticalScrollIndicator={false}
 							alwaysBounceVertical
-							onScroll={(event) => {
-								if (isNearScrollEnd(event)) {
-									void handleLoadMore();
-								}
-							}}
-							scrollEventThrottle={400}
 							refreshControl={
 								<RefreshControl
 									refreshing={isRefreshing}
@@ -230,9 +196,6 @@ const Teachings = () => {
 											teaching={teaching}
 										/>
 									))}
-								{isLoadMorePopularTeachings && (
-									<LoadingSpinner label="Loading more teachings..." />
-								)}
 							</View>
 						</ScrollView>
 					</View>

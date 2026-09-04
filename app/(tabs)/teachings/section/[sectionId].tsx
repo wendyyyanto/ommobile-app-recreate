@@ -131,9 +131,9 @@ const TeachingsSection = () => {
 								void handleLoadMoreSectionTeachings();
 							}
 						}}
-						scrollEventThrottle={400}
+						scrollEventThrottle={16}
 					>
-						<View className="flex-1 gap-4 relative pb-8">
+						<View className="flex-1 gap-4 relative pb-40">
 							{isLoadingSectionTeachings ? (
 								<View className="absolute left-1/2 top-56 -translate-x-1/2 -translate-y-1/2">
 									<LoadingSpinner />

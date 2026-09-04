@@ -174,7 +174,7 @@ export default function Index() {
 							void handleLoadMore();
 						}
 					}}
-					scrollEventThrottle={400}
+					scrollEventThrottle={16}
 					refreshControl={
 						<RefreshControl
 							refreshing={isRefreshing}
@@ -217,7 +217,7 @@ export default function Index() {
 									</Text>
 								</Pressable>
 							</View>
-							<View className="flex flex-1 gap-4">
+							<View className="flex flex-1 gap-4 pb-40">
 								{latestTeachings?.length > 0 &&
 									latestTeachings?.map((teaching) => (
 										<TeachingCard
