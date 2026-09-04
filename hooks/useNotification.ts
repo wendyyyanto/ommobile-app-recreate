@@ -2,7 +2,7 @@ import { getNotifications } from "@/services/notificationServices";
 import { getOneSignalSegments } from "@/services/oneSignalServices";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { OneSignal } from "react-native-onesignal";
 
 const useNotification = () => {
@@ -12,10 +12,36 @@ const useNotification = () => {
 		setNotificationSegments,
 		setUserNotificationTags
 	} = useNotificationStore();
+	const [isRefreshing, setIsRefreshing] = useState(false);
+
+	const fetchNotifications = useCallback(
+		async (isRefresh = false) => {
+			if (isRefresh) {
+				setIsRefreshing(true);
+			} else {
+				setIsLoadingNotificationList(true);
+			}
+
+			await getNotifications({
+				onSuccess: (data) => {
+					setNotificationList(data);
+				},
+				onError: (error) => {
+					console.log(error);
+				},
+				onFulfilled: () => {
+					if (isRefresh) {
+						setIsRefreshing(false);
+					} else {
+						setIsLoadingNotificationList(false);
+					}
+				}
+			});
+		},
+		[setIsLoadingNotificationList, setNotificationList]
+	);
 
 	useEffect(() => {
-		setIsLoadingNotificationList(true);
-
 		getOneSignalSegments({
 			onSuccess: (data) => {
 				setNotificationSegments(data.segments);
@@ -25,27 +51,26 @@ const useNotification = () => {
 			}
 		});
 
-		getNotifications({
-			onSuccess: (data) => {
-				setNotificationList(data);
-				setIsLoadingNotificationList(false);
-			},
-			onError: (error) => {
-				console.log(error);
-				setIsLoadingNotificationList(false);
-			}
-		});
+		void fetchNotifications();
 
 		OneSignal.User.getTags().then((tags) => {
 			setUserNotificationTags(tags as any);
 		});
-	}, []);
+	}, [fetchNotifications, setNotificationSegments, setUserNotificationTags]);
+
+	const handleRefreshNotifications = useCallback(() => {
+		void fetchNotifications(true);
+	}, [fetchNotifications]);
 
 	const handleNotificationItemPressed = (notificationId: number) => {
 		router.push(`/notifications/${notificationId}`);
 	};
 
-	return { handleNotificationItemPressed };
+	return {
+		handleNotificationItemPressed,
+		handleRefreshNotifications,
+		isRefreshing
+	};
 };
 
 export default useNotification;

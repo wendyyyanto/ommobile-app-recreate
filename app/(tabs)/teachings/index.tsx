@@ -1,4 +1,5 @@
 import TeachingCard from "@/components/ui/TeachingCard";
+import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import TeachingPageSkeleton from "@/features/skeletons/TeachingPageSkeleton";
 import { getTeachings } from "@/services/teachingServices";
@@ -6,10 +7,11 @@ import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { MotiView } from "moti";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	ImageBackground,
 	Pressable,
+	RefreshControl,
 	ScrollView,
 	Text,
 	View
@@ -25,23 +27,45 @@ const Teachings = () => {
 		isLoadingPopularTeachings,
 		setPopularTeachings
 	} = useTeachingStore();
+	const [isRefreshing, setIsRefreshing] = useState(false);
+
+	const fetchPopularTeachings = useCallback(
+		async (isRefresh = false) => {
+			if (isRefresh) {
+				setIsRefreshing(true);
+			} else {
+				setIsLoadingPopularTeachings(true);
+			}
+
+			await getTeachings(
+				{ page: 1, limit: 10 },
+				{
+					onSuccess: (data) => {
+						setPopularTeachings(data.data);
+					},
+					onError: (error) => {
+						console.log(error);
+					},
+					onFulfilled: () => {
+						if (isRefresh) {
+							setIsRefreshing(false);
+						} else {
+							setIsLoadingPopularTeachings(false);
+						}
+					}
+				}
+			);
+		},
+		[setIsLoadingPopularTeachings, setPopularTeachings]
+	);
 
 	useEffect(() => {
-		setIsLoadingPopularTeachings(true);
-		getTeachings(
-			{ page: 1, limit: 10 },
-			{
-				onSuccess: (data) => {
-					setPopularTeachings(data.data);
-					setIsLoadingPopularTeachings(false);
-				},
-				onError: (error) => {
-					console.log(error);
-					setIsLoadingPopularTeachings(false);
-				}
-			}
-		);
-	}, []);
+		void fetchPopularTeachings();
+	}, [fetchPopularTeachings]);
+
+	const handleRefresh = useCallback(() => {
+		void fetchPopularTeachings(true);
+	}, [fetchPopularTeachings]);
 
 	const teachingCategories = [
 		{ name: "New Testament", id: "new-testament" },
@@ -113,7 +137,17 @@ const Teachings = () => {
 						</Text>
 						<ScrollView
 							className="flex-1"
+							contentContainerStyle={{ flexGrow: 1 }}
 							showsVerticalScrollIndicator={false}
+							alwaysBounceVertical
+							refreshControl={
+								<RefreshControl
+									refreshing={isRefreshing}
+									onRefresh={handleRefresh}
+									tintColor={colors.black}
+									colors={[colors.black]}
+								/>
+							}
 						>
 							<View className="flex flex-1 flex-col gap-4">
 								{popularTeachings?.length > 0 &&
