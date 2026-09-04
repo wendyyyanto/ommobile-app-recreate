@@ -1,10 +1,8 @@
 import colors from "@/constants/colors";
-import { annoucementBanners } from "@/constants/placeholders";
-import { getAnnouncements } from "@/services/announcementServices";
 import { useAnnouncementStore } from "@/stores/announcementStore";
 import { getImageSource } from "@/utils/imageHelper";
 import { Image } from "expo-image";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Dimensions, View } from "react-native";
 import {
 	Extrapolation,
@@ -17,24 +15,9 @@ import Carousel, {
 } from "react-native-reanimated-carousel";
 
 const AnnouncementCarousel = () => {
-	const { setAnnouncementList, announcementList } = useAnnouncementStore();
+	const { announcementList } = useAnnouncementStore();
 	const progress = useSharedValue<number>(0);
 	const carouselRef = useRef<ICarouselInstance>(null);
-
-	useEffect(() => {
-		getAnnouncements({
-			onSuccess: (data) => {
-				if (data.length > 0) {
-					setAnnouncementList(data);
-				} else {
-					setAnnouncementList(annoucementBanners);
-				}
-			},
-			onError: (error) => {
-				console.log(error);
-			}
-		});
-	}, []);
 
 	return (
 		<View className="flex-1 justify-center items-center">
