@@ -1,13 +1,22 @@
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { getDropdowns } from "@/services/dropdownServices";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { GetTeachingParams } from "@/types/teaching";
+import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect } from "react";
 
 const useFilterOther = () => {
 	const { setFilterOtherOptions } = useTeachingFilterStore();
-	const { setIsLoadingSectionTeachings, setSectionTeachings } =
-		useTeachingStore();
+	const {
+		setIsLoadingSectionTeachings,
+		setSectionTeachings,
+		setIsLoadMoreSectionTeachings,
+		setSectionTeachingsPagination
+	} = useTeachingStore();
+	const { name } = useLocalSearchParams<{ name?: string | string[] }>();
+	const sectionName = Array.isArray(name) ? name[0] : name;
 
 	useEffect(() => {
 		const dropdownEntities = [
@@ -46,29 +55,43 @@ const useFilterOther = () => {
 
 	const handleFilterTeaching = useCallback(
 		(selectedFilter: any) => {
+			const { selectedBook } = useTeachingFilterStore.getState();
+			setIsLoadMoreSectionTeachings(false);
 			setIsLoadingSectionTeachings(true);
+			const params: GetTeachingParams = {
+				page: 1,
+				limit: TEACHINGS_PAGE_SIZE,
+				category: sectionName,
+				teacher: selectedFilter.teachers?.join(","),
+				year: selectedFilter.years?.join(","),
+				event: selectedFilter.events?.join(",")
+			};
 
-			getTeachings(
-				{
-					page: 1,
-					limit: 10,
-					teacher: selectedFilter.teachers?.join(","),
-					year: selectedFilter.years?.join(","),
-					event: selectedFilter.events?.join(",")
+			if (selectedBook?.bookName) {
+				params.book = selectedBook.bookName;
+				params.chapters = selectedBook.chapters.join(",");
+			}
+
+			getTeachings(params, {
+				onSuccess: (data) => {
+					setSectionTeachings(data.data);
+					setSectionTeachingsPagination(data.pagination);
 				},
-				{
-					onSuccess: (data) => {
-						setIsLoadingSectionTeachings(false);
-						setSectionTeachings(data.data);
-					},
-					onError: (error) => {
-						console.log(error);
-						setIsLoadingSectionTeachings(false);
-					}
+				onError: (error) => {
+					console.log(error);
+				},
+				onFulfilled: () => {
+					setIsLoadingSectionTeachings(false);
 				}
-			);
+			});
 		},
-		[setIsLoadingSectionTeachings, setSectionTeachings]
+		[
+			sectionName,
+			setIsLoadMoreSectionTeachings,
+			setIsLoadingSectionTeachings,
+			setSectionTeachings,
+			setSectionTeachingsPagination
+		]
 	);
 
 	return { handleFilterTeaching };

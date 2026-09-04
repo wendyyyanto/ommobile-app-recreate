@@ -1,13 +1,16 @@
 import TeachingCard from "@/components/ui/TeachingCard";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import TeachingPageSkeleton from "@/features/skeletons/TeachingPageSkeleton";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { appendUniqueItems, isNearScrollEnd } from "@/utils/paginationHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { MotiView } from "moti";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	ImageBackground,
 	Pressable,
@@ -25,29 +28,38 @@ const Teachings = () => {
 		setIsLoadingPopularTeachings,
 		popularTeachings,
 		isLoadingPopularTeachings,
-		setPopularTeachings
+		setPopularTeachings,
+		isLoadMorePopularTeachings,
+		setIsLoadMorePopularTeachings,
+		setPopularTeachingsPagination
 	} = useTeachingStore();
 	const [isRefreshing, setIsRefreshing] = useState(false);
+	const isRefreshingRef = useRef(false);
 
 	const fetchPopularTeachings = useCallback(
 		async (isRefresh = false) => {
+			setIsLoadMorePopularTeachings(false);
+
 			if (isRefresh) {
+				isRefreshingRef.current = true;
 				setIsRefreshing(true);
 			} else {
 				setIsLoadingPopularTeachings(true);
 			}
 
 			await getTeachings(
-				{ page: 1, limit: 10 },
+				{ page: 1, limit: TEACHINGS_PAGE_SIZE },
 				{
 					onSuccess: (data) => {
 						setPopularTeachings(data.data);
+						setPopularTeachingsPagination(data.pagination);
 					},
 					onError: (error) => {
 						console.log(error);
 					},
 					onFulfilled: () => {
 						if (isRefresh) {
+							isRefreshingRef.current = false;
 							setIsRefreshing(false);
 						} else {
 							setIsLoadingPopularTeachings(false);
@@ -56,7 +68,12 @@ const Teachings = () => {
 				}
 			);
 		},
-		[setIsLoadingPopularTeachings, setPopularTeachings]
+		[
+			setIsLoadMorePopularTeachings,
+			setIsLoadingPopularTeachings,
+			setPopularTeachings,
+			setPopularTeachingsPagination
+		]
 	);
 
 	useEffect(() => {
@@ -66,6 +83,56 @@ const Teachings = () => {
 	const handleRefresh = useCallback(() => {
 		void fetchPopularTeachings(true);
 	}, [fetchPopularTeachings]);
+
+	const handleLoadMore = useCallback(async () => {
+		if (isRefreshingRef.current) return;
+
+		const {
+			isLoadMorePopularTeachings,
+			isLoadingPopularTeachings,
+			popularTeachingsPagination
+		} = useTeachingStore.getState();
+
+		if (
+			isLoadMorePopularTeachings ||
+			isLoadingPopularTeachings ||
+			popularTeachingsPagination.page >=
+				popularTeachingsPagination.totalPages
+		) {
+			return;
+		}
+
+		setIsLoadMorePopularTeachings(true);
+
+		await getTeachings(
+			{
+				page: popularTeachingsPagination.page + 1,
+				limit: TEACHINGS_PAGE_SIZE
+			},
+			{
+				onSuccess: (data) => {
+					const state = useTeachingStore.getState();
+
+					if (!state.isLoadMorePopularTeachings) return;
+
+					setPopularTeachings(
+						appendUniqueItems(state.popularTeachings, data.data)
+					);
+					setPopularTeachingsPagination(data.pagination);
+				},
+				onError: (error) => {
+					console.log(error);
+				},
+				onFulfilled: () => {
+					setIsLoadMorePopularTeachings(false);
+				}
+			}
+		);
+	}, [
+		setIsLoadMorePopularTeachings,
+		setPopularTeachings,
+		setPopularTeachingsPagination
+	]);
 
 	const teachingCategories = [
 		{ name: "New Testament", id: "new-testament" },
@@ -140,6 +207,12 @@ const Teachings = () => {
 							contentContainerStyle={{ flexGrow: 1 }}
 							showsVerticalScrollIndicator={false}
 							alwaysBounceVertical
+							onScroll={(event) => {
+								if (isNearScrollEnd(event)) {
+									void handleLoadMore();
+								}
+							}}
+							scrollEventThrottle={400}
 							refreshControl={
 								<RefreshControl
 									refreshing={isRefreshing}
@@ -157,6 +230,9 @@ const Teachings = () => {
 											teaching={teaching}
 										/>
 									))}
+								{isLoadMorePopularTeachings && (
+									<LoadingSpinner label="Loading more teachings..." />
+								)}
 							</View>
 						</ScrollView>
 					</View>

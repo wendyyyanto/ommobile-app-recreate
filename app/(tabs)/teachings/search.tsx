@@ -5,6 +5,7 @@ import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import useSearchTeachings from "@/hooks/useSearchTeachings";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { isNearScrollEnd } from "@/utils/paginationHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import {
@@ -22,9 +23,11 @@ const SearchTeaching = () => {
 		isLoadingSearchTeachings,
 		searchQuery,
 		setSearchQuery,
-		setSearchTeachings
+		setSearchTeachings,
+		isLoadMoreSearchTeachings
 	} = useTeachingStore();
-	const { handleSearchTeachings } = useSearchTeachings();
+	const { handleSearchTeachings, handleLoadMoreSearchTeachings } =
+		useSearchTeachings();
 
 	const backgroundImage =
 		searchQuery.trim() !== "" && searchTeachings?.length === 0
@@ -79,7 +82,15 @@ const SearchTeaching = () => {
 						/>
 					</View>
 				) : searchTeachings?.length > 0 ? (
-					<ScrollView showsVerticalScrollIndicator={false}>
+					<ScrollView
+						showsVerticalScrollIndicator={false}
+						onScroll={(event) => {
+							if (isNearScrollEnd(event)) {
+								void handleLoadMoreSearchTeachings();
+							}
+						}}
+						scrollEventThrottle={400}
+					>
 						<View className="flex-1 gap-4">
 							{searchTeachings?.map((teaching) => (
 								<TeachingCard
@@ -87,6 +98,9 @@ const SearchTeaching = () => {
 									teaching={teaching}
 								/>
 							))}
+							{isLoadMoreSearchTeachings && (
+								<LoadingSpinner label="Loading more teachings..." />
+							)}
 						</View>
 					</ScrollView>
 				) : (
