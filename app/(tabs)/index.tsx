@@ -1,6 +1,8 @@
 import TeachingCard from "@/components/ui/TeachingCard";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { annoucementBanners } from "@/constants/placeholders";
 import AnnouncementCarousel from "@/features/home/AnnouncementCarousel";
 import HomePageSkeleton from "@/features/skeletons/HomePageSkeleton";
@@ -9,8 +11,9 @@ import { getTeachings } from "@/services/teachingServices";
 import { useAnnouncementStore } from "@/stores/announcementStore";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Announcement } from "@/types/announcement";
+import { appendUniqueItems, isNearScrollEnd } from "@/utils/paginationHelper";
 import { router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	ImageBackground,
 	Pressable,
@@ -28,14 +31,21 @@ export default function Index() {
 		setIsLoadingLatestTeachings,
 		setLatestTeachings,
 		latestTeachings,
-		isLoadingLatestTeachings
+		isLoadingLatestTeachings,
+		isLoadMoreLatestTeachings,
+		setIsLoadMoreLatestTeachings,
+		setLatestTeachingsPagination
 	} = useTeachingStore();
 	const { setAnnouncementList } = useAnnouncementStore();
 	const [isRefreshing, setIsRefreshing] = useState(false);
+	const isRefreshingRef = useRef(false);
 
 	const fetchHomeData = useCallback(
 		async (isRefresh = false) => {
+			setIsLoadMoreLatestTeachings(false);
+
 			if (isRefresh) {
+				isRefreshingRef.current = true;
 				setIsRefreshing(true);
 			} else {
 				setIsLoadingLatestTeachings(true);
@@ -43,10 +53,11 @@ export default function Index() {
 
 			await Promise.all([
 				getTeachings(
-					{ page: 1, limit: 10 },
+					{ page: 1, limit: TEACHINGS_PAGE_SIZE },
 					{
 						onSuccess: (data) => {
 							setLatestTeachings(data.data);
+							setLatestTeachingsPagination(data.pagination);
 						},
 						onError: (error) => {
 							console.log(error);
@@ -71,12 +82,19 @@ export default function Index() {
 			]);
 
 			if (isRefresh) {
+				isRefreshingRef.current = false;
 				setIsRefreshing(false);
 			} else {
 				setIsLoadingLatestTeachings(false);
 			}
 		},
-		[setAnnouncementList, setIsLoadingLatestTeachings, setLatestTeachings]
+		[
+			setAnnouncementList,
+			setIsLoadMoreLatestTeachings,
+			setIsLoadingLatestTeachings,
+			setLatestTeachings,
+			setLatestTeachingsPagination
+		]
 	);
 
 	useEffect(() => {
@@ -86,6 +104,56 @@ export default function Index() {
 	const handleRefresh = useCallback(() => {
 		void fetchHomeData(true);
 	}, [fetchHomeData]);
+
+	const handleLoadMore = useCallback(async () => {
+		if (isRefreshingRef.current) return;
+
+		const {
+			isLoadMoreLatestTeachings,
+			isLoadingLatestTeachings,
+			latestTeachingsPagination
+		} = useTeachingStore.getState();
+
+		if (
+			isLoadMoreLatestTeachings ||
+			isLoadingLatestTeachings ||
+			latestTeachingsPagination.page >=
+				latestTeachingsPagination.totalPages
+		) {
+			return;
+		}
+
+		setIsLoadMoreLatestTeachings(true);
+
+		await getTeachings(
+			{
+				page: latestTeachingsPagination.page + 1,
+				limit: TEACHINGS_PAGE_SIZE
+			},
+			{
+				onSuccess: (data) => {
+					const state = useTeachingStore.getState();
+
+					if (!state.isLoadMoreLatestTeachings) return;
+
+					setLatestTeachings(
+						appendUniqueItems(state.latestTeachings, data.data)
+					);
+					setLatestTeachingsPagination(data.pagination);
+				},
+				onError: (error) => {
+					console.log(error);
+				},
+				onFulfilled: () => {
+					setIsLoadMoreLatestTeachings(false);
+				}
+			}
+		);
+	}, [
+		setIsLoadMoreLatestTeachings,
+		setLatestTeachings,
+		setLatestTeachingsPagination
+	]);
 
 	if (isLoadingLatestTeachings) return <HomePageSkeleton />;
 
@@ -101,6 +169,12 @@ export default function Index() {
 					contentContainerStyle={{ flexGrow: 1 }}
 					showsVerticalScrollIndicator={false}
 					alwaysBounceVertical
+					onScroll={(event) => {
+						if (isNearScrollEnd(event)) {
+							void handleLoadMore();
+						}
+					}}
+					scrollEventThrottle={400}
 					refreshControl={
 						<RefreshControl
 							refreshing={isRefreshing}
@@ -151,6 +225,9 @@ export default function Index() {
 											teaching={teaching}
 										/>
 									))}
+								{isLoadMoreLatestTeachings && (
+									<LoadingSpinner label="Loading more teachings..." />
+								)}
 							</View>
 						</View>
 					</View>
