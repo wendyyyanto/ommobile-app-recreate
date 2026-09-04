@@ -91,6 +91,8 @@ export default function TabsLayout() {
 				name="teachings"
 				listeners={{
 					tabPress: (e) => {
+						if (pathname === "/teachings") return;
+
 						e.preventDefault();
 						router.replace("/teachings");
 					}
@@ -134,6 +136,8 @@ export default function TabsLayout() {
 				name="notifications"
 				listeners={{
 					tabPress: (e) => {
+						if (pathname === "/notifications") return;
+
 						e.preventDefault();
 						router.replace("/notifications");
 					}
