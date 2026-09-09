@@ -6,6 +6,7 @@ import {
 	useFonts
 } from "@expo-google-fonts/poppins";
 import { SplashScreen, Stack } from "expo-router";
+import * as ScreenOrientation from "expo-screen-orientation";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
@@ -24,6 +25,11 @@ export default function RootLayout() {
 			SplashScreen.hideAsync();
 		}
 	}, [fontsLoaded, fontError]);
+
+	useEffect(() => {
+		// app-wide default; screens that support landscape (e.g. PdfViewer) unlock themselves
+		ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+	}, []);
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1, backgroundColor: "black" }}>
