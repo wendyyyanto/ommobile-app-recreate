@@ -78,8 +78,9 @@ const SectionBookOptionsAccordion = memo(function SectionBookOptionsAccordion({
 				>
 					<View
 						style={{
-							backgroundColor: colors.black,
-							paddingTop: 0
+							flexDirection: "row",
+							flexWrap: "wrap",
+							gap: 12
 						}}
 					>
 						{chapterNumbers.map((chapter) => (
