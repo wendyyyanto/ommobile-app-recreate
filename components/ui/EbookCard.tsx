@@ -1,5 +1,6 @@
 import fonts from "@/constants/fonts";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
 interface EbookCardProps {
@@ -19,7 +20,12 @@ export default function EbookCard({
 	return (
 		<Pressable
 			className="flex flex-1 flex-row bg-charcoal-blue rounded-2xl py-3 px-4 gap-4"
-			onPress={() => {}}
+			onPress={() =>
+				router.push({
+					pathname: "/(resources)/ebooks/[ebookId]",
+					params: { ebookId: ebookDetails.id }
+				})
+			}
 		>
 			<Image
 				source={{ uri: ebookDetails.coverImage }}
