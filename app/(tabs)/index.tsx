@@ -1,14 +1,23 @@
 import TeachingCard from "@/components/ui/TeachingCard";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
+import { annoucementBanners } from "@/constants/placeholders";
 import AnnouncementCarousel from "@/features/home/AnnouncementCarousel";
 import HomePageSkeleton from "@/features/skeletons/HomePageSkeleton";
+import { getAnnouncements } from "@/services/announcementServices";
 import { getTeachings } from "@/services/teachingServices";
+import { useAnnouncementStore } from "@/stores/announcementStore";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { Announcement } from "@/types/announcement";
+import { appendUniqueItems, isNearScrollEnd } from "@/utils/paginationHelper";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	ImageBackground,
 	Pressable,
+	RefreshControl,
 	ScrollView,
 	Text,
 	View
@@ -22,27 +31,129 @@ export default function Index() {
 		setIsLoadingLatestTeachings,
 		setLatestTeachings,
 		latestTeachings,
-		isLoadingLatestTeachings
+		isLoadingLatestTeachings,
+		isLoadMoreLatestTeachings,
+		setIsLoadMoreLatestTeachings,
+		setLatestTeachingsPagination
 	} = useTeachingStore();
+	const { setAnnouncementList } = useAnnouncementStore();
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const isRefreshingRef = useRef(false);
+
+	const fetchHomeData = useCallback(
+		async (isRefresh = false) => {
+			setIsLoadMoreLatestTeachings(false);
+
+			if (isRefresh) {
+				isRefreshingRef.current = true;
+				setIsRefreshing(true);
+			} else {
+				setIsLoadingLatestTeachings(true);
+			}
+
+			await Promise.all([
+				getTeachings(
+					{ page: 1, limit: TEACHINGS_PAGE_SIZE },
+					{
+						onSuccess: (data) => {
+							setLatestTeachings(data.data);
+							setLatestTeachingsPagination(data.pagination);
+						},
+						onError: (error) => {
+							console.log(error);
+						}
+					}
+				),
+				getAnnouncements({
+					onSuccess: (data) => {
+						const hasBanner = data.some(
+							(item: Announcement) => item.bannerUrl !== null
+						);
+						setAnnouncementList(
+							hasBanner
+								? data
+								: (annoucementBanners as Announcement[])
+						);
+					},
+					onError: (error) => {
+						console.log(error);
+					}
+				})
+			]);
+
+			if (isRefresh) {
+				isRefreshingRef.current = false;
+				setIsRefreshing(false);
+			} else {
+				setIsLoadingLatestTeachings(false);
+			}
+		},
+		[
+			setAnnouncementList,
+			setIsLoadMoreLatestTeachings,
+			setIsLoadingLatestTeachings,
+			setLatestTeachings,
+			setLatestTeachingsPagination
+		]
+	);
 
 	useEffect(() => {
-		setIsLoadingLatestTeachings(true);
-		getTeachings(
-			{ page: 1, limit: 10 },
+		void fetchHomeData();
+	}, [fetchHomeData]);
+
+	const handleRefresh = useCallback(() => {
+		void fetchHomeData(true);
+	}, [fetchHomeData]);
+
+	const handleLoadMore = useCallback(async () => {
+		if (isRefreshingRef.current) return;
+
+		const {
+			isLoadMoreLatestTeachings,
+			isLoadingLatestTeachings,
+			latestTeachingsPagination
+		} = useTeachingStore.getState();
+
+		if (
+			isLoadMoreLatestTeachings ||
+			isLoadingLatestTeachings ||
+			latestTeachingsPagination.page >=
+				latestTeachingsPagination.totalPages
+		) {
+			return;
+		}
+
+		setIsLoadMoreLatestTeachings(true);
+
+		await getTeachings(
+			{
+				page: latestTeachingsPagination.page + 1,
+				limit: TEACHINGS_PAGE_SIZE
+			},
 			{
 				onSuccess: (data) => {
-					setLatestTeachings(data.data);
-					setIsLoadingLatestTeachings(false);
+					const state = useTeachingStore.getState();
+
+					if (!state.isLoadMoreLatestTeachings) return;
+
+					setLatestTeachings(
+						appendUniqueItems(state.latestTeachings, data.data)
+					);
+					setLatestTeachingsPagination(data.pagination);
 				},
 				onError: (error) => {
 					console.log(error);
-					setIsLoadingLatestTeachings(false);
+				},
+				onFulfilled: () => {
+					setIsLoadMoreLatestTeachings(false);
 				}
 			}
 		);
-
-		return () => {};
-	}, []);
+	}, [
+		setIsLoadMoreLatestTeachings,
+		setLatestTeachings,
+		setLatestTeachingsPagination
+	]);
 
 	if (isLoadingLatestTeachings) return <HomePageSkeleton />;
 
@@ -55,7 +166,23 @@ export default function Index() {
 			<SafeAreaView edges={["top"]} className="flex-1">
 				<ScrollView
 					className="flex-1"
+					contentContainerStyle={{ flexGrow: 1 }}
 					showsVerticalScrollIndicator={false}
+					alwaysBounceVertical
+					onScroll={(event) => {
+						if (isNearScrollEnd(event)) {
+							void handleLoadMore();
+						}
+					}}
+					scrollEventThrottle={16}
+					refreshControl={
+						<RefreshControl
+							refreshing={isRefreshing}
+							onRefresh={handleRefresh}
+							tintColor={colors.black}
+							colors={[colors.black]}
+						/>
+					}
 				>
 					<View className="flex-1 flex flex-col gap-8 px-4">
 						<Text className="font-poppins text-4xl text-white w-1/2">
@@ -90,7 +217,7 @@ export default function Index() {
 									</Text>
 								</Pressable>
 							</View>
-							<View className="flex flex-1 gap-4">
+							<View className="flex flex-1 gap-4 pb-40">
 								{latestTeachings?.length > 0 &&
 									latestTeachings?.map((teaching) => (
 										<TeachingCard
@@ -98,6 +225,9 @@ export default function Index() {
 											teaching={teaching}
 										/>
 									))}
+								{isLoadMoreLatestTeachings && (
+									<LoadingSpinner label="Loading more teachings..." />
+								)}
 							</View>
 						</View>
 					</View>

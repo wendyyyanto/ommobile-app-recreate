@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import {
 	ImageBackground,
 	Pressable,
+	RefreshControl,
 	ScrollView,
 	Text,
 	View
@@ -19,7 +20,11 @@ const Notifications = () => {
 	const { notificationList, isLoadingNotificationList } =
 		useNotificationStore();
 
-	const { handleNotificationItemPressed } = useNotification();
+	const {
+		handleNotificationItemPressed,
+		handleRefreshNotifications,
+		isRefreshing
+	} = useNotification();
 
 	if (isLoadingNotificationList) return <NotificationPageSkeleton />;
 
@@ -50,69 +55,84 @@ const Notifications = () => {
 							/>
 						</Pressable>
 					</View>
-					{notificationList?.length === 0 ? (
-						<ImageBackground
-							imageStyle={{ transform: [{ scale: 1.5 }] }}
-							source={require("@/assets/images/notif_empty.png")}
-							className="flex-1 justify-center items-center"
-							resizeMode="contain"
-						>
-							<Text
-								style={[
-									fonts.body1White,
-									{
-										opacity: 0.7,
-										marginTop: 160,
-										width: "80%",
-										textAlign: "center"
-									}
-								]}
+					<ScrollView
+						className="flex-1"
+						contentContainerStyle={{ flexGrow: 1 }}
+						showsVerticalScrollIndicator={false}
+						alwaysBounceVertical
+						refreshControl={
+							<RefreshControl
+								refreshing={isRefreshing}
+								onRefresh={handleRefreshNotifications}
+								tintColor={colors.black}
+								colors={[colors.black]}
+							/>
+						}
+					>
+						{notificationList?.length === 0 ? (
+							<ImageBackground
+								imageStyle={{ transform: [{ scale: 1.5 }] }}
+								source={require("@/assets/images/notif_empty.png")}
+								className="flex-1 justify-center items-center"
+								resizeMode="contain"
 							>
-								You have no notifications right now. Come back
-								later.
-							</Text>
-						</ImageBackground>
-					) : (
-						<ScrollView>
-							{notificationList?.map((notification) => (
-								<Pressable
-									key={notification.id}
-									className="mb-4"
-									onPress={() => {
-										handleNotificationItemPressed(
-											notification.id
-										);
-									}}
+								<Text
+									style={[
+										fonts.body1White,
+										{
+											opacity: 0.7,
+											marginTop: 160,
+											width: "80%",
+											textAlign: "center"
+										}
+									]}
 								>
-									<Text
-										style={[
-											fonts.subtitle2White,
-											{ fontWeight: "500" }
-										]}
-									>
-										{notification.title} -{" "}
-										{formatDate(
-											notification.eventDate,
-											"MMMM Do, YYYY"
-										)}
-									</Text>
-									<Text style={[fonts.caption1Grey]}>
-										{formatDate(
-											notification.createdAt,
-											"MMMM Do, YYYY"
-										)}
-									</Text>
-									<View
-										style={{
-											borderWidth: 0.5,
-											borderColor: colors.darkGray,
-											marginTop: 16
+									You have no notifications right now. Come
+									back later.
+								</Text>
+							</ImageBackground>
+						) : (
+							<View>
+								{notificationList?.map((notification) => (
+									<Pressable
+										key={notification.id}
+										className="mb-4"
+										onPress={() => {
+											handleNotificationItemPressed(
+												notification.id
+											);
 										}}
-									/>
-								</Pressable>
-							))}
-						</ScrollView>
-					)}
+									>
+										<Text
+											style={[
+												fonts.subtitle2White,
+												{ fontWeight: "500" }
+											]}
+										>
+											{notification.title} -{" "}
+											{formatDate(
+												notification.eventDate,
+												"MMMM Do, YYYY"
+											)}
+										</Text>
+										<Text style={[fonts.caption1Grey]}>
+											{formatDate(
+												notification.createdAt,
+												"MMMM Do, YYYY"
+											)}
+										</Text>
+										<View
+											style={{
+												borderWidth: 0.5,
+												borderColor: colors.darkGray,
+												marginTop: 16
+											}}
+										/>
+									</Pressable>
+								))}
+							</View>
+						)}
+					</ScrollView>
 				</View>
 			</SafeAreaView>
 		</ImageBackground>

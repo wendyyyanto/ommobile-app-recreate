@@ -1,15 +1,20 @@
 import TeachingCard from "@/components/ui/TeachingCard";
+import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import TeachingPageSkeleton from "@/features/skeletons/TeachingPageSkeleton";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { Pagination } from "@/types/request";
+import { Teaching } from "@/types/teaching";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { MotiView } from "moti";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	ImageBackground,
 	Pressable,
+	RefreshControl,
 	ScrollView,
 	Text,
 	View
@@ -18,6 +23,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const backgroundImage = require("@/assets/images/background.png");
 
+type TeachingPage = {
+	data: Teaching[];
+	pagination: Pagination;
+};
+
+const fetchTeachingPage = (page: number) =>
+	new Promise<TeachingPage>((resolve, reject) => {
+		void getTeachings(
+			{ page, limit: TEACHINGS_PAGE_SIZE },
+			{
+				onSuccess: resolve,
+				onError: reject
+			}
+		);
+	});
+
 const Teachings = () => {
 	const {
 		setIsLoadingPopularTeachings,
@@ -25,23 +46,65 @@ const Teachings = () => {
 		isLoadingPopularTeachings,
 		setPopularTeachings
 	} = useTeachingStore();
+	const [isRefreshing, setIsRefreshing] = useState(false);
+	const isRefreshingRef = useRef(false);
+	const totalPagesRef = useRef<number | null>(null);
 
-	useEffect(() => {
-		setIsLoadingPopularTeachings(true);
-		getTeachings(
-			{ page: 1, limit: 10 },
-			{
-				onSuccess: (data) => {
-					setPopularTeachings(data.data);
-					setIsLoadingPopularTeachings(false);
-				},
-				onError: (error) => {
-					console.log(error);
+	const fetchPopularTeachings = useCallback(
+		async (isRefresh = false) => {
+			if (isRefresh) {
+				isRefreshingRef.current = true;
+				setIsRefreshing(true);
+			} else {
+				setIsLoadingPopularTeachings(true);
+			}
+
+			try {
+				let selectedPage: TeachingPage | null = null;
+
+				if (totalPagesRef.current === null) {
+					selectedPage = await fetchTeachingPage(1);
+					totalPagesRef.current = Math.max(
+						1,
+						selectedPage.pagination.totalPages
+					);
+				}
+
+				const randomPage =
+					Math.floor(Math.random() * totalPagesRef.current) + 1;
+
+				if (randomPage !== 1 || selectedPage === null) {
+					selectedPage = await fetchTeachingPage(randomPage);
+				}
+
+				totalPagesRef.current = Math.max(
+					1,
+					selectedPage.pagination.totalPages
+				);
+				setPopularTeachings(
+					selectedPage.data.slice(0, TEACHINGS_PAGE_SIZE)
+				);
+			} catch (error) {
+				console.log(error);
+			} finally {
+				if (isRefresh) {
+					isRefreshingRef.current = false;
+					setIsRefreshing(false);
+				} else {
 					setIsLoadingPopularTeachings(false);
 				}
 			}
-		);
-	}, []);
+		},
+		[setIsLoadingPopularTeachings, setPopularTeachings]
+	);
+
+	useEffect(() => {
+		void fetchPopularTeachings();
+	}, [fetchPopularTeachings]);
+
+	const handleRefresh = useCallback(() => {
+		void fetchPopularTeachings(true);
+	}, [fetchPopularTeachings]);
 
 	const teachingCategories = [
 		{ name: "New Testament", id: "new-testament" },
@@ -113,7 +176,17 @@ const Teachings = () => {
 						</Text>
 						<ScrollView
 							className="flex-1"
+							contentContainerStyle={{ flexGrow: 1 }}
 							showsVerticalScrollIndicator={false}
+							alwaysBounceVertical
+							refreshControl={
+								<RefreshControl
+									refreshing={isRefreshing}
+									onRefresh={handleRefresh}
+									tintColor={colors.black}
+									colors={[colors.black]}
+								/>
+							}
 						>
 							<View className="flex flex-1 flex-col gap-4">
 								{popularTeachings?.length > 0 &&

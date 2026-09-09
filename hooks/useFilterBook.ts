@@ -1,13 +1,22 @@
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { GetTeachingParams } from "@/types/teaching";
 import { getNextChapters } from "@/utils/chapterSelector";
+import { useLocalSearchParams } from "expo-router";
 import { useCallback } from "react";
 
 const useFilterBook = () => {
 	const { setSelectedBook } = useTeachingFilterStore();
-	const { setSectionTeachings, setIsLoadingSectionTeachings } =
-		useTeachingStore();
+	const {
+		setSectionTeachings,
+		setIsLoadingSectionTeachings,
+		setIsLoadMoreSectionTeachings,
+		setSectionTeachingsPagination
+	} = useTeachingStore();
+	const { name } = useLocalSearchParams<{ name?: string | string[] }>();
+	const sectionName = Array.isArray(name) ? name[0] : name;
 
 	const handleChapterPress = useCallback(
 		(bookName: string, chapter: number) => {
@@ -70,24 +79,48 @@ const useFilterBook = () => {
 
 	const handleFilterTeachingByBook = useCallback(
 		(bookName: string, chapterNumbers: number[]) => {
+			const { selectedFilter } = useTeachingFilterStore.getState();
+			setIsLoadMoreSectionTeachings(false);
 			setIsLoadingSectionTeachings(true);
 
-			const payload = {
+			const payload: GetTeachingParams = {
+				page: 1,
+				limit: TEACHINGS_PAGE_SIZE,
+				category: sectionName,
 				book: bookName,
 				chapters: chapterNumbers.join(",")
 			};
+
+			if (selectedFilter?.teachers) {
+				payload.teacher = selectedFilter.teachers.join(",");
+			}
+			if (selectedFilter?.years) {
+				payload.year = selectedFilter.years.join(",");
+			}
+			if (selectedFilter?.events) {
+				payload.event = selectedFilter.events.join(",");
+			}
+
 			getTeachings(payload, {
 				onSuccess: (data) => {
 					setSectionTeachings(data.data);
-					setIsLoadingSectionTeachings(false);
+					setSectionTeachingsPagination(data.pagination);
 				},
 				onError: (error) => {
 					console.log(error);
+				},
+				onFulfilled: () => {
 					setIsLoadingSectionTeachings(false);
 				}
 			});
 		},
-		[setSectionTeachings, setIsLoadingSectionTeachings]
+		[
+			sectionName,
+			setIsLoadMoreSectionTeachings,
+			setIsLoadingSectionTeachings,
+			setSectionTeachings,
+			setSectionTeachingsPagination
+		]
 	);
 
 	return {

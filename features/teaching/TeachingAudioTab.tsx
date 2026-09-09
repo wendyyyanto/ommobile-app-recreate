@@ -51,19 +51,24 @@ const TeachingAudioTab = () => {
 						style={{
 							fontSize: 20,
 							color: "white",
-							fontWeight: 600
+							fontWeight: 600,
+							textAlign: "center"
 						}}
 					>
 						{teachingDetails?.title}
 					</Text>
-					<Text
-						style={[fonts.caption2White, { textAlign: "center" }]}
-					>
+					<Text style={[fonts.caption2White, { textAlign: "center" }]}>
 						{teachingDetails?.teacher ?? "Unknown Teacher"}
 					</Text>
 				</View>
 
-				<TeachingAudioPlayer />
+				{teachingDetails?.audioUrl?.trim() ? (
+					<TeachingAudioPlayer />
+				) : (
+					<Text style={[fonts.body1White, { marginTop: 28 }]}>
+						This teaching has no audio
+					</Text>
+				)}
 			</View>
 		</GestureDetector>
 	);

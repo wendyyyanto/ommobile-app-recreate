@@ -1,4 +1,5 @@
 import { TabEnum } from "@/constants/enums";
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { Pagination } from "@/types/request";
 import { Teaching, TeachingDetails } from "@/types/teaching";
 import { create } from "zustand";
@@ -16,8 +17,12 @@ interface TeachingState {
 	activeTab: TabEnum;
 	teachingDetails: TeachingDetails | null;
 	isLoadingTeachingDetails: boolean;
+	isLoadMoreLatestTeachings: boolean;
 	isLoadMoreSectionTeachings: boolean;
+	isLoadMoreSearchTeachings: boolean;
+	latestTeachingsPagination: Pagination;
 	sectionTeachingsPagination: Pagination;
+	searchTeachingsPagination: Pagination;
 	setLatestTeachings: (latestTeachings: Teaching[]) => void;
 	setPopularTeachings: (popularTeachings: Teaching[]) => void;
 	setSectionTeachings: (sectionTeachings: Teaching[]) => void;
@@ -30,11 +35,19 @@ interface TeachingState {
 	setActiveTab: (activeTab: TabEnum) => void;
 	setTeachingDetails: (teachingDetails: TeachingDetails) => void;
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) => void;
+	setIsLoadMoreLatestTeachings: (isLoadMoreLatestTeachings: boolean) => void;
 	setIsLoadMoreSectionTeachings: (
 		isLoadMoreSectionTeachings: boolean
 	) => void;
+	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) => void;
+	setLatestTeachingsPagination: (
+		latestTeachingsPagination: Pagination
+	) => void;
 	setSectionTeachingsPagination: (
 		sectionTeachingsPagination: Pagination
+	) => void;
+	setSearchTeachingsPagination: (
+		searchTeachingsPagination: Pagination
 	) => void;
 }
 
@@ -51,10 +64,22 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	activeTab: TabEnum.AUDIO,
 	teachingDetails: null,
 	isLoadingTeachingDetails: false,
+	isLoadMoreLatestTeachings: false,
 	isLoadMoreSectionTeachings: false,
+	isLoadMoreSearchTeachings: false,
+	latestTeachingsPagination: {
+		page: 1,
+		limit: TEACHINGS_PAGE_SIZE,
+		totalPages: 1
+	},
 	sectionTeachingsPagination: {
 		page: 1,
-		limit: 10,
+		limit: TEACHINGS_PAGE_SIZE,
+		totalPages: 1
+	},
+	searchTeachingsPagination: {
+		page: 1,
+		limit: TEACHINGS_PAGE_SIZE,
 		totalPages: 1
 	},
 	setLatestTeachings: (latestTeachings: Teaching[]) =>
@@ -79,8 +104,16 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 		set({ teachingDetails }),
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) =>
 		set({ isLoadingTeachingDetails }),
+	setIsLoadMoreLatestTeachings: (isLoadMoreLatestTeachings: boolean) =>
+		set({ isLoadMoreLatestTeachings }),
 	setIsLoadMoreSectionTeachings: (isLoadMoreSectionTeachings: boolean) =>
 		set({ isLoadMoreSectionTeachings }),
+	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) =>
+		set({ isLoadMoreSearchTeachings }),
+	setLatestTeachingsPagination: (latestTeachingsPagination: Pagination) =>
+		set({ latestTeachingsPagination }),
 	setSectionTeachingsPagination: (sectionTeachingsPagination: Pagination) =>
-		set({ sectionTeachingsPagination })
+		set({ sectionTeachingsPagination }),
+	setSearchTeachingsPagination: (searchTeachingsPagination: Pagination) =>
+		set({ searchTeachingsPagination })
 }));
