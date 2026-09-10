@@ -78,7 +78,7 @@ const TeachingDetail = () => {
 			className="flex-1"
 			resizeMode="cover"
 		>
-			<SafeAreaView edges={["top", "bottom"]} className="flex-1">
+			<SafeAreaView edges={["top", "bottom"]} className="flex-1 mt-6">
 				<GestureDetector gesture={swipeToAudioGesture}>
 					<ScrollView
 						className="flex-1"
@@ -104,8 +104,12 @@ const TeachingDetail = () => {
 						</View>
 
 						<View className="mt-20">
-							{activeTab === TabEnum.AUDIO && <TeachingAudioTab />}
-							{activeTab === TabEnum.VIDEO && <TeachingVideoTab />}
+							{activeTab === TabEnum.AUDIO && (
+								<TeachingAudioTab />
+							)}
+							{activeTab === TabEnum.VIDEO && (
+								<TeachingVideoTab />
+							)}
 						</View>
 
 						<View className="flex-row justify-between items-center mt-20 gap-4">
@@ -115,7 +119,8 @@ const TeachingDetail = () => {
 										style={[
 											styles.downloadButton,
 											styles.fullWidthDownloadButton,
-											hasBothTeachingFiles && styles.downloadDropdownButton
+											hasBothTeachingFiles &&
+												styles.downloadDropdownButton
 										]}
 										onPress={handleFileButtonPress}
 									>
@@ -137,47 +142,88 @@ const TeachingDetail = () => {
 										{hasBothTeachingFiles && (
 											<MotiView
 												animate={{
-													rotate: isFileDropdownOpen ? "180deg" : "0deg"
+													rotate: isFileDropdownOpen
+														? "180deg"
+														: "0deg"
 												}}
-												transition={{ type: "timing", duration: 200 }}
+												transition={{
+													type: "timing",
+													duration: 200
+												}}
 											>
 												<Image
 													source={require("@/assets/icons/chevron_Down.svg")}
-													style={{ width: 16, height: 16 }}
+													style={{
+														width: 16,
+														height: 16
+													}}
 												/>
 											</MotiView>
 										)}
 									</Pressable>
 
-									{isFileDropdownOpen && hasBothTeachingFiles && (
-										<View style={styles.fileDropdown}>
-											<Pressable
-												style={styles.fileDropdownOption}
-												onPress={() => {
-													if (pptUrl) downloadTeachingFile(pptUrl);
-												}}
-											>
-												<Image
-													source={require("@/assets/icons/ppt.svg")}
-													style={{ width: 20, height: 20 }}
+									{isFileDropdownOpen &&
+										hasBothTeachingFiles && (
+											<View style={styles.fileDropdown}>
+												<Pressable
+													style={
+														styles.fileDropdownOption
+													}
+													onPress={() => {
+														if (pptUrl)
+															downloadTeachingFile(
+																pptUrl
+															);
+													}}
+												>
+													<Image
+														source={require("@/assets/icons/ppt.svg")}
+														style={{
+															width: 20,
+															height: 20
+														}}
+													/>
+													<Text
+														style={
+															fonts.caption2White
+														}
+													>
+														PPT File
+													</Text>
+												</Pressable>
+												<View
+													style={
+														styles.fileDropdownSeparator
+													}
 												/>
-												<Text style={fonts.caption2White}>PPT File</Text>
-											</Pressable>
-											<View style={styles.fileDropdownSeparator} />
-											<Pressable
-												style={styles.fileDropdownOption}
-												onPress={() => {
-													if (pdfUrl) downloadTeachingFile(pdfUrl);
-												}}
-											>
-												<Image
-													source={require("@/assets/icons/pdf.svg")}
-													style={{ width: 20, height: 20 }}
-												/>
-												<Text style={fonts.caption2White}>PDF File</Text>
-											</Pressable>
-										</View>
-									)}
+												<Pressable
+													style={
+														styles.fileDropdownOption
+													}
+													onPress={() => {
+														if (pdfUrl)
+															downloadTeachingFile(
+																pdfUrl
+															);
+													}}
+												>
+													<Image
+														source={require("@/assets/icons/pdf.svg")}
+														style={{
+															width: 20,
+															height: 20
+														}}
+													/>
+													<Text
+														style={
+															fonts.caption2White
+														}
+													>
+														PDF File
+													</Text>
+												</Pressable>
+											</View>
+										)}
 								</View>
 							)}
 							{activeTab === TabEnum.AUDIO && audioUrl && (
@@ -191,8 +237,7 @@ const TeachingDetail = () => {
 											Toast.show({
 												type: "info",
 												text1: "Downloading file...",
-												text2:
-													"It might take a few minutes to finish the download, please wait...",
+												text2: "It might take a few minutes to finish the download, please wait...",
 												visibilityTime: 6000
 											});
 											handleDownloadFile(audioUrl);
@@ -202,7 +247,9 @@ const TeachingDetail = () => {
 											source={require("@/assets/icons/audio.svg")}
 											style={{ width: 16, height: 16 }}
 										/>
-										<Text style={fonts.caption2White}>Download Audio</Text>
+										<Text style={fonts.caption2White}>
+											Download Audio
+										</Text>
 									</Pressable>
 								</View>
 							)}

@@ -121,7 +121,7 @@ const Teachings = () => {
 			className="flex-1"
 			resizeMode="cover"
 		>
-			<SafeAreaView edges={["top"]} className="flex-1">
+			<SafeAreaView edges={["top"]} className="flex-1 mt-6">
 				<MotiView
 					transition={{ type: "spring" }}
 					className="flex-1 px-4 font-poppins"

@@ -1,17 +1,11 @@
 import { getNotifications } from "@/services/notificationServices";
-import { getOneSignalSegments } from "@/services/oneSignalServices";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { OneSignal } from "react-native-onesignal";
 
 const useNotification = () => {
-	const {
-		setNotificationList,
-		setIsLoadingNotificationList,
-		setNotificationSegments,
-		setUserNotificationTags
-	} = useNotificationStore();
+	const { setNotificationList, setIsLoadingNotificationList } =
+		useNotificationStore();
 	const [isRefreshing, setIsRefreshing] = useState(false);
 
 	const fetchNotifications = useCallback(
@@ -42,21 +36,8 @@ const useNotification = () => {
 	);
 
 	useEffect(() => {
-		getOneSignalSegments({
-			onSuccess: (data) => {
-				setNotificationSegments(data.segments);
-			},
-			onError: (error) => {
-				console.log(error);
-			}
-		});
-
 		void fetchNotifications();
-
-		OneSignal.User.getTags().then((tags) => {
-			setUserNotificationTags(tags as any);
-		});
-	}, [fetchNotifications, setNotificationSegments, setUserNotificationTags]);
+	}, [fetchNotifications]);
 
 	const handleRefreshNotifications = useCallback(() => {
 		void fetchNotifications(true);

@@ -134,7 +134,7 @@ export default function Index() {
 								hitSlop={12}
 								className="z-10"
 								onPress={() =>
-									router.push("/notifications/settings")
+									router.push("/settings")
 								}
 							>
 								<Ionicons

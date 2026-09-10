@@ -53,7 +53,10 @@ const TeachingsSection = () => {
 
 	return (
 		<ImageBackground source={backgroundImage} className="flex-1">
-			<SafeAreaView edges={["top", "bottom"]} className="flex-1 gap-7">
+			<SafeAreaView
+				edges={["top", "bottom"]}
+				className="flex-1 gap-7 mt-6"
+			>
 				<View className="px-4 flex flex-row justify-between items-start">
 					<View className="flex justify-start items-start gap-4">
 						<BackButton onPress={handleCloseSectionTeachings} />
