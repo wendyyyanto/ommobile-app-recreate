@@ -62,7 +62,9 @@ export default function EbookDetailScreen() {
 						<Text style={styles.title}>{ebookDetail.title}</Text>
 						<Text style={styles.author}>{ebookDetail.author}</Text>
 						<View style={styles.metadata}>
-							<Text style={styles.metadataText}>{ebookDetail.language}</Text>
+							<Text style={styles.metadataText}>
+								{ebookDetail.language}
+							</Text>
 							<View style={styles.metadataDot} />
 							<Text style={styles.metadataText}>
 								{ebookDetail.pageCount} pages
@@ -80,7 +82,9 @@ export default function EbookDetailScreen() {
 
 					<View style={styles.overview}>
 						<Text style={styles.overviewTitle}>Overview</Text>
-						<Text style={styles.overviewText}>{ebookDetail.overview}</Text>
+						<Text style={styles.overviewText}>
+							{ebookDetail.overview}
+						</Text>
 					</View>
 				</ScrollView>
 
@@ -124,16 +128,14 @@ const styles = StyleSheet.create({
 	title: {
 		marginTop: 44,
 		fontFamily: "Poppins_600SemiBold",
-		fontSize: 28,
-		lineHeight: 36,
+		fontSize: 20,
 		color: colors.white,
 		textAlign: "center"
 	},
 	author: {
 		marginTop: 8,
 		fontFamily: "Poppins_400Regular",
-		fontSize: 18,
-		lineHeight: 27,
+		fontSize: 13,
 		color: colors.lightSteelGray,
 		textAlign: "center"
 	},
@@ -141,13 +143,12 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		gap: 10,
+		gap: 8,
 		marginTop: 8
 	},
 	metadataText: {
 		fontFamily: "Poppins_400Regular",
-		fontSize: 16,
-		lineHeight: 24,
+		fontSize: 12,
 		color: colors.lightSteelGray
 	},
 	metadataDot: {
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
 	},
 	tag: {
 		justifyContent: "center",
-		minHeight: 28,
+		minHeight: 20,
 		paddingHorizontal: 12,
 		paddingVertical: 3,
 		borderRadius: 16,
@@ -172,24 +173,22 @@ const styles = StyleSheet.create({
 	},
 	tagText: {
 		fontFamily: "Poppins_400Regular",
-		fontSize: 14,
+		fontSize: 11,
 		lineHeight: 20,
 		color: colors.lightSteelGray
 	},
 	overview: {
 		marginTop: 36,
-		gap: 18
+		gap: 14
 	},
 	overviewTitle: {
 		fontFamily: "Poppins_500Medium",
-		fontSize: 17,
-		lineHeight: 26,
+		fontSize: 13,
 		color: colors.white
 	},
 	overviewText: {
 		fontFamily: "Poppins_400Regular",
-		fontSize: 17,
-		lineHeight: 29,
+		fontSize: 14,
 		color: colors.lightSteelGray
 	},
 	buttonContainer: {
@@ -199,7 +198,7 @@ const styles = StyleSheet.create({
 		bottom: 16
 	},
 	readButton: {
-		height: 64,
+		height: 50,
 		alignItems: "center",
 		justifyContent: "center",
 		borderRadius: 32,
@@ -207,8 +206,7 @@ const styles = StyleSheet.create({
 	},
 	readButtonText: {
 		fontFamily: "Poppins_400Regular",
-		fontSize: 18,
-		lineHeight: 27,
+		fontSize: 14,
 		color: colors.offBlack
 	}
 });
