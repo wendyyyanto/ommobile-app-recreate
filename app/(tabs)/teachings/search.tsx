@@ -5,10 +5,13 @@ import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import useSearchTeachings from "@/hooks/useSearchTeachings";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { isNearScrollEnd } from "@/utils/paginationHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useRef } from "react";
 import {
 	ImageBackground,
+	Pressable,
 	ScrollView,
 	Text,
 	TextInput,
@@ -22,9 +25,12 @@ const SearchTeaching = () => {
 		isLoadingSearchTeachings,
 		searchQuery,
 		setSearchQuery,
-		setSearchTeachings
+		setSearchTeachings,
+		isLoadMoreSearchTeachings
 	} = useTeachingStore();
-	const { handleSearchTeachings } = useSearchTeachings();
+	const { handleSearchTeachings, handleLoadMoreSearchTeachings } =
+		useSearchTeachings();
+	const searchInputRef = useRef<TextInput>(null);
 
 	const backgroundImage =
 		searchQuery.trim() !== "" && searchTeachings?.length === 0
@@ -39,7 +45,7 @@ const SearchTeaching = () => {
 		>
 			<SafeAreaView
 				edges={["top", "bottom"]}
-				className="flex-1 px-4 gap-7"
+				className="flex-1 px-4 gap-7 mt-6"
 			>
 				<View className="flex flex-row justify-start items-center gap-4">
 					<BackButton
@@ -51,26 +57,27 @@ const SearchTeaching = () => {
 					/>
 					<Text style={fonts.body2White}>Search</Text>
 				</View>
-				<View
+				<Pressable
 					className="flex-row items-center gap-2 py-2"
 					style={{
 						borderBottomWidth: 0.5,
 						borderColor: colors.lightSteelGray
 					}}
+					onPress={() => searchInputRef.current?.focus()}
 				>
 					<Image
 						source={require("@/assets/icons/search_icon.svg")}
 						style={{ width: 14, height: 14 }}
 					/>
 					<TextInput
+						ref={searchInputRef}
 						placeholder="Search teachings..."
 						placeholderTextColor={colors.lightSteelGray}
-						style={[fonts.body1White]}
-						className="w-full"
+						style={[fonts.body1White, { flex: 1 }]}
 						textAlignVertical="center"
 						onChangeText={handleSearchTeachings}
 					/>
-				</View>
+				</Pressable>
 
 				{isLoadingSearchTeachings ? (
 					<View className="flex-1 justify-center items-center">
@@ -79,14 +86,25 @@ const SearchTeaching = () => {
 						/>
 					</View>
 				) : searchTeachings?.length > 0 ? (
-					<ScrollView showsVerticalScrollIndicator={false}>
-						<View className="flex-1 gap-4">
+					<ScrollView
+						showsVerticalScrollIndicator={false}
+						onScroll={(event) => {
+							if (isNearScrollEnd(event)) {
+								void handleLoadMoreSearchTeachings();
+							}
+						}}
+						scrollEventThrottle={16}
+					>
+						<View className="flex-1 gap-4 pb-40">
 							{searchTeachings?.map((teaching) => (
 								<TeachingCard
 									key={teaching.id}
 									teaching={teaching}
 								/>
 							))}
+							{isLoadMoreSearchTeachings && (
+								<LoadingSpinner label="Loading more teachings..." />
+							)}
 						</View>
 					</ScrollView>
 				) : (

@@ -8,6 +8,7 @@ import SectionOtherFilterDropdown from "@/features/section/SectionOtherFilterDro
 import useTeachingSection from "@/hooks/useTeachingSection";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
+import { isNearScrollEnd } from "@/utils/paginationHelper";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -52,7 +53,10 @@ const TeachingsSection = () => {
 
 	return (
 		<ImageBackground source={backgroundImage} className="flex-1">
-			<SafeAreaView edges={["top", "bottom"]} className="flex-1 gap-7">
+			<SafeAreaView
+				edges={["top", "bottom"]}
+				className="flex-1 gap-7 mt-6"
+			>
 				<View className="px-4 flex flex-row justify-between items-start">
 					<View className="flex justify-start items-start gap-4">
 						<BackButton onPress={handleCloseSectionTeachings} />
@@ -125,36 +129,26 @@ const TeachingsSection = () => {
 						}
 						showsVerticalScrollIndicator={false}
 						className="flex-1"
-						onMomentumScrollEnd={(e) => {
-							const {
-								layoutMeasurement,
-								contentOffset,
-								contentSize
-							} = e.nativeEvent;
-							const isNearBottom =
-								layoutMeasurement.height + contentOffset.y >=
-								contentSize.height - 32;
-							if (isNearBottom) {
-								handleLoadMoreSectionTeachings();
+						onScroll={(event) => {
+							if (isNearScrollEnd(event)) {
+								void handleLoadMoreSectionTeachings();
 							}
 						}}
-						scrollEventThrottle={700}
+						scrollEventThrottle={16}
 					>
-						<View className="flex-1 gap-4 relative pb-8">
+						<View className="flex-1 gap-4 relative pb-40">
 							{isLoadingSectionTeachings ? (
 								<View className="absolute left-1/2 top-56 -translate-x-1/2 -translate-y-1/2">
 									<LoadingSpinner />
 								</View>
 							) : sectionTeachings?.length > 0 ? (
 								<>
-									{sectionTeachings?.map(
-										(teaching, index) => (
-											<TeachingCard
-												key={index}
-												teaching={teaching}
-											/>
-										)
-									)}
+									{sectionTeachings?.map((teaching) => (
+										<TeachingCard
+											key={teaching.id}
+											teaching={teaching}
+										/>
+									))}
 									{isLoadMoreSectionTeachings && (
 										<LoadingSpinner label="Loading more teachings..." />
 									)}

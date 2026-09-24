@@ -1,23 +1,22 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
-import useNotificationSettings from "@/hooks/useNotificationSettings";
 import { Switch, Text, View } from "react-native";
 
 const NotificationSwitch = ({
 	label,
-	checked
+	checked,
+	onValueChange
 }: {
 	label: string;
 	checked: boolean;
+	onValueChange: (checked: boolean, label: string) => void;
 }) => {
-	const { handleCheckedChange } = useNotificationSettings();
-
 	return (
-		<View className="flex-row justify-between items-center">
-			<Text style={fonts.subtitle1White}>{label}</Text>
+		<View className="min-h-12 flex-row items-center justify-between">
+			<Text style={fonts.body2White}>{label}</Text>
 			<Switch
 				value={checked}
-				onValueChange={(value) => handleCheckedChange(value, label)}
+				onValueChange={(value) => onValueChange(value, label)}
 				trackColor={{
 					false: colors.darkerGray,
 					true: colors.offBlack

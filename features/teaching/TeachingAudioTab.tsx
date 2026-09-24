@@ -1,15 +1,15 @@
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { TabEnum } from "@/constants/enums";
+import fonts from "@/constants/fonts";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import {
 	Directions,
 	Gesture,
 	GestureDetector
 } from "react-native-gesture-handler";
 import TeachingAudioPlayer from "./TeachingAudioPlayer";
-import TeachingMetadata from "./TeachingMetadata";
 
 const TeachingAudioTab = () => {
 	const { teachingDetails, isLoadingTeachingDetails, setActiveTab } =
@@ -37,9 +37,40 @@ const TeachingAudioTab = () => {
 					}}
 					contentFit="cover"
 				/>
-				<TeachingMetadata teachingDetails={teachingDetails} />
+				<View className="gap-2">
+					<Text
+						style={[
+							fonts.caption2White,
+							{ marginTop: 30, textAlign: "center" }
+						]}
+					>
+						{teachingDetails?.book} {teachingDetails?.chapters}{" "}
+						{`: ${teachingDetails?.verses}`}
+					</Text>
+					<Text
+						style={{
+							fontSize: 20,
+							color: "white",
+							fontWeight: 600,
+							textAlign: "center"
+						}}
+					>
+						{teachingDetails?.title}
+					</Text>
+					<Text
+						style={[fonts.caption2White, { textAlign: "center" }]}
+					>
+						{teachingDetails?.teacher ?? "Unknown Teacher"}
+					</Text>
+				</View>
 
-				<TeachingAudioPlayer />
+				{teachingDetails?.audioUrl?.trim() ? (
+					<TeachingAudioPlayer />
+				) : (
+					<Text style={[fonts.body1White, { marginTop: 28 }]}>
+						This teaching has no audio
+					</Text>
+				)}
 			</View>
 		</GestureDetector>
 	);

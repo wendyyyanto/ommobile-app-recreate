@@ -1,75 +1,57 @@
-import {
-	getNotificationDetail,
-	getNotifications
-} from "@/services/notificationServices";
-import { getOneSignalSegments } from "@/services/oneSignalServices";
+import { getNotifications } from "@/services/notificationServices";
 import { useNotificationStore } from "@/stores/notificationStore";
-import Constants from "expo-constants";
 import { router } from "expo-router";
-import { useEffect } from "react";
-
-const isExpoGo = Constants.executionEnvironment === "storeClient";
+import { useCallback, useEffect, useState } from "react";
 
 const useNotification = () => {
-	const {
-		setNotificationList,
-		setIsLoadingNotificationList,
-		setNotificationSegments,
-		setNotificationDetail,
-		setIsLoadingNotificationDetail,
-		setUserNotificationTags
-	} = useNotificationStore();
+	const { setNotificationList, setIsLoadingNotificationList } =
+		useNotificationStore();
+	const [isRefreshing, setIsRefreshing] = useState(false);
+
+	const fetchNotifications = useCallback(
+		async (isRefresh = false) => {
+			if (isRefresh) {
+				setIsRefreshing(true);
+			} else {
+				setIsLoadingNotificationList(true);
+			}
+
+			await getNotifications({
+				onSuccess: (data) => {
+					setNotificationList(data);
+				},
+				onError: (error) => {
+					console.log(error);
+				},
+				onFulfilled: () => {
+					if (isRefresh) {
+						setIsRefreshing(false);
+					} else {
+						setIsLoadingNotificationList(false);
+					}
+				}
+			});
+		},
+		[setIsLoadingNotificationList, setNotificationList]
+	);
 
 	useEffect(() => {
-		setIsLoadingNotificationList(true);
+		void fetchNotifications();
+	}, [fetchNotifications]);
 
-		getOneSignalSegments({
-			onSuccess: (data) => {
-				setNotificationSegments(data.segments);
-			},
-			onError: (error) => {
-				console.log(error);
-			}
-		});
-
-		getNotifications({
-			onSuccess: (data) => {
-				setNotificationList(data);
-				setIsLoadingNotificationList(false);
-			},
-			onError: (error) => {
-				console.log(error);
-				setIsLoadingNotificationList(false);
-			}
-		});
-
-		if (!isExpoGo) {
-			const { OneSignal } = require("react-native-onesignal");
-			OneSignal.User.getTags().then((tags: any) => {
-				setUserNotificationTags(tags);
-			});
-		}
-	}, []);
+	const handleRefreshNotifications = useCallback(() => {
+		void fetchNotifications(true);
+	}, [fetchNotifications]);
 
 	const handleNotificationItemPressed = (notificationId: number) => {
-		setNotificationDetail(null);
-		setIsLoadingNotificationDetail(true);
-
 		router.push(`/notifications/${notificationId}`);
-
-		getNotificationDetail(notificationId, {
-			onSuccess: (data) => {
-				setNotificationDetail(data);
-				setIsLoadingNotificationDetail(false);
-			},
-			onError: (error) => {
-				console.log(error);
-				setIsLoadingNotificationDetail(false);
-			}
-		});
 	};
 
-	return { handleNotificationItemPressed };
+	return {
+		handleNotificationItemPressed,
+		handleRefreshNotifications,
+		isRefreshing
+	};
 };
 
 export default useNotification;

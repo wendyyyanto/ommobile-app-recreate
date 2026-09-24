@@ -1,4 +1,5 @@
 import { TabEnum } from "@/constants/enums";
+import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { Pagination } from "@/types/request";
 import { Teaching, TeachingDetails } from "@/types/teaching";
 import { create } from "zustand";
@@ -17,7 +18,9 @@ interface TeachingState {
 	teachingDetails: TeachingDetails | null;
 	isLoadingTeachingDetails: boolean;
 	isLoadMoreSectionTeachings: boolean;
+	isLoadMoreSearchTeachings: boolean;
 	sectionTeachingsPagination: Pagination;
+	searchTeachingsPagination: Pagination;
 	setLatestTeachings: (latestTeachings: Teaching[]) => void;
 	setPopularTeachings: (popularTeachings: Teaching[]) => void;
 	setSectionTeachings: (sectionTeachings: Teaching[]) => void;
@@ -33,8 +36,12 @@ interface TeachingState {
 	setIsLoadMoreSectionTeachings: (
 		isLoadMoreSectionTeachings: boolean
 	) => void;
+	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) => void;
 	setSectionTeachingsPagination: (
 		sectionTeachingsPagination: Pagination
+	) => void;
+	setSearchTeachingsPagination: (
+		searchTeachingsPagination: Pagination
 	) => void;
 }
 
@@ -52,9 +59,15 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	teachingDetails: null,
 	isLoadingTeachingDetails: false,
 	isLoadMoreSectionTeachings: false,
+	isLoadMoreSearchTeachings: false,
 	sectionTeachingsPagination: {
 		page: 1,
-		limit: 10,
+		limit: TEACHINGS_PAGE_SIZE,
+		totalPages: 1
+	},
+	searchTeachingsPagination: {
+		page: 1,
+		limit: TEACHINGS_PAGE_SIZE,
 		totalPages: 1
 	},
 	setLatestTeachings: (latestTeachings: Teaching[]) =>
@@ -81,6 +94,10 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 		set({ isLoadingTeachingDetails }),
 	setIsLoadMoreSectionTeachings: (isLoadMoreSectionTeachings: boolean) =>
 		set({ isLoadMoreSectionTeachings }),
+	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) =>
+		set({ isLoadMoreSearchTeachings }),
 	setSectionTeachingsPagination: (sectionTeachingsPagination: Pagination) =>
-		set({ sectionTeachingsPagination })
+		set({ sectionTeachingsPagination }),
+	setSearchTeachingsPagination: (searchTeachingsPagination: Pagination) =>
+		set({ searchTeachingsPagination })
 }));
