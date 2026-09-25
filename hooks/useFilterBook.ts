@@ -66,18 +66,18 @@ const useFilterBook = () => {
 				page: 1,
 				limit: TEACHINGS_PAGE_SIZE,
 				category: sectionName,
-				book: bookName,
+				passage: bookName,
 				chapters: chapterNumbers.join(",")
 			};
 
 			if (selectedFilter?.teachers) {
-				payload.teacher = selectedFilter.teachers.join(",");
+				payload.teacher = selectedFilter.teachers;
 			}
 			if (selectedFilter?.years) {
-				payload.year = selectedFilter.years.join(",");
+				payload.year = selectedFilter.years;
 			}
 			if (selectedFilter?.events) {
-				payload.event = selectedFilter.events.join(",");
+				payload.event = selectedFilter.events;
 			}
 
 			getTeachings(payload, {

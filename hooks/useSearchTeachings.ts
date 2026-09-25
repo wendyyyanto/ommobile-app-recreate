@@ -1,5 +1,5 @@
 import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
-import { getSearchTeachings } from "@/services/teachingServices";
+import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { appendUniqueItems } from "@/utils/paginationHelper";
 import { useCallback, useEffect, useRef } from "react";
@@ -28,14 +28,15 @@ const useSearchTeachings = () => {
 			setSearchTeachingsPagination({
 				page: 1,
 				limit: TEACHINGS_PAGE_SIZE,
-				totalPages: 1
+				total_items: 0,
+				total_pages: 1
 			});
 			return;
 		}
 
 		setSearchTeachings([]);
 		setIsLoadingSearchTeachings(true);
-		getSearchTeachings(
+		getTeachings(
 			{
 				page: 1,
 				limit: TEACHINGS_PAGE_SIZE,
@@ -97,7 +98,7 @@ const useSearchTeachings = () => {
 			isLoadMoreSearchTeachings ||
 			isLoadingSearchTeachings ||
 			searchTeachingsPagination.page >=
-				searchTeachingsPagination.totalPages
+				searchTeachingsPagination.total_pages
 		) {
 			return;
 		}
@@ -105,7 +106,7 @@ const useSearchTeachings = () => {
 		const requestId = requestIdRef.current;
 		setIsLoadMoreSearchTeachings(true);
 
-		await getSearchTeachings(
+		await getTeachings(
 			{
 				page: searchTeachingsPagination.page + 1,
 				limit: TEACHINGS_PAGE_SIZE,

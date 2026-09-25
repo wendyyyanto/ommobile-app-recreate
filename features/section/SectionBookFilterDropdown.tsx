@@ -5,6 +5,7 @@ import { getDropdowns } from "@/services/dropdownServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import SectionBookOptionsAccordion from "./SectionBookOptionsAccordion";
@@ -24,13 +25,20 @@ const SectionBookFilterDropdown = () => {
 	const { handleSelectAllChapters, handleFilterTeachingByBook } =
 		useFilterBook();
 
+	const { name } = useLocalSearchParams<{ name?: string | string[] }>();
+	const sectionName = Array.isArray(name) ? name[0] : name;
+
 	const bottomSheetRef = useRef<BottomSheet>(null);
 
 	useEffect(() => {
 		getDropdowns(
 			{
 				entity: "books",
-				attributes: ["id", "bookName"]
+				attributes: ["id", "bookName"],
+				filters: sectionName?.endsWith("Testament")
+					? [{ key: "testament", operator: "eq", value: sectionName }]
+					: undefined,
+				sort_by: [["id", "asc"]]
 			},
 			{
 				onSuccess: (data) => {
@@ -56,7 +64,7 @@ const SectionBookFilterDropdown = () => {
 				}
 			}
 		);
-	}, [setBookOptions, setBookChapters]);
+	}, [sectionName, setBookOptions, setBookChapters]);
 
 	useEffect(() => {
 		if (isFilterByBookOpen) {

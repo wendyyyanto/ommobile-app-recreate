@@ -19,28 +19,40 @@ const useFilterOther = () => {
 	const sectionName = Array.isArray(name) ? name[0] : name;
 
 	useEffect(() => {
-		const dropdownEntities = [
+		const dropdownEntities: {
+			stateName: string;
+			entity: string;
+			attributes: string[];
+			sort_by: [string, "asc" | "desc"][];
+		}[] = [
 			{
 				stateName: "events",
 				entity: "teaching_events",
-				attributes: ["id", "name"]
+				attributes: ["id", "name"],
+				sort_by: [["name", "asc"]]
 			},
 			{
 				stateName: "teachers",
 				entity: "teachers",
-				attributes: ["id", "name"]
+				attributes: ["id", "name"],
+				sort_by: [["name", "asc"]]
 			},
-			{ stateName: "years", entity: "years", attributes: ["id", "year"] }
+			{
+				stateName: "years",
+				entity: "years",
+				attributes: ["id", "year"],
+				sort_by: [["year", "desc"]]
+			}
 		];
 
-		dropdownEntities.map((entity) =>
+		dropdownEntities.forEach(({ stateName, ...payload }) =>
 			getDropdowns(
-				{ entity: entity.entity, attributes: entity.attributes },
+				payload,
 				{
 					onSuccess: (data) => {
 						setFilterOtherOptions((prevState: any) => ({
 							...prevState,
-							[entity.stateName]: data.data
+							[stateName]: data.data
 						}));
 					},
 					onError: (error) => {
@@ -62,13 +74,13 @@ const useFilterOther = () => {
 				page: 1,
 				limit: TEACHINGS_PAGE_SIZE,
 				category: sectionName,
-				teacher: selectedFilter.teachers?.join(","),
-				year: selectedFilter.years?.join(","),
-				event: selectedFilter.events?.join(",")
+				teacher: selectedFilter.teachers,
+				year: selectedFilter.years,
+				event: selectedFilter.events
 			};
 
 			if (selectedBook?.bookName) {
-				params.book = selectedBook.bookName;
+				params.passage = selectedBook.bookName;
 				params.chapters = selectedBook.chapters.join(",");
 			}
 

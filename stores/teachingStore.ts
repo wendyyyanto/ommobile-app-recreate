@@ -63,12 +63,14 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	sectionTeachingsPagination: {
 		page: 1,
 		limit: TEACHINGS_PAGE_SIZE,
-		totalPages: 1
+		total_items: 0,
+		total_pages: 1
 	},
 	searchTeachingsPagination: {
 		page: 1,
 		limit: TEACHINGS_PAGE_SIZE,
-		totalPages: 1
+		total_items: 0,
+		total_pages: 1
 	},
 	setLatestTeachings: (latestTeachings: Teaching[]) =>
 		set({ latestTeachings }),

@@ -1,41 +1,38 @@
 import BackButton from "@/components/ui/BackButton";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
+import PdfViewer from "@/features/teaching/PdfViewer";
+import { handleDownloadFile } from "@/utils/fileHelper";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { getEbookDetails } from "@/services/ebookServices";
+import { EbookDetails } from "@/types/ebook";
+import {
+	Modal,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const DUMMY_EBOOK_ID = 5;
-
-const dummyEbookDetail = {
-	id: DUMMY_EBOOK_ID,
-	title: "The 5 love languages",
-	author: "Gary Chapman",
-	language: "Bahasa Indonesia",
-	pageCount: 189,
-	coverImage: require("@/assets/images/ebook-five-love-languages.jpg"),
-	tags: [
-		"Love",
-		"One another",
-		"Fellowship",
-		"Love & Unity",
-		"Church & Ministry",
-		"The Gospel"
-	],
-	overview:
-		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas id metus at lacus mattis tincidunt et eu lacus. Morbi lectus orci, scelerisque non scelerisque ornare, varius nec ante. Vestibulum viverra magna nec maximus volutpat. Morbi luctus ultrices nisi, tristique dignissim massa suscipit, quis ullamcorper quam."
-};
-
 export default function EbookDetailScreen() {
-	const { ebookId } = useLocalSearchParams<{
-		ebookId?: string | string[];
-	}>();
-	const requestedEbookId = Array.isArray(ebookId) ? ebookId[0] : ebookId;
-	const ebookDetail = {
-		...dummyEbookDetail,
-		id: Number(requestedEbookId) || DUMMY_EBOOK_ID
-	};
+	const { ebookId } = useLocalSearchParams<{ ebookId: string }>();
+	const [ebookDetail, setEbookDetail] = useState<EbookDetails | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [isReading, setIsReading] = useState(false);
+
+	useEffect(() => {
+		setIsLoading(true);
+		void getEbookDetails(ebookId, {
+			onSuccess: (response) => setEbookDetail(response.data),
+			onError: (error) => console.log(error),
+			onFulfilled: () => setIsLoading(false)
+		});
+	}, [ebookId]);
 
 	return (
 		<LinearGradient
@@ -48,52 +45,85 @@ export default function EbookDetailScreen() {
 					<BackButton />
 				</View>
 
-				<ScrollView
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={styles.content}
-				>
-					<View style={styles.bookSummary}>
-						<Image
-							source={ebookDetail.coverImage}
-							style={styles.coverImage}
-							contentFit="cover"
-							transition={300}
-						/>
-						<Text style={styles.title}>{ebookDetail.title}</Text>
-						<Text style={styles.author}>{ebookDetail.author}</Text>
-						<View style={styles.metadata}>
-							<Text style={styles.metadataText}>
-								{ebookDetail.language}
-							</Text>
-							<View style={styles.metadataDot} />
-							<Text style={styles.metadataText}>
-								{ebookDetail.pageCount} pages
-							</Text>
-						</View>
+				{isLoading || !ebookDetail ? (
+					<View style={styles.loading}>
+						{isLoading ? (
+							<LoadingSpinner />
+						) : (
+							<Text style={styles.overviewText}>Ebook not found.</Text>
+						)}
 					</View>
-
-					<View style={styles.tags}>
-						{ebookDetail.tags.map((tag) => (
-							<View key={tag} style={styles.tag}>
-								<Text style={styles.tagText}>{tag}</Text>
+				) : (
+					<>
+						<ScrollView
+							showsVerticalScrollIndicator={false}
+							contentContainerStyle={styles.content}
+						>
+							<View style={styles.bookSummary}>
+								<Image
+									source={
+										ebookDetail.cover_file
+											? { uri: ebookDetail.cover_file.url }
+											: require("@/assets/images/ebooks.png")
+									}
+									style={styles.coverImage}
+									contentFit="cover"
+									transition={300}
+								/>
+								<Text style={styles.title}>{ebookDetail.title}</Text>
+								<Text style={styles.author}>{ebookDetail.author}</Text>
+								<View style={styles.metadata}>
+									<Text style={styles.metadataText}>
+										{ebookDetail.language}
+									</Text>
+									<View style={styles.metadataDot} />
+									<Text style={styles.metadataText}>
+										{ebookDetail.total_pages} pages
+									</Text>
+								</View>
 							</View>
-						))}
-					</View>
 
-					<View style={styles.overview}>
-						<Text style={styles.overviewTitle}>Overview</Text>
-						<Text style={styles.overviewText}>
-							{ebookDetail.overview}
-						</Text>
-					</View>
-				</ScrollView>
+							<View style={styles.tags}>
+								{ebookDetail.tags.map((tag) => (
+									<View key={tag.id} style={styles.tag}>
+										<Text style={styles.tagText}>{tag.label}</Text>
+									</View>
+								))}
+							</View>
 
-				<View style={styles.buttonContainer}>
-					<Pressable style={styles.readButton} onPress={() => {}}>
-						<Text style={styles.readButtonText}>Read Book</Text>
-					</Pressable>
-				</View>
+							<View style={styles.overview}>
+								<Text style={styles.overviewTitle}>Overview</Text>
+								<Text style={styles.overviewText}>{ebookDetail.overview}</Text>
+							</View>
+						</ScrollView>
+
+						<View style={styles.buttonContainer}>
+							<Pressable
+								style={styles.readButton}
+								onPress={() => {
+									setIsReading(true);
+									// ponytail: saves a new copy on every tap; track downloaded ids if duplicates become a problem.
+									void handleDownloadFile(ebookDetail.ebook_file.url);
+								}}
+							>
+								<Text style={styles.readButtonText}>Read Book</Text>
+							</Pressable>
+						</View>
+					</>
+				)}
 			</SafeAreaView>
+			<Modal
+				visible={isReading}
+				animationType="slide"
+				onRequestClose={() => setIsReading(false)}
+			>
+				{ebookDetail && (
+					<PdfViewer
+						source={ebookDetail.ebook_file.url}
+						onClose={() => setIsReading(false)}
+					/>
+				)}
+			</Modal>
 		</LinearGradient>
 	);
 }
@@ -104,6 +134,11 @@ const styles = StyleSheet.create({
 	},
 	safeArea: {
 		flex: 1
+	},
+	loading: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center"
 	},
 	content: {
 		paddingHorizontal: 24,

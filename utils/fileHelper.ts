@@ -39,7 +39,18 @@ function uniqueFileName(base: string): string {
 	return `${base}-${Date.now()}`;
 }
 
-export const downloadFileToCache = async (url: string): Promise<string> => {
+// Some asset URLs come back with raw spaces/parentheses in the path, which the
+// native downloaders reject. Decode first so already-encoded URLs aren't double-encoded.
+function encodeFileUrl(url: string): string {
+	try {
+		return encodeURI(decodeURI(url.trim()));
+	} catch {
+		return encodeURI(url.trim());
+	}
+}
+
+export const downloadFileToCache = async (rawUrl: string): Promise<string> => {
+	const url = encodeFileUrl(rawUrl);
 	const fileName = fileNameFromUrl(url);
 	const destination = new File(Paths.cache, fileName);
 	const downloadedFile = await File.downloadFileAsync(url, destination, {
@@ -56,7 +67,8 @@ export const deleteCachedFile = (uri: string): void => {
 	}
 };
 
-export const handleDownloadFile = async (url: string): Promise<void> => {
+export const handleDownloadFile = async (rawUrl: string): Promise<void> => {
+	const url = encodeFileUrl(rawUrl);
 	const fileName = uniqueFileName(fileNameFromUrl(url));
 
 	try {

@@ -12,8 +12,7 @@ const TeachingMetadata = ({
 			<Text
 				style={[fonts.caption2White, { marginTop: 30, textAlign: "center" }]}
 			>
-				{teachingDetails?.book} {teachingDetails?.chapters}{" "}
-				{`: ${teachingDetails?.verses}`}
+				{teachingDetails?.passage}
 			</Text>
 			<Text
 				style={{

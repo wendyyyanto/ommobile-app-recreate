@@ -4,6 +4,7 @@ import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
 import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
+import PdfViewer from "@/features/teaching/PdfViewer";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
 import useTeachingDetail from "@/hooks/useTeachingDetail";
 import { useTeachingStore } from "@/stores/teachingStore";
@@ -13,6 +14,7 @@ import { MotiView } from "moti";
 import { useEffect, useState } from "react";
 import {
 	ImageBackground,
+	Modal,
 	Pressable,
 	RefreshControl,
 	ScrollView,
@@ -30,9 +32,13 @@ const TeachingDetail = () => {
 	const { activeTab, teachingDetails, setActiveTab } = useTeachingStore();
 	const { handleRefreshTeachingDetail, isRefreshing } = useTeachingDetail();
 	const [isFileDropdownOpen, setIsFileDropdownOpen] = useState(false);
-	const audioUrl = teachingDetails?.audioUrl?.trim();
-	const pdfUrl = teachingDetails?.pdfUrl?.trim();
-	const pptUrl = teachingDetails?.pptUrl?.trim();
+	const [openedFile, setOpenedFile] = useState<{
+		url: string;
+		isPdf: boolean;
+	} | null>(null);
+	const audioUrl = teachingDetails?.audio_file?.url?.trim();
+	const pdfUrl = teachingDetails?.pdf_file?.url?.trim();
+	const pptUrl = teachingDetails?.ppt_file?.url?.trim();
 	const hasBothTeachingFiles = Boolean(pdfUrl && pptUrl);
 	const swipeToAudioGesture = Gesture.Pan()
 		.enabled(activeTab === TabEnum.VIDEO)
@@ -49,15 +55,9 @@ const TeachingDetail = () => {
 		setIsFileDropdownOpen(false);
 	}, [pdfUrl, pptUrl]);
 
-	const downloadTeachingFile = (url: string) => {
+	const openTeachingFile = (url: string, isPdf: boolean) => {
 		setIsFileDropdownOpen(false);
-		Toast.show({
-			type: "info",
-			text1: "Downloading file...",
-			text2: "Please wait while we download the file...",
-			visibilityTime: 6000
-		});
-		handleDownloadFile(url);
+		setOpenedFile({ url, isPdf });
 	};
 
 	const handleFileButtonPress = () => {
@@ -66,8 +66,8 @@ const TeachingDetail = () => {
 			return;
 		}
 
-		const availableFileUrl = pptUrl || pdfUrl;
-		if (availableFileUrl) downloadTeachingFile(availableFileUrl);
+		if (pptUrl) openTeachingFile(pptUrl, false);
+		else if (pdfUrl) openTeachingFile(pdfUrl, true);
 	};
 
 	useTeachingDetail();
@@ -171,8 +171,9 @@ const TeachingDetail = () => {
 													}
 													onPress={() => {
 														if (pptUrl)
-															downloadTeachingFile(
-																pptUrl
+															openTeachingFile(
+																pptUrl,
+																false
 															);
 													}}
 												>
@@ -202,8 +203,9 @@ const TeachingDetail = () => {
 													}
 													onPress={() => {
 														if (pdfUrl)
-															downloadTeachingFile(
-																pdfUrl
+															openTeachingFile(
+																pdfUrl,
+																true
 															);
 													}}
 												>
@@ -257,6 +259,19 @@ const TeachingDetail = () => {
 					</ScrollView>
 				</GestureDetector>
 			</SafeAreaView>
+			<Modal
+				visible={Boolean(openedFile)}
+				animationType="slide"
+				onRequestClose={() => setOpenedFile(null)}
+			>
+				{openedFile && (
+					<PdfViewer
+						source={openedFile.url}
+						isPdf={openedFile.isPdf}
+						onClose={() => setOpenedFile(null)}
+					/>
+				)}
+			</Modal>
 		</ImageBackground>
 	);
 };

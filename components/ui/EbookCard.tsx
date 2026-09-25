@@ -1,25 +1,17 @@
 import fonts from "@/constants/fonts";
+import { EbookSummary } from "@/types/ebook";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
-interface EbookCardProps {
-	id: number;
-	title: string;
-	author: string;
-	coverImage: string;
-	pdfUrl: string;
-	tags: string[];
-}
-
 export default function EbookCard({
 	ebookDetails
 }: {
-	ebookDetails: EbookCardProps;
+	ebookDetails: EbookSummary;
 }) {
 	return (
 		<Pressable
-			className="flex flex-1 flex-row bg-charcoal-blue rounded-2xl py-3 px-4 gap-4"
+			className="flex flex-1 flex-row items-center bg-charcoal-blue rounded-2xl py-2 px-4 gap-4"
 			onPress={() =>
 				router.push({
 					pathname: "/(resources)/ebooks/[ebookId]",
@@ -28,23 +20,43 @@ export default function EbookCard({
 			}
 		>
 			<Image
-				source={{ uri: ebookDetails.coverImage }}
-				style={{ width: 62, height: 62, borderRadius: 16 }}
+				source={
+					ebookDetails.cover_url
+						? { uri: ebookDetails.cover_url }
+						: require("@/assets/images/ebooks.png")
+				}
+				style={{ width: 52, height: 77, borderRadius: 3 }}
 				transition={1000}
 				contentFit="cover"
 			/>
 			<View className="flex-1 flex-col gap-1">
-				<Text style={fonts.subtitle1White}>{ebookDetails.title}</Text>
-				<Text style={fonts.caption1Grey}>{ebookDetails.author}</Text>
-				<View className="flex-row gap-2">
-					{ebookDetails.tags.map((tag) => (
-						<Text
-							key={tag}
-							style={fonts.caption1Grey}
-							className="bg-dark-slate-blue rounded-full px-2 py-1"
+				<Text style={fonts.subtitle1White} numberOfLines={1}>
+					{ebookDetails.title}
+				</Text>
+				<Text style={[fonts.caption1Grey]} numberOfLines={1}>
+					{ebookDetails.author}
+				</Text>
+				<View className="flex-row flex-wrap gap-2 mt-1">
+					{[
+						...ebookDetails.tags.slice(0, 3).map((tag) => tag.label),
+						...(ebookDetails.tags.length > 3
+							? [`+${ebookDetails.tags.length - 3}`]
+							: [])
+					].map((label) => (
+						<View
+							key={label}
+							className="bg-dark-slate-blue rounded-full px-2 py-0.5"
 						>
-							{tag}
-						</Text>
+							<Text
+								style={{
+									fontSize: 11,
+									color: "#B9B9B9",
+									fontFamily: "Poppins_400Regular"
+								}}
+							>
+								{label}
+							</Text>
+						</View>
 					))}
 				</View>
 			</View>
