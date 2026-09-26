@@ -2,7 +2,7 @@ import { router } from "expo-router";
 
 const useTeachingCard = () => {
 	const handleTeachingCardPress = (teachingId: string) => {
-		router.push(`/teachings/${teachingId}`);
+		router.push(`/teaching/${teachingId}`);
 	};
 
 	return { handleTeachingCardPress };

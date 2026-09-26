@@ -50,7 +50,11 @@ export default function Index() {
 
 			await Promise.all([
 				getTeachings(
-					{ page: 1, limit: TEACHINGS_PAGE_SIZE },
+					{
+						page: 1,
+						limit: TEACHINGS_PAGE_SIZE,
+						year: [String(new Date().getFullYear())]
+					},
 					{
 						onSuccess: (data) => {
 							setLatestTeachings(data.data);

@@ -44,7 +44,7 @@ export default function TabsLayout() {
 			if (data?.notificationId) {
 				router.push(`/notifications/${data.notificationId}`);
 			} else if (data?.teachingId) {
-				router.push(`/teachings/${data.teachingId}`);
+				router.push(`/teaching/${data.teachingId}`);
 			}
 		};
 
