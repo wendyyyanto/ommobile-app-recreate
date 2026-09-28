@@ -3,7 +3,6 @@ import { Stack } from "expo-router";
 const TeachingsLayout = () => {
 	return (
 		<Stack
-			initialRouteName="index"
 			screenOptions={{
 				contentStyle: { backgroundColor: "black" },
 				headerShown: false

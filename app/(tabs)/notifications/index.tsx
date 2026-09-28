@@ -34,7 +34,7 @@ const Notifications = () => {
 			resizeMode="cover"
 			className="flex-1"
 		>
-			<SafeAreaView edges={["top"]} className="flex-1 px-4">
+			<SafeAreaView edges={["top"]} className="flex-1 px-4 mt-6">
 				<View className="flex-1">
 					<View className="flex-row justify-between items-center mb-10">
 						<Text className="text-4xl text-white font-poppins">
@@ -44,9 +44,7 @@ const Notifications = () => {
 						<Pressable
 							hitSlop={12}
 							className="z-10"
-							onPress={() =>
-								router.push("/notifications/settings")
-							}
+							onPress={() => router.push("/settings")}
 						>
 							<Ionicons
 								name="settings-outline"

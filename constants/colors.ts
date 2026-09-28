@@ -11,7 +11,8 @@ const colors = {
 	slateGrayBlue: "#3D4D61",
 	charcoalSlate: "#364458",
 	steelBlue: "#3C70A5",
-	lightBlue: "#60CFFF"
+	lightBlue: "#60CFFF",
+	darkSlateBlue: "#242D39"
 };
 
 export default colors;

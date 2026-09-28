@@ -66,7 +66,7 @@ const Teachings = () => {
 					selectedPage = await fetchTeachingPage(1);
 					totalPagesRef.current = Math.max(
 						1,
-						selectedPage.pagination.totalPages
+						selectedPage.pagination.total_pages
 					);
 				}
 
@@ -79,7 +79,7 @@ const Teachings = () => {
 
 				totalPagesRef.current = Math.max(
 					1,
-					selectedPage.pagination.totalPages
+					selectedPage.pagination.total_pages
 				);
 				setPopularTeachings(
 					selectedPage.data.slice(0, TEACHINGS_PAGE_SIZE)
@@ -121,7 +121,7 @@ const Teachings = () => {
 			className="flex-1"
 			resizeMode="cover"
 		>
-			<SafeAreaView edges={["top"]} className="flex-1">
+			<SafeAreaView edges={["top"]} className="flex-1 mt-6">
 				<MotiView
 					transition={{ type: "spring" }}
 					className="flex-1 px-4 font-poppins"
@@ -172,7 +172,7 @@ const Teachings = () => {
 
 					<View className="flex-1 gap-4">
 						<Text style={fonts.subtitle1White}>
-							Popular Teachings
+							Random Teachings
 						</Text>
 						<ScrollView
 							className="flex-1"

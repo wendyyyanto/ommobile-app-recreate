@@ -30,7 +30,7 @@ const TeachingAudioTab = () => {
 		<GestureDetector gesture={flingGestureHandler}>
 			<View className="justify-center items-center">
 				<Image
-					source={teachingDetails?.thumbnailUrl}
+					source={teachingDetails?.thumbnail_url}
 					style={{
 						width: 200,
 						height: 200
@@ -44,8 +44,7 @@ const TeachingAudioTab = () => {
 							{ marginTop: 30, textAlign: "center" }
 						]}
 					>
-						{teachingDetails?.book} {teachingDetails?.chapters}{" "}
-						{`: ${teachingDetails?.verses}`}
+						{teachingDetails?.passage}
 					</Text>
 					<Text
 						style={{
@@ -57,12 +56,14 @@ const TeachingAudioTab = () => {
 					>
 						{teachingDetails?.title}
 					</Text>
-					<Text style={[fonts.caption2White, { textAlign: "center" }]}>
+					<Text
+						style={[fonts.caption2White, { textAlign: "center" }]}
+					>
 						{teachingDetails?.teacher ?? "Unknown Teacher"}
 					</Text>
 				</View>
 
-				{teachingDetails?.audioUrl?.trim() ? (
+				{teachingDetails?.audio_file?.url?.trim() ? (
 					<TeachingAudioPlayer />
 				) : (
 					<Text style={[fonts.body1White, { marginTop: 28 }]}>

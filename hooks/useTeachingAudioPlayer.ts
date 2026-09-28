@@ -14,7 +14,7 @@ const useTeachingAudioPlayer = () => {
 	const [playbackRate, setPlaybackRate] = useState(1);
 
 	const player = useAudioPlayer({
-		uri: teachingDetails?.audioUrl!
+		uri: teachingDetails?.audio_file?.url ?? ""
 	});
 	const status = useAudioPlayerStatus(player);
 
@@ -53,8 +53,8 @@ const useTeachingAudioPlayer = () => {
 			{
 				title: teachingDetails?.title,
 				artist: teachingDetails?.teacher,
-				albumTitle: teachingDetails?.book,
-				artworkUrl: teachingDetails?.thumbnailUrl
+				albumTitle: teachingDetails?.passage,
+				artworkUrl: teachingDetails?.thumbnail_url ?? undefined
 			},
 			{
 				showSeekBackward: true,

@@ -45,7 +45,7 @@ const SearchTeaching = () => {
 		>
 			<SafeAreaView
 				edges={["top", "bottom"]}
-				className="flex-1 px-4 gap-7"
+				className="flex-1 px-4 gap-7 mt-6"
 			>
 				<View className="flex flex-row justify-start items-center gap-4">
 					<BackButton

@@ -2,18 +2,28 @@ import axios from "@/constants/axios";
 import { RequestHandlerParams } from "@/types/request";
 import { GetTeachingParams } from "@/types/teaching";
 
-type GetSearchTeachingsParams = {
-	page?: number;
-	limit?: number;
-	q: string;
+// The app's section names differ from the API's category enum in one place.
+const CATEGORY_ALIASES: Record<string, string> = {
+	Topical: "Topical Teaching"
 };
 
+// Repeat array keys (teacher=a&teacher=b), which the API parses as arrays.
+const paramsSerializer = { indexes: null };
+
 export const getTeachings = async (
-	params: GetTeachingParams,
+	{ category, ...params }: GetTeachingParams,
 	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
 ) => {
 	try {
-		const response = await axios.get("/teaching", { params });
+		const response = await axios.get("/teachings", {
+			params: {
+				...params,
+				category: category
+					? (CATEGORY_ALIASES[category] ?? category)
+					: undefined
+			},
+			paramsSerializer
+		});
 		onSuccess(response.data);
 	} catch (error) {
 		onError(error);
@@ -27,21 +37,7 @@ export const getTeachingDetails = async (
 	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
 ) => {
 	try {
-		const response = await axios.get(`/teaching/${teachingId}`);
-		onSuccess(response.data);
-	} catch (error) {
-		onError(error);
-	} finally {
-		onFulfilled();
-	}
-};
-
-export const getSearchTeachings = async (
-	params: GetSearchTeachingsParams,
-	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
-) => {
-	try {
-		const response = await axios.get("/teaching/search", { params });
+		const response = await axios.get(`/teachings/${teachingId}`);
 		onSuccess(response.data);
 	} catch (error) {
 		onError(error);

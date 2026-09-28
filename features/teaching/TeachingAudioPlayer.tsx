@@ -2,7 +2,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import useTeachingAudioPlayer from "@/hooks/useTeachingAudioPlayer";
 import { formatDuration } from "@/utils/timeHelper";
-import { Slider } from "@tamagui/slider";
+import Slider from "@react-native-community/slider";
 import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
 
@@ -33,29 +33,18 @@ const TeachingAudioPlayer = () => {
 					width: "95%",
 					alignSelf: "center",
 					marginTop: 28,
-					marginBottom: 18
+					marginBottom: 14
 				}}
-				size="$2"
-				value={[currentTime ?? 0]}
-				max={status.duration ?? 0}
+				value={currentTime ?? 0}
+				minimumValue={0}
+				maximumValue={status.duration ?? 0}
 				step={1}
-				onSlideEnd={(e, value) => handleSeekTo(value)}
-				onSlideMove={(e, value) => {
-					handleSlideMove(value);
-				}}
-			>
-				<Slider.Track height={7}>
-					<Slider.TrackActive
-						style={{ backgroundColor: colors.steelBlue }}
-					/>
-				</Slider.Track>
-				<Slider.Thumb
-					circular
-					index={0}
-					borderWidth={0}
-					backgroundColor={colors.lightBlue}
-				/>
-			</Slider>
+				minimumTrackTintColor={colors.steelBlue}
+				maximumTrackTintColor={colors.lightGray}
+				thumbTintColor={colors.lightBlue}
+				onSlidingComplete={(value) => handleSeekTo(value)}
+				onValueChange={(value) => handleSlideMove(value)}
+			/>
 			<View className="flex-row justify-between">
 				<Text className="text-white">
 					{formatDuration(currentTime)}

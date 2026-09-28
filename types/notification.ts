@@ -14,4 +14,15 @@ type NotificationDetail = {
 	createdAt: string;
 };
 
-export type { Notification, NotificationDetail };
+type NotificationSegment = {
+	name: string;
+};
+
+type NotificationTags = Record<string, string>;
+
+export type {
+	Notification,
+	NotificationDetail,
+	NotificationSegment,
+	NotificationTags
+};

@@ -139,7 +139,7 @@ const useTeachingSection = ({
 			isLoadMoreSectionTeachings ||
 			isLoadingSectionTeachings ||
 			sectionTeachingsPagination.page >=
-				sectionTeachingsPagination.totalPages
+				sectionTeachingsPagination.total_pages
 		) {
 			return;
 		}
@@ -152,19 +152,19 @@ const useTeachingSection = ({
 
 		if (selectedFilter) {
 			if (selectedFilter.teachers) {
-				params.teacher = selectedFilter.teachers.join(",");
+				params.teacher = selectedFilter.teachers;
 			}
 			if (selectedFilter.years) {
-				params.year = selectedFilter.years.join(",");
+				params.year = selectedFilter.years;
 			}
 			if (selectedFilter.events) {
-				params.event = selectedFilter.events.join(",");
+				params.event = selectedFilter.events;
 			}
 		}
 
 		if (selectedBook) {
 			if (selectedBook.bookName) {
-				params.book = selectedBook.bookName;
+				params.passage = selectedBook.bookName;
 			}
 			if (selectedBook.chapters) {
 				params.chapters = selectedBook.chapters.join(",");

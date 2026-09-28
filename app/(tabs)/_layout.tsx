@@ -1,4 +1,4 @@
-import { router, Tabs, usePathname } from "expo-router";
+import { router, Tabs, usePathname, useSegments } from "expo-router";
 
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
@@ -11,8 +11,8 @@ const tabBarIconSize = { width: 18, height: 18, marginBottom: 6 };
 export default function TabsLayout() {
 	const insets = useSafeAreaInsets();
 	const pathname = usePathname();
-	const tabBarRootRoutes = ["/", "/teachings", "/notifications"];
-	const shouldHideTabBar = !tabBarRootRoutes.includes(pathname);
+	const segments = useSegments();
+	const shouldHideTabBar = segments.length > 2;
 	const baseTabBarStyle = {
 		backgroundColor: "black",
 		paddingBottom: 12 + insets.bottom,

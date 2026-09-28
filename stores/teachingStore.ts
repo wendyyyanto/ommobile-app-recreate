@@ -20,7 +20,6 @@ interface TeachingState {
 	isLoadMoreLatestTeachings: boolean;
 	isLoadMoreSectionTeachings: boolean;
 	isLoadMoreSearchTeachings: boolean;
-	latestTeachingsPagination: Pagination;
 	sectionTeachingsPagination: Pagination;
 	searchTeachingsPagination: Pagination;
 	setLatestTeachings: (latestTeachings: Teaching[]) => void;
@@ -40,9 +39,6 @@ interface TeachingState {
 		isLoadMoreSectionTeachings: boolean
 	) => void;
 	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) => void;
-	setLatestTeachingsPagination: (
-		latestTeachingsPagination: Pagination
-	) => void;
 	setSectionTeachingsPagination: (
 		sectionTeachingsPagination: Pagination
 	) => void;
@@ -67,20 +63,17 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	isLoadMoreLatestTeachings: false,
 	isLoadMoreSectionTeachings: false,
 	isLoadMoreSearchTeachings: false,
-	latestTeachingsPagination: {
-		page: 1,
-		limit: TEACHINGS_PAGE_SIZE,
-		totalPages: 1
-	},
 	sectionTeachingsPagination: {
 		page: 1,
 		limit: TEACHINGS_PAGE_SIZE,
-		totalPages: 1
+		total_items: 0,
+		total_pages: 1
 	},
 	searchTeachingsPagination: {
 		page: 1,
 		limit: TEACHINGS_PAGE_SIZE,
-		totalPages: 1
+		total_items: 0,
+		total_pages: 1
 	},
 	setLatestTeachings: (latestTeachings: Teaching[]) =>
 		set({ latestTeachings }),
@@ -110,8 +103,6 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 		set({ isLoadMoreSectionTeachings }),
 	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) =>
 		set({ isLoadMoreSearchTeachings }),
-	setLatestTeachingsPagination: (latestTeachingsPagination: Pagination) =>
-		set({ latestTeachingsPagination }),
 	setSectionTeachingsPagination: (sectionTeachingsPagination: Pagination) =>
 		set({ sectionTeachingsPagination }),
 	setSearchTeachingsPagination: (searchTeachingsPagination: Pagination) =>

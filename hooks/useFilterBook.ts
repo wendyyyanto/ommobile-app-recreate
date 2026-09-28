@@ -21,21 +21,10 @@ const useFilterBook = () => {
 	const handleChapterPress = useCallback(
 		(bookName: string, chapter: number) => {
 			const { selectedBook } = useTeachingFilterStore.getState();
-			const prevChapters = selectedBook?.chapters;
-
-			const nextChapters = getNextChapters(prevChapters, chapter);
-			const hasSelectionFromOtherBook =
-				selectedBook?.bookName !== bookName;
-
-			// When user taps a chapter in another accordion, switch selection context
-			// to that book only. Opening accordion alone doesn't touch state.
-			if (hasSelectionFromOtherBook) {
-				setSelectedBook({
-					bookName,
-					chapters: nextChapters
-				});
-				return;
-			}
+			const nextChapters = getNextChapters(
+				selectedBook?.chapters,
+				chapter
+			);
 
 			// If nothing remains selected, remove the book entry entirely.
 			if (nextChapters.length === 0) {
@@ -43,16 +32,6 @@ const useFilterBook = () => {
 				return;
 			}
 
-			// First selection for this book.
-			if (!selectedBook) {
-				setSelectedBook({
-					bookName,
-					chapters: nextChapters
-				});
-				return;
-			}
-
-			// Update contiguous range.
 			setSelectedBook({
 				bookName,
 				chapters: nextChapters
@@ -87,18 +66,18 @@ const useFilterBook = () => {
 				page: 1,
 				limit: TEACHINGS_PAGE_SIZE,
 				category: sectionName,
-				book: bookName,
+				passage: bookName,
 				chapters: chapterNumbers.join(",")
 			};
 
 			if (selectedFilter?.teachers) {
-				payload.teacher = selectedFilter.teachers.join(",");
+				payload.teacher = selectedFilter.teachers;
 			}
 			if (selectedFilter?.years) {
-				payload.year = selectedFilter.years.join(",");
+				payload.year = selectedFilter.years;
 			}
 			if (selectedFilter?.events) {
-				payload.event = selectedFilter.events.join(",");
+				payload.event = selectedFilter.events;
 			}
 
 			getTeachings(payload, {
