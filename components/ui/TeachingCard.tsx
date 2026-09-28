@@ -8,7 +8,7 @@ const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 	const { handleTeachingCardPress } = useTeachingCard();
 	const passage = [teaching.passage, teaching.chapters]
 		.filter((v) => v?.trim())
-		.join(" ");
+		.join(": ");
 	const teacher = teaching.teacher?.trim();
 	const metaLines =
 		passage || teacher

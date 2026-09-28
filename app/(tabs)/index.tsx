@@ -237,7 +237,7 @@ export default function Index() {
 									</Text>
 								</Pressable>
 							</View>
-							<View className="flex flex-1 gap-4 pb-40">
+							<View className="flex flex-1 gap-4">
 								{latestTeachings?.length > 0 &&
 									latestTeachings?.map((teaching) => (
 										<TeachingCard

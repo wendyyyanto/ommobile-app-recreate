@@ -30,9 +30,9 @@ const TeachingDetail = () => {
 	const { activeTab, teachingDetails, setActiveTab } = useTeachingStore();
 	const { handleRefreshTeachingDetail, isRefreshing } = useTeachingDetail();
 	const [isFileDropdownOpen, setIsFileDropdownOpen] = useState(false);
-	const audioUrl = teachingDetails?.audioUrl?.trim();
-	const pdfUrl = teachingDetails?.pdfUrl?.trim();
-	const pptUrl = teachingDetails?.pptUrl?.trim();
+	const audioUrl = teachingDetails?.audio_file?.url?.trim();
+	const pdfUrl = teachingDetails?.pdf_file?.url?.trim();
+	const pptUrl = teachingDetails?.ppt_file?.url?.trim();
 	const hasBothTeachingFiles = Boolean(pdfUrl && pptUrl);
 	const swipeToAudioGesture = Gesture.Pan()
 		.enabled(activeTab === TabEnum.VIDEO)
