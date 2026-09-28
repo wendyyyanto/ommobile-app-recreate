@@ -1,3 +1,4 @@
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
@@ -35,7 +36,9 @@ export default function Index() {
 		setIsLoadingLatestTeachings,
 		setLatestTeachings,
 		latestTeachings,
-		isLoadingLatestTeachings
+		isLoadingLatestTeachings,
+		isLoadMoreLatestTeachings,
+		setIsLoadMoreLatestTeachings
 	} = useTeachingStore();
 	const { setAnnouncementList } = useAnnouncementStore();
 	const [isRefreshing, setIsRefreshing] = useState(false);
@@ -137,9 +140,7 @@ export default function Index() {
 							<Pressable
 								hitSlop={12}
 								className="z-10"
-								onPress={() =>
-									router.push("/settings")
-								}
+								onPress={() => router.push("/settings")}
 							>
 								<Ionicons
 									name="settings-outline"
@@ -236,7 +237,7 @@ export default function Index() {
 									</Text>
 								</Pressable>
 							</View>
-							<View className="flex flex-1 gap-4">
+							<View className="flex flex-1 gap-4 pb-40">
 								{latestTeachings?.length > 0 &&
 									latestTeachings?.map((teaching) => (
 										<TeachingCard
@@ -244,6 +245,9 @@ export default function Index() {
 											teaching={teaching}
 										/>
 									))}
+								{isLoadMoreLatestTeachings && (
+									<LoadingSpinner label="Loading more teachings..." />
+								)}
 							</View>
 						</View>
 					</View>

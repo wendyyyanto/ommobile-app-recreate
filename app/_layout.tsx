@@ -28,7 +28,9 @@ export default function RootLayout() {
 
 	useEffect(() => {
 		// app-wide default; screens that support landscape (e.g. PdfViewer) unlock themselves
-		ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+		ScreenOrientation.lockAsync(
+			ScreenOrientation.OrientationLock.PORTRAIT_UP
+		);
 	}, []);
 
 	return (

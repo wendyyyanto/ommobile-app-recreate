@@ -11,6 +11,13 @@ import { showErrorToast, showSuccessToast } from "./toastHelper";
 const getNativeFileSystem = (): typeof RNFileSystemType =>
 	require("react-native-file-access").FileSystem;
 
+// react-native-file-access resolves its native module while it is imported, so a
+// static import throws on any binary built without it and takes down every screen
+// importing this file. Load it lazily so a missing native module only fails the
+// download itself.
+const getNativeFileSystem = (): typeof RNFileSystemType =>
+	require("react-native-file-access").FileSystem;
+
 function fileUriToPlainPath(uri: string): string {
 	return decodeURIComponent(uri.replace(/^file:\/{2,3}/, ""));
 }

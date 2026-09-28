@@ -17,6 +17,7 @@ interface TeachingState {
 	activeTab: TabEnum;
 	teachingDetails: TeachingDetails | null;
 	isLoadingTeachingDetails: boolean;
+	isLoadMoreLatestTeachings: boolean;
 	isLoadMoreSectionTeachings: boolean;
 	isLoadMoreSearchTeachings: boolean;
 	sectionTeachingsPagination: Pagination;
@@ -33,6 +34,7 @@ interface TeachingState {
 	setActiveTab: (activeTab: TabEnum) => void;
 	setTeachingDetails: (teachingDetails: TeachingDetails) => void;
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) => void;
+	setIsLoadMoreLatestTeachings: (isLoadMoreLatestTeachings: boolean) => void;
 	setIsLoadMoreSectionTeachings: (
 		isLoadMoreSectionTeachings: boolean
 	) => void;
@@ -58,6 +60,7 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 	activeTab: TabEnum.AUDIO,
 	teachingDetails: null,
 	isLoadingTeachingDetails: false,
+	isLoadMoreLatestTeachings: false,
 	isLoadMoreSectionTeachings: false,
 	isLoadMoreSearchTeachings: false,
 	sectionTeachingsPagination: {
@@ -94,6 +97,8 @@ export const useTeachingStore = create<TeachingState>()((set) => ({
 		set({ teachingDetails }),
 	setIsLoadingTeachingDetails: (isLoadingTeachingDetails: boolean) =>
 		set({ isLoadingTeachingDetails }),
+	setIsLoadMoreLatestTeachings: (isLoadMoreLatestTeachings: boolean) =>
+		set({ isLoadMoreLatestTeachings }),
 	setIsLoadMoreSectionTeachings: (isLoadMoreSectionTeachings: boolean) =>
 		set({ isLoadMoreSectionTeachings }),
 	setIsLoadMoreSearchTeachings: (isLoadMoreSearchTeachings: boolean) =>

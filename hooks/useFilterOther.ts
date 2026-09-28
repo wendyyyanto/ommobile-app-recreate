@@ -46,20 +46,17 @@ const useFilterOther = () => {
 		];
 
 		dropdownEntities.forEach(({ stateName, ...payload }) =>
-			getDropdowns(
-				payload,
-				{
-					onSuccess: (data) => {
-						setFilterOtherOptions((prevState: any) => ({
-							...prevState,
-							[stateName]: data.data
-						}));
-					},
-					onError: (error) => {
-						console.log(error);
-					}
+			getDropdowns(payload, {
+				onSuccess: (data) => {
+					setFilterOtherOptions((prevState: any) => ({
+						...prevState,
+						[stateName]: data.data
+					}));
+				},
+				onError: (error) => {
+					console.log(error);
 				}
-			)
+			})
 		);
 
 		return () => {};
