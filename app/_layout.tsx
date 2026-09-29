@@ -8,6 +8,7 @@ import {
 import Constants from "expo-constants";
 import { router, SplashScreen, Stack } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -30,6 +31,7 @@ if (!isExpoGo) {
 }
 
 export default function RootLayout() {
+	const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
 	const [fontsLoaded, fontError] = useFonts({
 		Poppins_400Regular,
 		Poppins_500Medium,
@@ -81,7 +83,19 @@ export default function RootLayout() {
 					headerShown: false,
 					contentStyle: { backgroundColor: "black" }
 				}}
-			/>
+			>
+				<Stack.Protected guard={isLoggedIn}>
+					<Stack.Screen name="(tabs)" />
+					<Stack.Screen name="(resources)" />
+					<Stack.Screen name="notifications" />
+					<Stack.Screen name="teaching" />
+					<Stack.Screen name="teachings" />
+					<Stack.Screen name="settings" />
+				</Stack.Protected>
+				<Stack.Protected guard={!isLoggedIn}>
+					<Stack.Screen name="(auth)" />
+				</Stack.Protected>
+			</Stack>
 			<Toast />
 		</GestureHandlerRootView>
 	);

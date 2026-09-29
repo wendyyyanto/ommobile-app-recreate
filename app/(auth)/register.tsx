@@ -1,7 +1,10 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { register } from "@/services/authServices";
+import { showErrorToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useState } from "react";
 import {
 	KeyboardAvoidingView,
 	Platform,
@@ -13,6 +16,32 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen() {
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+
+	const handleRegister = () => {
+		const trimmedName = name.trim();
+		const trimmedEmail = email.trim();
+		if (!trimmedName || !trimmedEmail) {
+			showErrorToast("Please fill in all fields.");
+			return;
+		}
+
+		setIsLoading(true);
+		register(
+			{ name: trimmedName, email: trimmedEmail },
+			{
+				onSuccess: () => router.replace("/register-success"),
+				onError: (error) =>
+					showErrorToast(
+						error?.response?.data?.message ??
+							"Something went wrong. Please try again."
+					),
+				onFulfilled: () => setIsLoading(false)
+			}
+		);
+	};
 	return (
 		<SafeAreaView
 			style={{ flex: 1, backgroundColor: colors.black }}
@@ -92,6 +121,8 @@ export default function RegisterScreen() {
 								style={{ width: 14, height: 14 }}
 							/>
 							<TextInput
+								value={name}
+								onChangeText={setName}
 								placeholder="Full Name"
 								placeholderTextColor={colors.lightSteelGray}
 								style={{
@@ -120,6 +151,8 @@ export default function RegisterScreen() {
 								style={{ width: 14, height: 14 }}
 							/>
 							<TextInput
+								value={email}
+								onChangeText={setEmail}
 								placeholder="Email address"
 								placeholderTextColor={colors.lightSteelGray}
 								style={{
@@ -132,8 +165,10 @@ export default function RegisterScreen() {
 								keyboardType="email-address"
 								autoCapitalize="none"
 								autoCorrect={false}
+								onSubmitEditing={handleRegister}
 							/>
 						</View>
+
 					</View>
 
 					<View style={{ gap: 24, marginTop: 8 }}>
@@ -143,9 +178,11 @@ export default function RegisterScreen() {
 								borderRadius: 40,
 								paddingVertical: 14,
 								alignItems: "center",
-								width: "100%"
+								width: "100%",
+								opacity: isLoading ? 0.5 : 1
 							}}
-							onPress={() => router.replace("/register-success")}
+							disabled={isLoading}
+							onPress={handleRegister}
 						>
 							<Text
 								style={{
@@ -154,7 +191,7 @@ export default function RegisterScreen() {
 									color: colors.black
 								}}
 							>
-								Submit
+								{isLoading ? "Submitting..." : "Submit"}
 							</Text>
 						</Pressable>
 

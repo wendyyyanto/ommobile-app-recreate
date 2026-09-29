@@ -1,5 +1,7 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { login } from "@/services/authServices";
+import { showErrorToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -8,6 +10,47 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
 	const [email, setEmail] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+
+	const handleLogin = () => {
+		const trimmedEmail = email.trim();
+		if (!trimmedEmail) {
+			showErrorToast("Please enter your email.");
+			return;
+		}
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+			showErrorToast("Please enter a valid email address.");
+			return;
+		}
+
+		setIsLoading(true);
+		login(
+			{ email: trimmedEmail },
+			{
+				onSuccess: () =>
+					router.push({
+						pathname: "/check-email",
+						params: { email: trimmedEmail }
+					}),
+				onError: (error) => {
+					const message = error?.response?.data?.message;
+					// "Your account is not approved by admin yet": registered but pending admin approval; stay on login
+					if (message?.includes("not approved"))
+						showErrorToast(
+							message,
+							"Please contact the admin to get your account approved."
+						);
+					else if (error?.response?.status === 404)
+						router.push("/account-not-found");
+					else
+						showErrorToast(
+							message ?? "Something went wrong. Please try again."
+						);
+				},
+				onFulfilled: () => setIsLoading(false)
+			}
+		);
+	};
 
 	return (
 		<SafeAreaView
@@ -42,43 +85,47 @@ export default function LoginScreen() {
 							}
 						]}
 					>
-						Enter your email address and we&apos;ll send you a
+						Enter your email and we&apos;ll send you a
 						secure sign-in link.
 					</Text>
 				</View>
 
-				<View
-					style={{
-						flexDirection: "row",
-						alignItems: "center",
-						gap: 8,
-						paddingVertical: 8,
-						borderBottomWidth: 0.5,
-						borderColor: colors.lightSteelGray
-					}}
-				>
-					<Image
-						source={require("@/assets/icons/mail_icon.svg")}
-						style={{ width: 14, height: 14 }}
-					/>
-					<TextInput
-						value={email}
-						onChangeText={(text) => {
-							setEmail(text);
-						}}
-						placeholder="Email address"
-						placeholderTextColor={colors.lightSteelGray}
+				<View style={{ gap: 24 }}>
+					<View
 						style={{
-							flex: 1,
-							fontSize: 14,
-							fontFamily: "Poppins_400Regular",
-							color: colors.white
+							flexDirection: "row",
+							alignItems: "center",
+							gap: 8,
+							paddingVertical: 8,
+							borderBottomWidth: 0.5,
+							borderColor: colors.lightSteelGray
 						}}
-						textAlignVertical="center"
-						keyboardType="email-address"
-						autoCapitalize="none"
-						autoCorrect={false}
-					/>
+					>
+						<Image
+							source={require("@/assets/icons/mail_icon.svg")}
+							style={{ width: 14, height: 14 }}
+						/>
+						<TextInput
+							value={email}
+							onChangeText={(text) => {
+								setEmail(text);
+							}}
+							placeholder="Email address"
+							placeholderTextColor={colors.lightSteelGray}
+							style={{
+								flex: 1,
+								fontSize: 14,
+								fontFamily: "Poppins_400Regular",
+								color: colors.white
+							}}
+							textAlignVertical="center"
+							keyboardType="email-address"
+							autoCapitalize="none"
+							autoCorrect={false}
+							onSubmitEditing={handleLogin}
+						/>
+					</View>
+
 				</View>
 
 				<View style={{ gap: 40 }}>
@@ -88,17 +135,11 @@ export default function LoginScreen() {
 							borderRadius: 40,
 							paddingVertical: 14,
 							alignItems: "center",
-							opacity: 1,
+							opacity: isLoading ? 0.5 : 1,
 							width: "100%"
 						}}
-						onPress={() =>
-							email.trim() === ""
-								? router.push("/account-not-found")
-								: router.push({
-										pathname: "/check-email",
-										params: { email: email.trim() }
-									})
-						}
+						disabled={isLoading}
+						onPress={handleLogin}
 					>
 						<Text
 							style={{
@@ -107,7 +148,7 @@ export default function LoginScreen() {
 								color: colors.black
 							}}
 						>
-							Continue
+							{isLoading ? "Sending link..." : "Continue"}
 						</Text>
 					</Pressable>
 

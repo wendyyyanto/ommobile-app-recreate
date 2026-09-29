@@ -7,8 +7,10 @@ import { annoucementBanners } from "@/constants/placeholders";
 import AnnouncementCarousel from "@/features/home/AnnouncementCarousel";
 import HomePageSkeleton from "@/features/skeletons/HomePageSkeleton";
 import { getAnnouncements } from "@/services/announcementServices";
+import { getProfile } from "@/services/authServices";
 import { getTeachings } from "@/services/teachingServices";
 import { useAnnouncementStore } from "@/stores/announcementStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Announcement } from "@/types/announcement";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -28,9 +30,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const backgroundImage = require("@/assets/images/background.png");
 
 export default function Index() {
-	const [user, setUser] = useState({
-		name: "Wendy"
-	});
+	const { token, profile, setProfile, logout } = useAuthStore();
 
 	const {
 		setIsLoadingLatestTeachings,
@@ -67,6 +67,14 @@ export default function Index() {
 						}
 					}
 				),
+				getProfile(token ?? "", {
+					onSuccess: setProfile,
+					onError: (error) => {
+						// expired or revoked magic-link token
+						if (error?.response?.status === 401) logout();
+						else console.log(error);
+					}
+				}),
 				getAnnouncements({
 					onSuccess: (data) => {
 						const hasBanner = data.some(
@@ -90,7 +98,14 @@ export default function Index() {
 				setIsLoadingLatestTeachings(false);
 			}
 		},
-		[setAnnouncementList, setIsLoadingLatestTeachings, setLatestTeachings]
+		[
+			token,
+			setProfile,
+			logout,
+			setAnnouncementList,
+			setIsLoadingLatestTeachings,
+			setLatestTeachings
+		]
 	);
 
 	useEffect(() => {
@@ -134,7 +149,7 @@ export default function Index() {
 									Welcome back,
 								</Text>
 								<Text className="font-poppins text-white w-1/2 text-3xl">
-									{user.name}
+									{profile?.name}
 								</Text>
 							</View>
 							<Pressable
