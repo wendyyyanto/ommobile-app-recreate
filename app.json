@@ -47,6 +47,11 @@
 							"scheme": "https",
 							"host": "mobile.organic-ministry.org",
 							"pathPrefix": "/notifications"
+						},
+						{
+							"scheme": "https",
+							"host": "mobile.organic-ministry.org",
+							"pathPrefix": "/auth"
 						}
 					],
 					"category": ["BROWSABLE", "DEFAULT"]

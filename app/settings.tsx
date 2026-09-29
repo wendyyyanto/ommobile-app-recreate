@@ -4,6 +4,7 @@ import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import NotificationSwitch from "@/features/notification/NotificationSwitch";
 import useNotificationSettings from "@/hooks/useNotificationSettings";
+import { useAuthStore } from "@/stores/authStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -12,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const NotificationSettings = () => {
 	const { notificationSegments, userNotificationTags } =
 		useNotificationStore();
+	const profile = useAuthStore((s) => s.profile);
 	const {
 		handleCheckedChange,
 		hasNotificationSettingsError,
@@ -33,7 +35,7 @@ const NotificationSettings = () => {
 
 				<View className="px-4 pb-5 pt-6">
 					<Text className="font-poppins text-[32px] text-white">
-						Charbel
+						{profile?.name}
 					</Text>
 					<Text
 						style={[
@@ -42,7 +44,7 @@ const NotificationSettings = () => {
 						]}
 						className="mt-1"
 					>
-						charbelangelia@gmail.com
+						{profile?.email}
 					</Text>
 				</View>
 
@@ -114,7 +116,7 @@ const NotificationSettings = () => {
 				<Pressable
 					className="flex-row items-center gap-2 px-4 py-8"
 					hitSlop={8}
-					onPress={() => undefined}
+					onPress={useAuthStore.getState().logout}
 				>
 					<Ionicons name="log-out-outline" size={24} color="white" />
 					<Text style={fonts.body2White}>Logout</Text>

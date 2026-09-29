@@ -99,12 +99,17 @@ export default function EbookDetailScreen() {
 
 						<View style={styles.buttonContainer}>
 							<Pressable
-								style={styles.readButton}
+								style={styles.downloadButton}
 								onPress={() => {
-									setIsReading(true);
 									// ponytail: saves a new copy on every tap; track downloaded ids if duplicates become a problem.
 									void handleDownloadFile(ebookDetail.ebook_file.url);
 								}}
+							>
+								<Text style={styles.downloadButtonText}>Download</Text>
+							</Pressable>
+							<Pressable
+								style={styles.readButton}
+								onPress={() => setIsReading(true)}
 							>
 								<Text style={styles.readButtonText}>Read Book</Text>
 							</Pressable>
@@ -195,6 +200,7 @@ const styles = StyleSheet.create({
 	tags: {
 		flexDirection: "row",
 		flexWrap: "wrap",
+		justifyContent: "center",
 		gap: 8,
 		marginTop: 30
 	},
@@ -230,9 +236,25 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		left: 24,
 		right: 24,
-		bottom: 16
+		bottom: 16,
+		flexDirection: "row",
+		gap: 12
+	},
+	downloadButton: {
+		flex: 1,
+		height: 50,
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: 32,
+		backgroundColor: colors.darkSlateBlue
+	},
+	downloadButtonText: {
+		fontFamily: "Poppins_400Regular",
+		fontSize: 14,
+		color: colors.white
 	},
 	readButton: {
+		flex: 1,
 		height: 50,
 		alignItems: "center",
 		justifyContent: "center",
