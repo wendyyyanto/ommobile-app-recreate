@@ -76,6 +76,9 @@ export default function RootLayout() {
 		};
 	}, []);
 
+	// Text measured with the fallback font gets clipped on Android once Poppins swaps in
+	if (!fontsLoaded && !fontError) return null;
+
 	return (
 		<GestureHandlerRootView style={{ flex: 1, backgroundColor: "black" }}>
 			<Stack
