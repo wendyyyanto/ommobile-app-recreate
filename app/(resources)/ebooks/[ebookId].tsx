@@ -17,13 +17,17 @@ import {
 	Text,
 	View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+	SafeAreaView,
+	useSafeAreaInsets
+} from "react-native-safe-area-context";
 
 export default function EbookDetailScreen() {
 	const { ebookId } = useLocalSearchParams<{ ebookId: string }>();
 	const [ebookDetail, setEbookDetail] = useState<EbookDetails | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isReading, setIsReading] = useState(false);
+	const insets = useSafeAreaInsets();
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -40,7 +44,7 @@ export default function EbookDetailScreen() {
 			locations={[0, 0.28, 0.58, 1]}
 			style={styles.screen}
 		>
-			<SafeAreaView edges={["top", "bottom"]} style={styles.safeArea}>
+			<SafeAreaView edges={["top"]} style={styles.safeArea}>
 				<View style={styles.backButton}>
 					<BackButton />
 				</View>
@@ -57,7 +61,10 @@ export default function EbookDetailScreen() {
 					<>
 						<ScrollView
 							showsVerticalScrollIndicator={false}
-							contentContainerStyle={styles.content}
+							contentContainerStyle={[
+								styles.content,
+								{ paddingBottom: 112 + insets.bottom }
+							]}
 						>
 							<View style={styles.bookSummary}>
 								<Image
@@ -97,7 +104,9 @@ export default function EbookDetailScreen() {
 							</View>
 						</ScrollView>
 
-						<View style={styles.buttonContainer}>
+						<View
+							style={[styles.buttonContainer, { bottom: 16 + insets.bottom }]}
+						>
 							<Pressable
 								style={styles.downloadButton}
 								onPress={() => {
@@ -146,8 +155,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center"
 	},
 	content: {
-		paddingHorizontal: 24,
-		paddingBottom: 112
+		paddingHorizontal: 24
 	},
 	backButton: {
 		height: 50,
@@ -236,7 +244,6 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		left: 24,
 		right: 24,
-		bottom: 16,
 		flexDirection: "row",
 		gap: 12
 	},
