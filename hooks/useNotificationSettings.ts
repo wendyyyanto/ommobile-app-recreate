@@ -6,6 +6,27 @@ import { OneSignal } from "react-native-onesignal";
 
 const isExpoGo = Constants.executionEnvironment === "storeClient";
 
+export const toNotificationTagName = (label: string) =>
+	label.toLowerCase().replace(/ /g, "_");
+
+// Categories default to on: tag every segment the user hasn't chosen yet.
+// Opting out is stored as "inactive", so a missing tag always means "never chosen".
+export const enableUnsetNotificationCategories = () =>
+	getOneSignalSegments({
+		onSuccess: async ({ segments }: { segments: { name: string }[] }) => {
+			const tags = await OneSignal.User.getTags();
+			const unset = segments
+				.map(({ name }) => toNotificationTagName(name))
+				.filter((tag) => !(tag in tags));
+			if (unset.length) {
+				OneSignal.User.addTags(
+					Object.fromEntries(unset.map((tag) => [tag, "active"]))
+				);
+			}
+		},
+		onError: (error) => console.log(error)
+	});
+
 const useNotificationSettings = () => {
 	const {
 		userNotificationTags,
@@ -58,14 +79,10 @@ const useNotificationSettings = () => {
 	}, [loadNotificationSettings]);
 
 	const handleCheckedChange = (checked: boolean, label: string) => {
-		const parseTagName = label.toLowerCase().replace(/ /g, "_");
+		const parseTagName = toNotificationTagName(label);
 
 		if (!isExpoGo) {
-			if (checked) {
-				OneSignal.User.addTag(parseTagName, "active");
-			} else {
-				OneSignal.User.removeTag(parseTagName);
-			}
+			OneSignal.User.addTag(parseTagName, checked ? "active" : "inactive");
 		}
 
 		setUserNotificationTags({

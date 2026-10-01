@@ -8,6 +8,7 @@ import {
 import Constants from "expo-constants";
 import { router, SplashScreen, Stack } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { enableUnsetNotificationCategories } from "@/hooks/useNotificationSettings";
 import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -28,6 +29,7 @@ if (!isExpoGo) {
 	OneSignal.Debug.setLogLevel(LogLevel.Verbose);
 	OneSignal.initialize(process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string);
 	OneSignal.Notifications.requestPermission(true);
+	void enableUnsetNotificationCategories();
 }
 
 export default function RootLayout() {
