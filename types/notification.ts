@@ -1,17 +1,13 @@
 type Notification = {
-	id: number;
+	id: string;
 	title: string;
-	teaser: string;
-	eventDate: string;
-	createdAt: string;
-};
-
-type NotificationDetail = {
-	title: string;
-	fullMessage: string;
-	imageUrl: string;
-	eventDate: string;
-	createdAt: string;
+	description: string;
+	event_date: string;
+	segment: { id: number; name: string };
+	thumbnail: { id: string; url: string } | null;
+	onesignal_id: string | null;
+	created_at: string;
+	updated_at: string;
 };
 
 type NotificationSegment = {
@@ -20,9 +16,4 @@ type NotificationSegment = {
 
 type NotificationTags = Record<string, string>;
 
-export type {
-	Notification,
-	NotificationDetail,
-	NotificationSegment,
-	NotificationTags
-};
+export type { Notification, NotificationSegment, NotificationTags };

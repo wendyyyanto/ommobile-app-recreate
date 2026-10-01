@@ -1,13 +1,15 @@
 import axios from "@/constants/axios";
 import { RequestHandlerParams } from "@/types/request";
 
-export const getNotifications = async ({
-	onSuccess,
-	onError,
-	onFulfilled = () => {}
-}: RequestHandlerParams) => {
+// ponytail: single page of 50 (same as ebooks); paginate if notifications ever exceed 50.
+export const getNotifications = async (
+	q: string,
+	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
+) => {
 	try {
-		const response = await axios.get("/notifications");
+		const response = await axios.get("/notifications", {
+			params: { page: 1, limit: 50, q: q.trim() || undefined }
+		});
 		onSuccess(response.data);
 	} catch (error) {
 		onError(error);
@@ -17,7 +19,7 @@ export const getNotifications = async ({
 };
 
 export const getNotificationDetail = async (
-	notificationId: number,
+	notificationId: string,
 	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
 ) => {
 	try {

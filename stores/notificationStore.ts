@@ -1,6 +1,5 @@
 import {
 	Notification,
-	NotificationDetail,
 	NotificationSegment,
 	NotificationTags
 } from "@/types/notification";
@@ -11,7 +10,7 @@ interface NotificationState {
 	isLoadingNotificationList: boolean;
 	notificationSegments: NotificationSegment[];
 	userNotificationTags: NotificationTags | null;
-	notificationDetail: NotificationDetail | null;
+	notificationDetail: Notification | null;
 	isLoadingNotificationDetail: boolean;
 	setNotificationList: (notificationList: Notification[]) => void;
 	setIsLoadingNotificationList: (isLoadingNotificationList: boolean) => void;
@@ -20,7 +19,7 @@ interface NotificationState {
 	) => void;
 	setUserNotificationTags: (userNotificationTags: NotificationTags) => void;
 	setNotificationDetail: (
-		notificationDetail: NotificationDetail | null
+		notificationDetail: Notification | null
 	) => void;
 	setIsLoadingNotificationDetail: (
 		isLoadingNotificationDetail: boolean
@@ -42,7 +41,7 @@ export const useNotificationStore = create<NotificationState>()((set) => ({
 		set({ notificationSegments }),
 	setUserNotificationTags: (userNotificationTags: NotificationTags) =>
 		set({ userNotificationTags }),
-	setNotificationDetail: (notificationDetail: NotificationDetail | null) =>
+	setNotificationDetail: (notificationDetail: Notification | null) =>
 		set({ notificationDetail }),
 	setIsLoadingNotificationDetail: (isLoadingNotificationDetail: boolean) =>
 		set({ isLoadingNotificationDetail })

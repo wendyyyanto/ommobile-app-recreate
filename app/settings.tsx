@@ -3,7 +3,9 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import NotificationSwitch from "@/features/notification/NotificationSwitch";
-import useNotificationSettings from "@/hooks/useNotificationSettings";
+import useNotificationSettings, {
+	toNotificationTagName
+} from "@/hooks/useNotificationSettings";
 import { useAuthStore } from "@/stores/authStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -91,12 +93,10 @@ const NotificationSettings = () => {
 					) : (
 						<View className="mt-4">
 							{notificationSegments.map((setting) => {
-								const parseTagName = setting.name
-									.toLowerCase()
-									.replace(/ /g, "_");
 								const isChecked =
-									userNotificationTags?.[parseTagName] ===
-									"active";
+									userNotificationTags?.[
+										toNotificationTagName(setting.name)
+									] !== "inactive";
 
 								return (
 									<NotificationSwitch

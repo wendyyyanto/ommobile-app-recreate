@@ -31,9 +31,9 @@ const NotificationDetail = () => {
 			<SafeAreaView edges={["top"]} className="flex-1 px-4 gap-8">
 				<BackButton />
 				<View className="flex-1 gap-3">
-					{notificationDetail?.imageUrl && (
+					{notificationDetail?.thumbnail && (
 						<Image
-							source={{ uri: notificationDetail?.imageUrl }}
+							source={{ uri: notificationDetail.thumbnail.url }}
 							style={{
 								width: "100%",
 								height: 200,
@@ -45,19 +45,19 @@ const NotificationDetail = () => {
 					)}
 					<Text style={fonts.caption1Grey}>
 						{formatDate(
-							notificationDetail?.createdAt!,
+							notificationDetail?.created_at!,
 							"MMMM Do, YYYY"
 						)}
 					</Text>
 					<Text className="text-white text-2xl font-semibold">
 						{notificationDetail?.title} -{" "}
 						{formatDate(
-							notificationDetail?.eventDate!,
+							notificationDetail?.event_date!,
 							"MMMM Do, YYYY"
 						)}
 					</Text>
 					<Text style={fonts.body1White}>
-						{notificationDetail?.fullMessage}
+						{notificationDetail?.description}
 					</Text>
 				</View>
 			</SafeAreaView>
