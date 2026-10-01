@@ -6,13 +6,13 @@ import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { annoucementBanners } from "@/constants/placeholders";
 import AnnouncementCarousel from "@/features/home/AnnouncementCarousel";
 import HomePageSkeleton from "@/features/skeletons/HomePageSkeleton";
-import { getAnnouncements } from "@/services/announcementServices";
 import { getProfile } from "@/services/authServices";
+import { getNotifications } from "@/services/notificationServices";
 import { getTeachings } from "@/services/teachingServices";
 import { useAnnouncementStore } from "@/stores/announcementStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useTeachingStore } from "@/stores/teachingStore";
-import { Announcement } from "@/types/announcement";
+import { Notification } from "@/types/notification";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -75,15 +75,17 @@ export default function Index() {
 						else console.log(error);
 					}
 				}),
-				getAnnouncements({
-					onSuccess: (data) => {
-						const hasBanner = data.some(
-							(item: Announcement) => item.bannerUrl !== null
-						);
+				getNotifications("", {
+					onSuccess: ({ data }: { data: Notification[] }) => {
+						const banners = data
+							.filter((item) => item.thumbnail)
+							.map((item) => ({
+								id: item.id,
+								announcementTitle: item.title,
+								bannerUrl: item.thumbnail!.url
+							}));
 						setAnnouncementList(
-							hasBanner
-								? data
-								: (annoucementBanners as Announcement[])
+							banners.length ? banners : annoucementBanners
 						);
 					},
 					onError: (error) => {

@@ -16,9 +16,9 @@ const useNotificationDetail = () => {
 		setNotificationDetail(null);
 		setIsLoadingNotificationDetail(true);
 
-		getNotificationDetail(Number(notificationId), {
+		getNotificationDetail(notificationId, {
 			onSuccess: (data) => {
-				setNotificationDetail(data);
+				setNotificationDetail(data.data);
 				setIsLoadingNotificationDetail(false);
 			},
 			onError: (error) => {

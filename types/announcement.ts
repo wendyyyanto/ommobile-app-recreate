@@ -1,5 +1,5 @@
 type Announcement = {
-	id: number;
+	id: string | number;
 	announcementTitle: string;
 	bannerUrl: string | number;
 };

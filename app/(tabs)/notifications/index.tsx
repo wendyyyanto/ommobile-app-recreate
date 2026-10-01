@@ -109,13 +109,13 @@ const Notifications = () => {
 										>
 											{notification.title} -{" "}
 											{formatDate(
-												notification.eventDate,
+												notification.event_date,
 												"MMMM Do, YYYY"
 											)}
 										</Text>
 										<Text style={[fonts.caption1Grey]}>
 											{formatDate(
-												notification.createdAt,
+												notification.created_at,
 												"MMMM Do, YYYY"
 											)}
 										</Text>

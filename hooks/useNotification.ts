@@ -16,9 +16,9 @@ const useNotification = () => {
 				setIsLoadingNotificationList(true);
 			}
 
-			await getNotifications({
+			await getNotifications("", {
 				onSuccess: (data) => {
-					setNotificationList(data);
+					setNotificationList(data.data);
 				},
 				onError: (error) => {
 					console.log(error);
@@ -43,7 +43,7 @@ const useNotification = () => {
 		void fetchNotifications(true);
 	}, [fetchNotifications]);
 
-	const handleNotificationItemPressed = (notificationId: number) => {
+	const handleNotificationItemPressed = (notificationId: string) => {
 		router.push(`/notifications/${notificationId}`);
 	};
 
