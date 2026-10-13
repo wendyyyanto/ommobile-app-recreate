@@ -243,7 +243,7 @@ export default function Index() {
 								>
 									<Text
 										style={[
-											fonts.caption1White,
+											fonts.caption2White,
 											{
 												color: "rgba(255, 255, 255, 0.7)"
 											}

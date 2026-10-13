@@ -3,7 +3,7 @@ import { router, Tabs, usePathname, useSegments } from "expo-router";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { Image } from "expo-image";
-import { Text } from "react-native";
+import { Platform, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const tabBarIconSize = { width: 18, height: 18, marginBottom: 6 };
@@ -13,11 +13,15 @@ export default function TabsLayout() {
 	const pathname = usePathname();
 	const segments = useSegments();
 	const shouldHideTabBar = segments.length > 2;
+	// iOS home indicator is a gesture overlay, so content can sit inside its inset;
+	// Android button nav would cover it, so keep the full inset there
+	const tabBarPaddingBottom =
+		Platform.OS === "ios" ? 16 : 12 + insets.bottom;
 	const baseTabBarStyle = {
 		backgroundColor: "black",
-		paddingBottom: 12 + insets.bottom,
+		paddingBottom: tabBarPaddingBottom,
 		paddingTop: 10,
-		height: 58 + 10 + (12 + insets.bottom),
+		height: 58 + 10 + tabBarPaddingBottom,
 		borderColor: "transparent"
 	};
 

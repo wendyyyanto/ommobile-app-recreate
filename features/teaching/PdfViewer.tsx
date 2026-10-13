@@ -6,7 +6,7 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Pdf from "react-native-pdf";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 
 // react-native-pdf can't render slides, so non-PDF files (ppt/pptx) are streamed
@@ -80,56 +80,60 @@ const PdfViewer = ({
 		};
 	}, []);
 
+	// Modal content is mounted outside the root SafeAreaProvider natively, so
+	// SafeAreaView would read zero insets without a provider of its own.
 	return (
-		<SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-			<View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-				<BackButton onPress={onClose} />
-			</View>
-			{media ? (
-				<WebView
-					source={{ html: mediaHtml(source, media) }}
-					style={styles.pdf}
-					allowsFullscreenVideo
-					allowsInlineMediaPlayback
-					mediaPlaybackRequiresUserAction={false}
-				/>
-			) : !isPdf ? (
-				<WebView
-					source={{ uri: officeViewerUrl(source) }}
-					style={styles.pdf}
-					startInLoadingState
-					renderLoading={() => (
-						<View style={styles.loadingContainer}>
-							<LoadingSpinner label="Loading file..." />
-						</View>
-					)}
-					onError={() => {
-						showErrorToast(
-							"Failed to load file",
-							"Something went wrong while loading the file, please try again later or contact support"
-						);
-						onClose();
-					}}
-				/>
-			) : localPath ? (
-				<Pdf
-					enablePaging
-					source={{ uri: localPath }}
-					trustAllCerts={false}
-					onError={(error) => {
-						console.log(error);
-					}}
-					onPressLink={(uri) => {
-						console.log(`Link pressed: ${uri}`);
-					}}
-					style={styles.pdf}
-				/>
-			) : (
-				<View style={styles.loadingContainer}>
-					<LoadingSpinner label="Downloading file..." />
+		<SafeAreaProvider>
+			<SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+				<View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+					<BackButton onPress={onClose} />
 				</View>
-			)}
-		</SafeAreaView>
+				{media ? (
+					<WebView
+						source={{ html: mediaHtml(source, media) }}
+						style={styles.pdf}
+						allowsFullscreenVideo
+						allowsInlineMediaPlayback
+						mediaPlaybackRequiresUserAction={false}
+					/>
+				) : !isPdf ? (
+					<WebView
+						source={{ uri: officeViewerUrl(source) }}
+						style={styles.pdf}
+						startInLoadingState
+						renderLoading={() => (
+							<View style={styles.loadingContainer}>
+								<LoadingSpinner label="Loading file..." />
+							</View>
+						)}
+						onError={() => {
+							showErrorToast(
+								"Failed to load file",
+								"Something went wrong while loading the file, please try again later or contact support"
+							);
+							onClose();
+						}}
+					/>
+				) : localPath ? (
+					<Pdf
+						enablePaging
+						source={{ uri: localPath }}
+						trustAllCerts={false}
+						onError={(error) => {
+							console.log(error);
+						}}
+						onPressLink={(uri) => {
+							console.log(`Link pressed: ${uri}`);
+						}}
+						style={styles.pdf}
+					/>
+				) : (
+					<View style={styles.loadingContainer}>
+						<LoadingSpinner label="Downloading file..." />
+					</View>
+				)}
+			</SafeAreaView>
+		</SafeAreaProvider>
 	);
 };
 

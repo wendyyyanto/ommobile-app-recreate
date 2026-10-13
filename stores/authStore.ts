@@ -21,7 +21,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()((set) => ({
 	token: storedToken || null,
-	isLoggedIn: __DEV__ || !!storedToken,
+	isLoggedIn: !!storedToken,
 	profile: null,
 	login: (token) => {
 		sessionFile.write(token);
@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
 	},
 	logout: () => {
 		if (sessionFile.exists) sessionFile.delete();
-		set({ token: null, isLoggedIn: __DEV__, profile: null });
+		set({ token: null, isLoggedIn: false, profile: null });
 	},
 	setProfile: (profile) => set({ profile })
 }));
