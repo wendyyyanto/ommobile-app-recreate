@@ -11,6 +11,7 @@ import { getEbookDetails } from "@/services/ebookServices";
 import { EbookDetails } from "@/types/ebook";
 import {
 	Modal,
+	Platform,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -28,6 +29,8 @@ export default function EbookDetailScreen() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isReading, setIsReading] = useState(false);
 	const insets = useSafeAreaInsets();
+	// same rule as the tab bar: iOS buttons may sit inside the home indicator inset
+	const buttonBottom = Platform.OS === "ios" ? 16 : 16 + insets.bottom;
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -63,7 +66,7 @@ export default function EbookDetailScreen() {
 							showsVerticalScrollIndicator={false}
 							contentContainerStyle={[
 								styles.content,
-								{ paddingBottom: 112 + insets.bottom }
+								{ paddingBottom: 96 + buttonBottom }
 							]}
 						>
 							<View style={styles.bookSummary}>
@@ -105,7 +108,7 @@ export default function EbookDetailScreen() {
 						</ScrollView>
 
 						<View
-							style={[styles.buttonContainer, { bottom: 16 + insets.bottom }]}
+							style={[styles.buttonContainer, { bottom: buttonBottom }]}
 						>
 							<Pressable
 								style={styles.downloadButton}
