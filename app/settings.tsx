@@ -6,13 +6,49 @@ import NotificationSwitch from "@/features/notification/NotificationSwitch";
 import useNotificationSettings, {
 	toNotificationTagName
 } from "@/hooks/useNotificationSettings";
+import { deleteAccount } from "@/services/authServices";
 import { useAuthStore } from "@/stores/authStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const confirmAccountDeletion = (
+	setIsDeleting: (isDeleting: boolean) => void
+) =>
+	Alert.alert(
+		"Delete account?",
+		"Your account and its data will be permanently deleted. This can't be undone.",
+		[
+			{ text: "Cancel", style: "cancel" },
+			{
+				text: "Delete",
+				style: "destructive",
+				onPress: () => {
+					setIsDeleting(true);
+					void deleteAccount({
+						onSuccess: () => {
+							Alert.alert(
+								"Account deleted",
+								"Your account has been deleted."
+							);
+							useAuthStore.getState().logout();
+						},
+						onError: () =>
+							Alert.alert(
+								"Something went wrong",
+								"We couldn't delete your account. Please try again."
+							),
+						onFulfilled: () => setIsDeleting(false)
+					});
+				}
+			}
+		]
+	);
+
 const NotificationSettings = () => {
+	const [isDeleting, setIsDeleting] = useState(false);
 	const { notificationSegments, userNotificationTags } =
 		useNotificationStore();
 	const profile = useAuthStore((s) => s.profile);
@@ -120,6 +156,18 @@ const NotificationSettings = () => {
 				>
 					<Ionicons name="log-out-outline" size={24} color="white" />
 					<Text style={fonts.body2White}>Logout</Text>
+				</Pressable>
+
+				<Pressable
+					className="flex-row items-center gap-2 px-4 pb-8"
+					disabled={isDeleting}
+					hitSlop={8}
+					onPress={() => confirmAccountDeletion(setIsDeleting)}
+				>
+					<Ionicons name="trash-outline" size={24} color="#FF6B6B" />
+					<Text style={[fonts.body2White, { color: "#FF6B6B" }]}>
+						{isDeleting ? "Deleting..." : "Delete Account"}
+					</Text>
 				</Pressable>
 			</ScrollView>
 		</SafeAreaView>

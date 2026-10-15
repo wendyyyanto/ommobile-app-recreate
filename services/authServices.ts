@@ -33,6 +33,23 @@ export const login = async (
 	}
 };
 
+// Deletes the signed-in user's account; the API reads the user from the token that the
+// axios interceptor adds.
+export const deleteAccount = async ({
+	onSuccess,
+	onError,
+	onFulfilled = () => {}
+}: RequestHandlerParams) => {
+	try {
+		const response = await axios.delete("/account-deletion");
+		onSuccess(response.data);
+	} catch (error) {
+		onError(error);
+	} finally {
+		onFulfilled();
+	}
+};
+
 export const getProfile = async (
 	token: string,
 	{ onSuccess, onError, onFulfilled = () => {} }: RequestHandlerParams
