@@ -3,7 +3,7 @@
 		"name": "OM Mobile",
 		"slug": "ommobile-app",
 		"owner": "organicministryapp",
-		"version": "1.3.3",
+		"version": "1.3.4",
 		"orientation": "portrait",
 		"icon": "./assets/images/app_icon.png",
 		"scheme": "ommobileapp",
@@ -12,7 +12,7 @@
 		"ios": {
 			"supportsTablet": false,
 			"bundleIdentifier": "com.anonymous.ommobileapp",
-			"buildNumber": "1",
+			"buildNumber": "2",
 			"associatedDomains": ["applinks:mobile.organic-ministry.org"],
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false,
@@ -28,7 +28,7 @@
 			}
 		},
 		"android": {
-			"versionCode": 1303,
+			"versionCode": 1304,
 			"icon": "./assets/images/app_icon.png",
 			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false,
