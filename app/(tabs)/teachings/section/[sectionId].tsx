@@ -123,7 +123,7 @@ const TeachingsSection = () => {
 					<ScrollView
 						refreshControl={
 							<RefreshControl
-								refreshing={isLoadingSectionTeachings}
+								refreshing={false}
 								onRefresh={handleRefreshSectionTeachings}
 							/>
 						}
