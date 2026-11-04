@@ -1,4 +1,5 @@
 import fonts from "@/constants/fonts";
+import { TeachingVideoSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Text, View } from "react-native";
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -8,7 +9,14 @@ const getYoutubeId = (url?: string | null) =>
 
 const TeachingVideoTab = () => {
 	const teachingDetails = useTeachingStore((s) => s.teachingDetails);
+	const isLoadingTeachingDetails = useTeachingStore(
+		(s) => s.isLoadingTeachingDetails
+	);
 	const youtubeId = getYoutubeId(teachingDetails?.video_url);
+
+	if (isLoadingTeachingDetails) {
+		return <TeachingVideoSkeleton />;
+	}
 
 	if (!youtubeId) {
 		return (

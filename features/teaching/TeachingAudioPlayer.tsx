@@ -1,5 +1,5 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
+import { TeachingAudioPlayerSkeleton } from "@/features/skeletons/ContentSkeletons";
 import useTeachingAudioPlayer from "@/hooks/useTeachingAudioPlayer";
 import { formatDuration } from "@/utils/timeHelper";
 import Slider from "@react-native-community/slider";
@@ -28,9 +28,7 @@ const TeachingAudioPlayer = () => {
 	} = useTeachingAudioPlayer();
 
 	if (!status.isLoaded && !status.duration)
-		return (
-			<LoadingSpinner label="Please wait while we load the audio ..." />
-		);
+		return <TeachingAudioPlayerSkeleton />;
 
 	return (
 		<View className="w-full">

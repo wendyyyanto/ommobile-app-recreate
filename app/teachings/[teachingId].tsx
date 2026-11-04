@@ -2,6 +2,7 @@ import BackButton from "@/components/ui/BackButton";
 import colors from "@/constants/colors";
 import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
+import { TeachingDownloadsSkeleton } from "@/features/skeletons/ContentSkeletons";
 import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
@@ -31,19 +32,22 @@ const TeachingDetail = () => {
 	const {
 		activeTab,
 		teachingDetails,
+		isLoadingTeachingDetails,
 		setActiveTab
 	} = useTeachingStore(
 		useShallow((s) => ({
 			activeTab: s.activeTab,
 			teachingDetails: s.teachingDetails,
+			isLoadingTeachingDetails: s.isLoadingTeachingDetails,
 			setActiveTab: s.setActiveTab
 		}))
 	);
 	const { handleRefreshTeachingDetail, isRefreshing } = useTeachingDetail();
 	const [isFileDropdownOpen, setIsFileDropdownOpen] = useState(false);
-	const audioUrl = teachingDetails?.audio_file?.url?.trim();
-	const pdfUrl = teachingDetails?.pdf_file?.url?.trim();
-	const pptUrl = teachingDetails?.ppt_file?.url?.trim();
+	const loadedDetails = isLoadingTeachingDetails ? null : teachingDetails;
+	const audioUrl = loadedDetails?.audio_file?.url?.trim();
+	const pdfUrl = loadedDetails?.pdf_file?.url?.trim();
+	const pptUrl = loadedDetails?.ppt_file?.url?.trim();
 	const hasBothTeachingFiles = Boolean(pdfUrl && pptUrl);
 	const swipeToAudioGesture = Gesture.Pan()
 		.enabled(activeTab === TabEnum.VIDEO)
@@ -118,6 +122,11 @@ const TeachingDetail = () => {
 						</View>
 
 						<View className="flex-row justify-between items-center mt-20 gap-4">
+							{isLoadingTeachingDetails && (
+								<TeachingDownloadsSkeleton
+									count={activeTab === TabEnum.AUDIO ? 2 : 1}
+								/>
+							)}
 							{(pptUrl || pdfUrl) && (
 								<View style={styles.downloadButtonSlot}>
 									<Pressable

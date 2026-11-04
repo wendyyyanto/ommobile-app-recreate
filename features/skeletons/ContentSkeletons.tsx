@@ -53,6 +53,77 @@ const LoadingGroup = ({
 	</View>
 );
 
+const TEACHING_TITLE_FONT: TextStyle = { fontSize: 20, fontWeight: "600" };
+
+const TeachingMetadataSkeleton = () => (
+	<View className="w-full items-center gap-2" style={{ marginTop: 30 }}>
+		<View style={{ width: "36%" }}>
+			<SkeletonLine font={fonts.caption2White} width="100%" />
+		</View>
+		<View style={{ width: "68%" }}>
+			<SkeletonLine font={TEACHING_TITLE_FONT} width="100%" />
+		</View>
+		<View style={{ width: "44%" }}>
+			<SkeletonLine font={fonts.caption2White} width="100%" />
+		</View>
+	</View>
+);
+
+export const TeachingAudioPlayerSkeleton = () => (
+	<LoadingGroup label="Loading audio" className="w-full">
+		<View
+			className="justify-center"
+			style={{
+				width: "95%",
+				height: 40,
+				alignSelf: "center",
+				marginTop: 28,
+				marginBottom: 14
+			}}
+		>
+			<SkeletonBone height={4} width="100%" radius="round" />
+		</View>
+		<View className="flex-row justify-between">
+			<SkeletonBone height={10} width={36} radius={4} />
+			<SkeletonBone height={10} width={36} radius={4} />
+		</View>
+		<View className="flex-row justify-between items-center mt-5">
+			<View className="w-11 h-11" />
+			<View className="flex-row justify-center items-center gap-8">
+				<SkeletonBone height={36} width={36} radius="round" />
+				<SkeletonBone height={68} width={68} radius="round" />
+				<SkeletonBone height={36} width={36} radius="round" />
+			</View>
+			<SkeletonBone height={48} width={48} radius={8} />
+		</View>
+	</LoadingGroup>
+);
+
+export const TeachingAudioSkeleton = () => (
+	<LoadingGroup label="Loading teaching" className="items-center">
+		<SkeletonBone height={200} width={200} radius="square" />
+		<TeachingMetadataSkeleton />
+		<TeachingAudioPlayerSkeleton />
+	</LoadingGroup>
+);
+
+export const TeachingVideoSkeleton = () => (
+	<LoadingGroup label="Loading teaching" className="w-full">
+		<SkeletonBone height={200} width="100%" radius={16} />
+		<TeachingMetadataSkeleton />
+	</LoadingGroup>
+);
+
+export const TeachingDownloadsSkeleton = ({ count }: { count: number }) => (
+	<LoadingGroup label="Loading downloads" className="flex-1 flex-row gap-4">
+		{Array.from({ length: count }, (_, i) => (
+			<View key={i} className="flex-1">
+				<SkeletonBone height={52} width="100%" radius={40} />
+			</View>
+		))}
+	</LoadingGroup>
+);
+
 const TEACHING_WIDTHS = [
 	["72%", "46%", "34%"],
 	["58%", "38%", "42%"],

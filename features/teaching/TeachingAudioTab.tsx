@@ -1,6 +1,6 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
+import { TeachingAudioSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
@@ -33,7 +33,7 @@ const TeachingAudioTab = () => {
 		.runOnJS(true);
 
 	if (isLoadingTeachingDetails) {
-		return <LoadingSpinner />;
+		return <TeachingAudioSkeleton />;
 	}
 
 	return (
