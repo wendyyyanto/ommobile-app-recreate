@@ -123,10 +123,24 @@ const Teachings = () => {
 	}, [fetchPopularTeachings]);
 
 	const teachingCategories = [
-		{ name: "New Testament", id: "new-testament" },
-		{ name: "Topical", id: "topical" },
-		{ name: "Old Testament", id: "old-testament" },
-		{ name: "Workshop", id: "workshop" }
+		{
+			name: "New Testament",
+			id: "new-testament",
+			background: "#1B3550",
+			border: colors.steelBlue
+		},
+		{
+			name: "Old Testament",
+			id: "old-testament",
+			background: "#1D3B38",
+			border: "#3F8F84"
+		},
+		{
+			name: "Topical",
+			id: "topical",
+			background: "#34264A",
+			border: "#8A6BB0"
+		}
 	];
 
 	return (
@@ -156,30 +170,33 @@ const Teachings = () => {
 							/>
 						</Pressable>
 					</View>
-					<View className="flex flex-row flex-wrap gap-2 mb-11">
+					<View className="flex-row gap-2 mb-11">
 						{teachingCategories.map((category) => (
 							<Pressable
 								key={category.id}
-								className="basis-[48%] flex-1 flex-row justify-between items-center p-4 rounded-full bg-transparent border border-slate-gray-blue active:opacity-70"
+								accessibilityRole="button"
+								className="flex-1 min-h-[84px] justify-between p-2.5 rounded-2xl border active:opacity-70"
+								style={{
+									backgroundColor: category.background,
+									borderColor: category.border
+								}}
 								onPress={() =>
 									router.push(
 										`/teachings/section/${category.id}?name=${category.name}`
 									)
 								}
 							>
-								<Text
-									style={fonts.body1White}
-									numberOfLines={1}
-									ellipsizeMode="tail"
-								>
+								<Text style={fonts.caption2White} numberOfLines={2}>
 									{category.name}
 								</Text>
 								<Image
 									source={require("@/assets/icons/chevron_right.svg")}
 									style={{
-										width: 28,
-										height: 28,
-										marginRight: -6
+										width: 24,
+										height: 24,
+										alignSelf: "flex-end",
+										marginRight: -4,
+										marginBottom: -4
 									}}
 								/>
 							</Pressable>
