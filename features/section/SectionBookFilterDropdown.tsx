@@ -9,6 +9,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import SectionBookOptionsAccordion from "./SectionBookOptionsAccordion";
+import { useShallow } from "zustand/react/shallow";
 
 const SectionBookFilterDropdown = () => {
 	const {
@@ -20,7 +21,18 @@ const SectionBookFilterDropdown = () => {
 		setBookChapters,
 		isFilterByBookOpen,
 		setSelectedBook
-	} = useTeachingFilterStore();
+	} = useTeachingFilterStore(
+		useShallow((s) => ({
+			bookOptions: s.bookOptions,
+			bookChapters: s.bookChapters,
+			selectedBook: s.selectedBook,
+			setIsFilterByBookOpen: s.setIsFilterByBookOpen,
+			setBookOptions: s.setBookOptions,
+			setBookChapters: s.setBookChapters,
+			isFilterByBookOpen: s.isFilterByBookOpen,
+			setSelectedBook: s.setSelectedBook
+		}))
+	);
 
 	const { handleSelectAllChapters, handleFilterTeachingByBook } =
 		useFilterBook();

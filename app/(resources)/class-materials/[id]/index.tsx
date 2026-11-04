@@ -1,5 +1,5 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import fonts from "@/constants/fonts";
+import { ClassWeekListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { getClassDetails } from "@/services/classServices";
 import { useClassStore } from "@/stores/classStore";
 import { Image } from "expo-image";
@@ -7,6 +7,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useShallow } from "zustand/react/shallow";
 
 export default function ClassMaterialsDetailScreen() {
 	const { id, title, totalWeeks } = useLocalSearchParams<{
@@ -14,7 +15,15 @@ export default function ClassMaterialsDetailScreen() {
 		title?: string;
 		totalWeeks?: string;
 	}>();
-	const { classDetails, setClassDetails } = useClassStore();
+	const {
+		classDetails,
+		setClassDetails
+	} = useClassStore(
+		useShallow((s) => ({
+			classDetails: s.classDetails,
+			setClassDetails: s.setClassDetails
+		}))
+	);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
@@ -37,6 +46,8 @@ export default function ClassMaterialsDetailScreen() {
 		>
 			<View className="flex-row items-center gap-4">
 				<Pressable
+					accessibilityRole="button"
+					accessibilityLabel="Go back"
 					style={{ width: 40, height: 40 }}
 					onPress={() => router.back()}
 				>
@@ -50,9 +61,7 @@ export default function ClassMaterialsDetailScreen() {
 				</Text>
 			</View>
 			{isLoading && !weekCount ? (
-				<View className="flex-1 justify-center">
-					<LoadingSpinner />
-				</View>
+				<ClassWeekListSkeleton count={6} />
 			) : (
 				<View className="flex-1 flex-col gap-4">
 					{classDetails?.description ? (

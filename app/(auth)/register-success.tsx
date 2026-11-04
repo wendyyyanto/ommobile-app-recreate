@@ -20,6 +20,8 @@ export default function RegisterSuccessScreen() {
 				}}
 			>
 				<Pressable
+					accessibilityRole="button"
+					accessibilityLabel="Go back"
 					style={{ width: 40, height: 40 }}
 					onPress={() => router.back()}
 				>
@@ -48,18 +50,8 @@ export default function RegisterSuccessScreen() {
 							}
 						]}
 					>
-						Our administrator will review your request and send you
-						an email once a decision has been made.
-					</Text>
-					<Text
-						style={[
-							fonts.body1White,
-							{
-								color: colors.lightSteelGray
-							}
-						]}
-					>
-						Please check your inbox for updates.
+						Congrats! Your account has been successfully created.
+						You can now log in and access the application.
 					</Text>
 				</View>
 

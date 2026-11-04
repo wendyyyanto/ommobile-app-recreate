@@ -15,7 +15,7 @@ export default function AccountNotFoundScreen() {
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.black }}>
 			<Image
-				source={require("@/assets/images/search_noresult.png")}
+				source={require("@/assets/images/search_noresult.webp")}
 				style={{
 					position: "absolute",
 					top: 35,
@@ -35,6 +35,8 @@ export default function AccountNotFoundScreen() {
 					}}
 				>
 					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel="Go back"
 						style={{ width: 40, height: 40 }}
 						onPress={() => router.back()}
 					>

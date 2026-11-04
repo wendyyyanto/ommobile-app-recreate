@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { ImageBackground, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const backgroundImage = require("@/assets/images/background.png");
+const backgroundImage = require("@/assets/images/background.webp");
 
 const NotFound = () => {
 	const pathname = usePathname();

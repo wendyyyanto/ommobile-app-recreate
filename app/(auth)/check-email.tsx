@@ -1,5 +1,7 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { login } from "@/services/authServices";
+import { showErrorToast, showSuccessToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -16,6 +18,7 @@ const RESEND_SECONDS = 60;
 export default function CheckEmailScreen() {
 	const { email } = useLocalSearchParams<{ email?: string }>();
 	const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
+	const [isResending, setIsResending] = useState(false);
 
 	useEffect(() => {
 		// countdown only gates "Resend"; signing in happens solely via the emailed magic link
@@ -25,10 +28,30 @@ export default function CheckEmailScreen() {
 		return () => clearTimeout(timer);
 	}, [secondsLeft]);
 
+	const handleResend = () => {
+		if (!email || isResending) return;
+		setIsResending(true);
+		login(
+			{ email },
+			{
+				onSuccess: () => {
+					setSecondsLeft(RESEND_SECONDS);
+					showSuccessToast("Sign-in link sent");
+				},
+				onError: (error) =>
+					showErrorToast(
+						error?.response?.data?.message ??
+							"Something went wrong. Please try again."
+					),
+				onFulfilled: () => setIsResending(false)
+			}
+		);
+	};
+
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.black }}>
 			<Image
-				source={require("@/assets/images/email.png")}
+				source={require("@/assets/images/email.webp")}
 				style={{
 					position: "absolute",
 					top: 0,
@@ -70,8 +93,8 @@ export default function CheckEmailScreen() {
 
 						<View style={{ alignItems: "center", gap: 24 }}>
 							<Pressable
-								disabled={secondsLeft > 0}
-								onPress={() => setSecondsLeft(RESEND_SECONDS)}
+								disabled={secondsLeft > 0 || isResending}
+								onPress={handleResend}
 							>
 								<Text
 									style={[

@@ -1,6 +1,7 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ErrorState from "@/components/ui/ErrorState";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { ClassListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -14,6 +15,8 @@ export default function ClassMaterialsScreen() {
 	const [classes, setClasses] = useState<ClassSummary[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [query, setQuery] = useState("");
+	const [hasError, setHasError] = useState(false);
+	const [retryCount, setRetryCount] = useState(0);
 
 	// Debounced search; cleanup cancels the pending timer and ignores stale responses.
 	useEffect(() => {
@@ -21,9 +24,13 @@ export default function ClassMaterialsScreen() {
 		const timeout = setTimeout(
 			() => {
 				setIsLoading(true);
+				setHasError(false);
 				void getClasses(query, {
 					onSuccess: (response) => !ignore && setClasses(response.data),
-					onError: (error) => console.log(error),
+					onError: (error) => {
+						console.log(error);
+						if (!ignore) setHasError(true);
+					},
 					onFulfilled: () => !ignore && setIsLoading(false)
 				});
 			},
@@ -33,7 +40,7 @@ export default function ClassMaterialsScreen() {
 			ignore = true;
 			clearTimeout(timeout);
 		};
-	}, [query]);
+	}, [query, retryCount]);
 
 	// Group by category, keeping the API's newest-first order within each group.
 	const classMaterialsList = useMemo(() => {
@@ -53,6 +60,8 @@ export default function ClassMaterialsScreen() {
 		<SafeAreaView edges={["top"]} className="flex-1 flex-col gap-7 px-4 py-5">
 			<View className="flex-row items-center gap-4">
 				<Pressable
+					accessibilityRole="button"
+					accessibilityLabel="Go back"
 					style={{ width: 40, height: 40 }}
 					onPress={() => router.back()}
 				>
@@ -85,9 +94,12 @@ export default function ClassMaterialsScreen() {
 				/>
 			</View>
 			{isLoading ? (
-				<View className="flex-1 justify-center">
-					<LoadingSpinner />
-				</View>
+				<ClassListSkeleton />
+			) : hasError ? (
+				<ErrorState
+					message="Couldn't load classes. Check your connection and try again."
+					onRetry={() => setRetryCount((n) => n + 1)}
+				/>
 			) : (
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="flex-1 pb-8 gap-3">

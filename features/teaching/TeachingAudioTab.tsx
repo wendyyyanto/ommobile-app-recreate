@@ -10,10 +10,20 @@ import {
 	GestureDetector
 } from "react-native-gesture-handler";
 import TeachingAudioPlayer from "./TeachingAudioPlayer";
+import { useShallow } from "zustand/react/shallow";
 
 const TeachingAudioTab = () => {
-	const { teachingDetails, isLoadingTeachingDetails, setActiveTab } =
-		useTeachingStore();
+	const {
+		teachingDetails,
+		isLoadingTeachingDetails,
+		setActiveTab
+	} = useTeachingStore(
+		useShallow((s) => ({
+			teachingDetails: s.teachingDetails,
+			isLoadingTeachingDetails: s.isLoadingTeachingDetails,
+			setActiveTab: s.setActiveTab
+		}))
+	);
 
 	const flingGestureHandler = Gesture.Fling()
 		.direction(Directions.LEFT)

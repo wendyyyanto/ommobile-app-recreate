@@ -1,23 +1,26 @@
 import BackButton from "@/components/ui/BackButton";
+import ErrorState from "@/components/ui/ErrorState";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import useSearchTeachings from "@/hooks/useSearchTeachings";
 import { useTeachingStore } from "@/stores/teachingStore";
-import { isNearScrollEnd } from "@/utils/paginationHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useRef } from "react";
 import {
+	FlatList,
 	ImageBackground,
 	Pressable,
-	ScrollView,
 	Text,
 	TextInput,
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useShallow } from "zustand/react/shallow";
+
+const ItemSeparator = () => <View style={{ height: 16 }} />;
 
 const SearchTeaching = () => {
 	const {
@@ -27,15 +30,30 @@ const SearchTeaching = () => {
 		setSearchQuery,
 		setSearchTeachings,
 		isLoadMoreSearchTeachings
-	} = useTeachingStore();
-	const { handleSearchTeachings, handleLoadMoreSearchTeachings } =
-		useSearchTeachings();
+	} = useTeachingStore(
+		useShallow((s) => ({
+			searchTeachings: s.searchTeachings,
+			isLoadingSearchTeachings: s.isLoadingSearchTeachings,
+			searchQuery: s.searchQuery,
+			setSearchQuery: s.setSearchQuery,
+			setSearchTeachings: s.setSearchTeachings,
+			isLoadMoreSearchTeachings: s.isLoadMoreSearchTeachings
+		}))
+	);
+	const {
+		hasError,
+		handleSearchTeachings,
+		handleLoadMoreSearchTeachings,
+		handleRetrySearch
+	} = useSearchTeachings();
 	const searchInputRef = useRef<TextInput>(null);
 
 	const backgroundImage =
-		searchQuery.trim() !== "" && searchTeachings?.length === 0
-			? require("@/assets/images/search_noresult.png")
-			: require("@/assets/images/search_initial.png");
+		searchQuery.trim() !== "" &&
+		searchTeachings?.length === 0 &&
+		!hasError
+			? require("@/assets/images/search_noresult.webp")
+			: require("@/assets/images/search_initial.webp");
 
 	return (
 		<ImageBackground
@@ -86,27 +104,26 @@ const SearchTeaching = () => {
 						/>
 					</View>
 				) : searchTeachings?.length > 0 ? (
-					<ScrollView
+					<FlatList
+						data={searchTeachings}
+						keyExtractor={(teaching) => String(teaching.id)}
+						renderItem={({ item }) => <TeachingCard teaching={item} />}
+						ItemSeparatorComponent={ItemSeparator}
 						showsVerticalScrollIndicator={false}
-						onScroll={(event) => {
-							if (isNearScrollEnd(event)) {
-								void handleLoadMoreSearchTeachings();
-							}
-						}}
-						scrollEventThrottle={16}
-					>
-						<View className="flex-1 gap-4 pb-40">
-							{searchTeachings?.map((teaching) => (
-								<TeachingCard
-									key={teaching.id}
-									teaching={teaching}
-								/>
-							))}
-							{isLoadMoreSearchTeachings && (
+						contentContainerStyle={{ paddingBottom: 160 }}
+						onEndReached={() => void handleLoadMoreSearchTeachings()}
+						onEndReachedThreshold={0.5}
+						ListFooterComponent={
+							isLoadMoreSearchTeachings ? (
 								<LoadingSpinner label="Loading more teachings..." />
-							)}
-						</View>
-					</ScrollView>
+							) : null
+						}
+					/>
+				) : hasError ? (
+					<ErrorState
+						message="Couldn't search right now. Check your connection and try again."
+						onRetry={handleRetrySearch}
+					/>
 				) : (
 					<View className="flex-1 items-center justify-center">
 						<Text

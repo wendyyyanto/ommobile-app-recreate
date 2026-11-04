@@ -1,5 +1,5 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import fonts from "@/constants/fonts";
+import { ClassMaterialListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import PdfViewer from "@/features/teaching/PdfViewer";
 import { useClassStore } from "@/stores/classStore";
 import { ClassMaterial } from "@/types/class";
@@ -48,6 +48,8 @@ export default function ClassWeekMaterialsScreen() {
 		>
 			<View className="flex-row items-center gap-4">
 				<Pressable
+					accessibilityRole="button"
+					accessibilityLabel="Go back"
 					style={{ width: 40, height: 40 }}
 					onPress={() => router.back()}
 				>
@@ -59,9 +61,7 @@ export default function ClassWeekMaterialsScreen() {
 				<Text style={fonts.body2White}>Week {week}</Text>
 			</View>
 			{!classDetails ? (
-				<View className="flex-1 justify-center">
-					<LoadingSpinner />
-				</View>
+				<ClassMaterialListSkeleton count={5} />
 			) : (
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="flex-1 pb-8 gap-3">

@@ -4,8 +4,10 @@ import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { GetTeachingParams } from "@/types/teaching";
 import { appendUniqueItems } from "@/utils/paginationHelper";
+import { showErrorToast } from "@/utils/toastHelper";
 import { router } from "expo-router";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 type UseTeachingSectionParams = {
 	page?: number;
@@ -23,7 +25,14 @@ const useTeachingSection = ({
 		setIsLoadingSectionTeachings,
 		setIsLoadMoreSectionTeachings,
 		setSectionTeachingsPagination
-	} = useTeachingStore();
+	} = useTeachingStore(
+		useShallow((s) => ({
+			setSectionTeachings: s.setSectionTeachings,
+			setIsLoadingSectionTeachings: s.setIsLoadingSectionTeachings,
+			setIsLoadMoreSectionTeachings: s.setIsLoadMoreSectionTeachings,
+			setSectionTeachingsPagination: s.setSectionTeachingsPagination
+		}))
+	);
 	const {
 		setIsFilterByBookOpen,
 		setIsFilterByOtherOpen,
@@ -31,11 +40,22 @@ const useTeachingSection = ({
 		selectedBook,
 		setSelectedBook,
 		setSelectedFilter
-	} = useTeachingFilterStore();
+	} = useTeachingFilterStore(
+		useShallow((s) => ({
+			setIsFilterByBookOpen: s.setIsFilterByBookOpen,
+			setIsFilterByOtherOpen: s.setIsFilterByOtherOpen,
+			selectedFilter: s.selectedFilter,
+			selectedBook: s.selectedBook,
+			setSelectedBook: s.setSelectedBook,
+			setSelectedFilter: s.setSelectedFilter
+		}))
+	);
 	const requestIdRef = useRef(0);
+	const [hasError, setHasError] = useState(false);
 
 	useEffect(() => {
 		const requestId = ++requestIdRef.current;
+		setHasError(false);
 		setSelectedBook(null);
 		setSelectedFilter(null);
 		setSectionTeachings([]);
@@ -58,6 +78,7 @@ const useTeachingSection = ({
 					if (requestId !== requestIdRef.current) return;
 
 					console.log(error);
+					setHasError(true);
 				},
 				onFulfilled: () => {
 					if (requestId === requestIdRef.current) {
@@ -86,6 +107,7 @@ const useTeachingSection = ({
 
 	const handleRefreshSectionTeachings = useCallback(async () => {
 		const requestId = ++requestIdRef.current;
+		setHasError(false);
 		setSelectedBook(null);
 		setSelectedFilter(null);
 		setIsLoadMoreSectionTeachings(false);
@@ -108,6 +130,10 @@ const useTeachingSection = ({
 					if (requestId !== requestIdRef.current) return;
 
 					console.log(error);
+					setHasError(true);
+					if (useTeachingStore.getState().sectionTeachings.length > 0) {
+						showErrorToast("Couldn't refresh. Please try again.");
+					}
 				},
 				onFulfilled: () => {
 					if (requestId === requestIdRef.current) {
@@ -222,6 +248,7 @@ const useTeachingSection = ({
 	};
 
 	return {
+		hasError,
 		handleCloseSectionTeachings,
 		handleRefreshSectionTeachings,
 		handleLoadMoreSectionTeachings

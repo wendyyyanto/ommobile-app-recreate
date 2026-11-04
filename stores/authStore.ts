@@ -1,9 +1,28 @@
 import { File, Paths } from "expo-file-system";
+import * as SecureStore from "expo-secure-store";
 import { create } from "zustand";
 
-// ponytail: JWT kept as plain text in the app sandbox; move to expo-secure-store if it needs keychain protection
-const sessionFile = new File(Paths.document, "session");
-const storedToken = sessionFile.exists ? sessionFile.textSync() : "";
+const TOKEN_KEY = "session";
+const secureStoreOptions = {
+	keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK
+};
+
+const readStoredToken = () => {
+	try {
+		const legacySessionFile = new File(Paths.document, "session");
+		if (legacySessionFile.exists) {
+			const token = legacySessionFile.textSync();
+			SecureStore.setItem(TOKEN_KEY, token, secureStoreOptions);
+			legacySessionFile.delete();
+			return token;
+		}
+		return SecureStore.getItem(TOKEN_KEY, secureStoreOptions) ?? "";
+	} catch {
+		return "";
+	}
+};
+
+const storedToken = readStoredToken();
 
 interface Profile {
 	name: string;
@@ -24,11 +43,11 @@ export const useAuthStore = create<AuthState>()((set) => ({
 	isLoggedIn: !!storedToken,
 	profile: null,
 	login: (token) => {
-		sessionFile.write(token);
+		SecureStore.setItem(TOKEN_KEY, token, secureStoreOptions);
 		set({ token, isLoggedIn: true });
 	},
 	logout: () => {
-		if (sessionFile.exists) sessionFile.delete();
+		void SecureStore.deleteItemAsync(TOKEN_KEY, secureStoreOptions);
 		set({ token: null, isLoggedIn: false, profile: null });
 	},
 	setProfile: (profile) => set({ profile })

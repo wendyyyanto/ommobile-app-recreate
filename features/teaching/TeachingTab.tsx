@@ -4,11 +4,20 @@ import fonts from "@/constants/fonts";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { MotiView } from "moti";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useShallow } from "zustand/react/shallow";
 
 const TAB_WIDTH = 80;
 
 const TeachingTab = () => {
-	const { activeTab, setActiveTab } = useTeachingStore();
+	const {
+		activeTab,
+		setActiveTab
+	} = useTeachingStore(
+		useShallow((s) => ({
+			activeTab: s.activeTab,
+			setActiveTab: s.setActiveTab
+		}))
+	);
 
 	return (
 		<View className="flex-1 flex justify-center items-center">

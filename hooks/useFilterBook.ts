@@ -4,17 +4,26 @@ import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { GetTeachingParams } from "@/types/teaching";
 import { getNextChapters } from "@/utils/chapterSelector";
+import { showErrorToast } from "@/utils/toastHelper";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const useFilterBook = () => {
-	const { setSelectedBook } = useTeachingFilterStore();
+	const setSelectedBook = useTeachingFilterStore((s) => s.setSelectedBook);
 	const {
 		setSectionTeachings,
 		setIsLoadingSectionTeachings,
 		setIsLoadMoreSectionTeachings,
 		setSectionTeachingsPagination
-	} = useTeachingStore();
+	} = useTeachingStore(
+		useShallow((s) => ({
+			setSectionTeachings: s.setSectionTeachings,
+			setIsLoadingSectionTeachings: s.setIsLoadingSectionTeachings,
+			setIsLoadMoreSectionTeachings: s.setIsLoadMoreSectionTeachings,
+			setSectionTeachingsPagination: s.setSectionTeachingsPagination
+		}))
+	);
 	const { name } = useLocalSearchParams<{ name?: string | string[] }>();
 	const sectionName = Array.isArray(name) ? name[0] : name;
 
@@ -87,6 +96,7 @@ const useFilterBook = () => {
 				},
 				onError: (error) => {
 					console.log(error);
+					showErrorToast("Couldn't apply the filter. Please try again.");
 				},
 				onFulfilled: () => {
 					setIsLoadingSectionTeachings(false);

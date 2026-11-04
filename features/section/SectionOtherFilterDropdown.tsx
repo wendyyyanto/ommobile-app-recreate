@@ -8,6 +8,7 @@ import { Image } from "expo-image";
 import { useEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import SectionOtherOptionsAccordion from "./SectionOtherOptionsAccordion";
+import { useShallow } from "zustand/react/shallow";
 
 const SectionOtherFilterDropdown = () => {
 	const {
@@ -16,7 +17,15 @@ const SectionOtherFilterDropdown = () => {
 		filterOtherOptions,
 		setSelectedFilter,
 		selectedFilter
-	} = useTeachingFilterStore();
+	} = useTeachingFilterStore(
+		useShallow((s) => ({
+			isFilterByOtherOpen: s.isFilterByOtherOpen,
+			setIsFilterByOtherOpen: s.setIsFilterByOtherOpen,
+			filterOtherOptions: s.filterOtherOptions,
+			setSelectedFilter: s.setSelectedFilter,
+			selectedFilter: s.selectedFilter
+		}))
+	);
 
 	const { handleFilterTeaching } = useFilterOther();
 

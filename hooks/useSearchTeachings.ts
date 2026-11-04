@@ -2,7 +2,9 @@ import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { appendUniqueItems } from "@/utils/paginationHelper";
-import { useCallback, useEffect, useRef } from "react";
+import { showErrorToast } from "@/utils/toastHelper";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const useSearchTeachings = () => {
 	const {
@@ -12,7 +14,18 @@ const useSearchTeachings = () => {
 		searchQuery,
 		setIsLoadMoreSearchTeachings,
 		setSearchTeachingsPagination
-	} = useTeachingStore();
+	} = useTeachingStore(
+		useShallow((s) => ({
+			setSearchTeachings: s.setSearchTeachings,
+			setIsLoadingSearchTeachings: s.setIsLoadingSearchTeachings,
+			setSearchQuery: s.setSearchQuery,
+			searchQuery: s.searchQuery,
+			setIsLoadMoreSearchTeachings: s.setIsLoadMoreSearchTeachings,
+			setSearchTeachingsPagination: s.setSearchTeachingsPagination
+		}))
+	);
+	const [hasError, setHasError] = useState(false);
+	const [retryCount, setRetryCount] = useState(0);
 	const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
 		null
 	);
@@ -20,6 +33,7 @@ const useSearchTeachings = () => {
 
 	useEffect(() => {
 		const requestId = ++requestIdRef.current;
+		setHasError(false);
 		setIsLoadMoreSearchTeachings(false);
 
 		if (!searchQuery.trim()) {
@@ -53,6 +67,7 @@ const useSearchTeachings = () => {
 					if (requestId !== requestIdRef.current) return;
 
 					console.log(error);
+					setHasError(true);
 				},
 				onFulfilled: () => {
 					if (requestId === requestIdRef.current) {
@@ -69,6 +84,7 @@ const useSearchTeachings = () => {
 		};
 	}, [
 		searchQuery,
+		retryCount,
 		setIsLoadMoreSearchTeachings,
 		setIsLoadingSearchTeachings,
 		setSearchTeachings,
@@ -126,6 +142,7 @@ const useSearchTeachings = () => {
 				onError: (error) => {
 					if (requestId === requestIdRef.current) {
 						console.log(error);
+						showErrorToast("Couldn't load more results. Please try again.");
 					}
 				},
 				onFulfilled: () => {
@@ -149,7 +166,14 @@ const useSearchTeachings = () => {
 		};
 	}, []);
 
-	return { handleSearchTeachings, handleLoadMoreSearchTeachings };
+	const handleRetrySearch = useCallback(() => setRetryCount((n) => n + 1), []);
+
+	return {
+		hasError,
+		handleSearchTeachings,
+		handleLoadMoreSearchTeachings,
+		handleRetrySearch
+	};
 };
 
 export default useSearchTeachings;

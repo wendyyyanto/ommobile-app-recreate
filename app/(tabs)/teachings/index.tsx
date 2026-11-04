@@ -1,12 +1,14 @@
+import ErrorState from "@/components/ui/ErrorState";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
-import TeachingPageSkeleton from "@/features/skeletons/TeachingPageSkeleton";
+import { TeachingListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Pagination } from "@/types/request";
 import { Teaching } from "@/types/teaching";
+import { showErrorToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { MotiView } from "moti";
@@ -20,8 +22,9 @@ import {
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useShallow } from "zustand/react/shallow";
 
-const backgroundImage = require("@/assets/images/background.png");
+const backgroundImage = require("@/assets/images/background.webp");
 
 type TeachingPage = {
 	data: Teaching[];
@@ -45,13 +48,22 @@ const Teachings = () => {
 		popularTeachings,
 		isLoadingPopularTeachings,
 		setPopularTeachings
-	} = useTeachingStore();
+	} = useTeachingStore(
+		useShallow((s) => ({
+			setIsLoadingPopularTeachings: s.setIsLoadingPopularTeachings,
+			popularTeachings: s.popularTeachings,
+			isLoadingPopularTeachings: s.isLoadingPopularTeachings,
+			setPopularTeachings: s.setPopularTeachings
+		}))
+	);
 	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [hasError, setHasError] = useState(false);
 	const isRefreshingRef = useRef(false);
 	const totalPagesRef = useRef<number | null>(null);
 
 	const fetchPopularTeachings = useCallback(
 		async (isRefresh = false) => {
+			setHasError(false);
 			if (isRefresh) {
 				isRefreshingRef.current = true;
 				setIsRefreshing(true);
@@ -86,6 +98,10 @@ const Teachings = () => {
 				);
 			} catch (error) {
 				console.log(error);
+				setHasError(true);
+				if (useTeachingStore.getState().popularTeachings.length > 0) {
+					showErrorToast("Couldn't refresh. Please try again.");
+				}
 			} finally {
 				if (isRefresh) {
 					isRefreshingRef.current = false;
@@ -113,8 +129,6 @@ const Teachings = () => {
 		{ name: "Workshop", id: "workshop" }
 	];
 
-	if (isLoadingPopularTeachings) return <TeachingPageSkeleton />;
-
 	return (
 		<ImageBackground
 			source={backgroundImage}
@@ -131,7 +145,9 @@ const Teachings = () => {
 							Bible Teachings
 						</Text>
 						<Pressable
-							className="rounded-full px-5 py-5 bg-slate-gray"
+							accessibilityRole="button"
+							accessibilityLabel="Search teachings"
+							className="rounded-full px-5 py-5 bg-slate-gray active:opacity-70"
 							onPress={() => router.push("/teachings/search")}
 						>
 							<Image
@@ -144,7 +160,7 @@ const Teachings = () => {
 						{teachingCategories.map((category) => (
 							<Pressable
 								key={category.id}
-								className="basis-[48%] flex-1 flex-row justify-between items-center p-4 rounded-full bg-transparent border border-slate-gray-blue"
+								className="basis-[48%] flex-1 flex-row justify-between items-center p-4 rounded-full bg-transparent border border-slate-gray-blue active:opacity-70"
 								onPress={() =>
 									router.push(
 										`/teachings/section/${category.id}?name=${category.name}`
@@ -189,13 +205,23 @@ const Teachings = () => {
 							}
 						>
 							<View className="flex flex-1 flex-col gap-4">
-								{popularTeachings?.length > 0 &&
+								{isLoadingPopularTeachings && (
+									<TeachingListSkeleton count={5} />
+								)}
+								{!isLoadingPopularTeachings &&
+									popularTeachings?.length > 0 &&
 									popularTeachings?.map((teaching) => (
 										<TeachingCard
 											key={teaching.id}
 											teaching={teaching}
 										/>
 									))}
+								{hasError && popularTeachings?.length === 0 && (
+									<ErrorState
+										message="Couldn't load teachings. Check your connection and try again."
+										onRetry={handleRefresh}
+									/>
+								)}
 							</View>
 						</ScrollView>
 					</View>

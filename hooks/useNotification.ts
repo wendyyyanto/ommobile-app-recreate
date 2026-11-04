@@ -1,15 +1,24 @@
 import { getNotifications } from "@/services/notificationServices";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { router } from "expo-router";
+import { showErrorToast } from "@/utils/toastHelper";
 import { useCallback, useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const useNotification = () => {
 	const { setNotificationList, setIsLoadingNotificationList } =
-		useNotificationStore();
+		useNotificationStore(
+			useShallow((s) => ({
+				setNotificationList: s.setNotificationList,
+				setIsLoadingNotificationList: s.setIsLoadingNotificationList
+			}))
+		);
 	const [isRefreshing, setIsRefreshing] = useState(false);
+	const [hasError, setHasError] = useState(false);
 
 	const fetchNotifications = useCallback(
 		async (isRefresh = false) => {
+			setHasError(false);
 			if (isRefresh) {
 				setIsRefreshing(true);
 			} else {
@@ -22,6 +31,10 @@ const useNotification = () => {
 				},
 				onError: (error) => {
 					console.log(error);
+					setHasError(true);
+					if (useNotificationStore.getState().notificationList.length > 0) {
+						showErrorToast("Couldn't refresh. Please try again.");
+					}
 				},
 				onFulfilled: () => {
 					if (isRefresh) {
@@ -48,6 +61,7 @@ const useNotification = () => {
 	};
 
 	return {
+		hasError,
 		handleNotificationItemPressed,
 		handleRefreshNotifications,
 		isRefreshing

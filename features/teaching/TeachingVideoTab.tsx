@@ -7,7 +7,7 @@ const getYoutubeId = (url?: string | null) =>
 	url?.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)?.[1];
 
 const TeachingVideoTab = () => {
-	const { teachingDetails } = useTeachingStore();
+	const teachingDetails = useTeachingStore((s) => s.teachingDetails);
 	const youtubeId = getYoutubeId(teachingDetails?.video_url);
 
 	if (!youtubeId) {

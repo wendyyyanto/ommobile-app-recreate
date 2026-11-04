@@ -1,21 +1,30 @@
-import { getOneSignalSegments } from "@/services/oneSignalServices";
+import { getDropdowns } from "@/services/dropdownServices";
 import { useNotificationStore } from "@/stores/notificationStore";
+import { NotificationSegment } from "@/types/notification";
+import { RequestHandlerParams } from "@/types/request";
 import Constants from "expo-constants";
 import { useCallback, useEffect, useState } from "react";
 import { OneSignal } from "react-native-onesignal";
+import { useShallow } from "zustand/react/shallow";
 
 const isExpoGo = Constants.executionEnvironment === "storeClient";
 
 export const toNotificationTagName = (label: string) =>
 	label.toLowerCase().replace(/ /g, "_");
 
+const getNotificationSegments = (handlers: RequestHandlerParams) =>
+	getDropdowns(
+		{ entity: "notification_segments", attributes: ["id", "name"] },
+		handlers
+	);
+
 // Categories default to on: tag every segment the user hasn't chosen yet.
 // Opting out is stored as "inactive", so a missing tag always means "never chosen".
 export const enableUnsetNotificationCategories = () =>
-	getOneSignalSegments({
-		onSuccess: async ({ segments }: { segments: { name: string }[] }) => {
+	getNotificationSegments({
+		onSuccess: async ({ data }: { data: NotificationSegment[] }) => {
 			const tags = await OneSignal.User.getTags();
-			const unset = segments
+			const unset = data
 				.map(({ name }) => toNotificationTagName(name))
 				.filter((tag) => !(tag in tags));
 			if (unset.length) {
@@ -32,7 +41,13 @@ const useNotificationSettings = () => {
 		userNotificationTags,
 		setNotificationSegments,
 		setUserNotificationTags
-	} = useNotificationStore();
+	} = useNotificationStore(
+		useShallow((s) => ({
+			userNotificationTags: s.userNotificationTags,
+			setNotificationSegments: s.setNotificationSegments,
+			setUserNotificationTags: s.setUserNotificationTags
+		}))
+	);
 	const [isLoadingNotificationSettings, setIsLoadingNotificationSettings] =
 		useState(true);
 	const [hasNotificationSettingsError, setHasNotificationSettingsError] =
@@ -45,9 +60,9 @@ const useNotificationSettings = () => {
 		setHasNotificationSettingsError(false);
 
 		await Promise.all([
-			getOneSignalSegments({
-				onSuccess: (data) => {
-					setNotificationSegments(data.segments);
+			getNotificationSegments({
+				onSuccess: ({ data }: { data: NotificationSegment[] }) => {
+					setNotificationSegments(data);
 				},
 				onError: (error) => {
 					hasError = true;

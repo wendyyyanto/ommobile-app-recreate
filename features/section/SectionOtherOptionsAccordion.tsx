@@ -11,6 +11,7 @@ import Animated, {
 	useSharedValue,
 	withTiming
 } from "react-native-reanimated";
+import { useShallow } from "zustand/react/shallow";
 
 const SectionOtherOptionsAccordion = ({
 	name,
@@ -22,7 +23,15 @@ const SectionOtherOptionsAccordion = ({
 	const [open, setOpen] = useState(false);
 	const rotation = useSharedValue(0);
 
-	const { setSelectedFilter, selectedFilter } = useTeachingFilterStore();
+	const {
+		setSelectedFilter,
+		selectedFilter
+	} = useTeachingFilterStore(
+		useShallow((s) => ({
+			setSelectedFilter: s.setSelectedFilter,
+			selectedFilter: s.selectedFilter
+		}))
+	);
 
 	const chevronStyle = useAnimatedStyle(() => ({
 		transform: [{ rotate: `${rotation.value}deg` }]

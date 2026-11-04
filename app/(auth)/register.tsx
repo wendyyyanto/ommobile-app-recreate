@@ -60,6 +60,8 @@ export default function RegisterScreen() {
 					}}
 				>
 					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel="Go back"
 						style={{ width: 40, height: 40 }}
 						onPress={() => router.back()}
 					>
@@ -89,19 +91,8 @@ export default function RegisterScreen() {
 								}
 							]}
 						>
-							Submit your information to request access.
-						</Text>
-						<Text
-							style={[
-								fonts.body1White,
-								{
-									color: colors.lightSteelGray
-								}
-							]}
-						>
-							Your registration will be reviewed by our
-							administrator. Once approved, you&apos;ll receive a
-							confirmation email with instructions to sign in.
+							Submit your information to create a new account to
+							get started.
 						</Text>
 					</View>
 
@@ -168,7 +159,6 @@ export default function RegisterScreen() {
 								onSubmitEditing={handleRegister}
 							/>
 						</View>
-
 					</View>
 
 					<View style={{ gap: 24, marginTop: 8 }}>
