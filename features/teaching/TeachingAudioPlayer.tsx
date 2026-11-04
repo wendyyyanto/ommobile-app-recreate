@@ -4,10 +4,16 @@ import useTeachingAudioPlayer from "@/hooks/useTeachingAudioPlayer";
 import { formatDuration } from "@/utils/timeHelper";
 import Slider from "@react-native-community/slider";
 import { Image } from "expo-image";
+import * as Haptics from "expo-haptics";
 import { Pressable, Text, View } from "react-native";
 
 const playPauseIconStyle = { width: 68, height: 68 };
 const seekIconStyle = { width: 36, height: 36 };
+
+const withHaptic = (action: () => void) => () => {
+	void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+	action();
+};
 
 const TeachingAudioPlayer = () => {
 	const {
@@ -56,13 +62,21 @@ const TeachingAudioPlayer = () => {
 				<View className="w-11 h-11" />
 
 				<View className="flex-row justify-center items-center gap-8">
-					<Pressable onPress={() => handleSeekTo(currentTime - 15)}>
+					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel="Rewind 15 seconds"
+						onPress={withHaptic(() => handleSeekTo(currentTime - 15))}
+					>
 						<Image
 							source={require("@/assets/icons/backward_15s.svg")}
 							style={seekIconStyle}
 						/>
 					</Pressable>
-					<Pressable onPress={handlePlayPause}>
+					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel={status.playing ? "Pause" : "Play"}
+						onPress={withHaptic(handlePlayPause)}
+					>
 						{status.playing ? (
 							<Image
 								source={require("@/assets/icons/pause.svg")}
@@ -75,7 +89,11 @@ const TeachingAudioPlayer = () => {
 							/>
 						)}
 					</Pressable>
-					<Pressable onPress={() => handleSeekTo(currentTime + 30)}>
+					<Pressable
+						accessibilityRole="button"
+						accessibilityLabel="Forward 30 seconds"
+						onPress={withHaptic(() => handleSeekTo(currentTime + 30))}
+					>
 						<Image
 							source={require("@/assets/icons/forward_30s.svg")}
 							style={seekIconStyle}
@@ -92,7 +110,9 @@ const TeachingAudioPlayer = () => {
 						alignItems: "center",
 						justifyContent: "center"
 					}}
-					onPress={handleChangePlaybackRate}
+					accessibilityRole="button"
+					accessibilityLabel={`Playback speed ${playbackRate}x`}
+					onPress={withHaptic(handleChangePlaybackRate)}
 				>
 					<Text className="text-white ">{playbackRate}x</Text>
 				</Pressable>

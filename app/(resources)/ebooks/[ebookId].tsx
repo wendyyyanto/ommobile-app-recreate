@@ -1,6 +1,9 @@
 import BackButton from "@/components/ui/BackButton";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
+import {
+	SkeletonBone,
+	SkeletonLine
+} from "@/features/skeletons/ContentSkeletons";
 import PdfViewer from "@/features/teaching/PdfViewer";
 import { handleDownloadFile } from "@/utils/fileHelper";
 import { Image } from "expo-image";
@@ -22,6 +25,57 @@ import {
 	SafeAreaView,
 	useSafeAreaInsets
 } from "react-native-safe-area-context";
+
+const OVERVIEW_LINE_WIDTHS = ["100%", "94%", "98%", "88%", "62%"] as const;
+
+const EbookDetailSkeleton = ({ buttonBottom }: { buttonBottom: number }) => (
+	<View
+		style={styles.safeArea}
+		accessible
+		accessibilityRole="progressbar"
+		accessibilityLabel="Loading e-book"
+	>
+		<View style={styles.content}>
+			<View style={styles.bookSummary}>
+				<View style={[styles.coverImage, { overflow: "hidden" }]}>
+					<View style={StyleSheet.absoluteFill}>
+						<SkeletonBone height="100%" width="100%" radius={14} />
+					</View>
+				</View>
+				<View style={{ marginTop: 44, width: "62%" }}>
+					<SkeletonLine font={{ ...styles.title, marginTop: 0 }} width="100%" />
+				</View>
+				<View style={{ marginTop: 8, width: "38%" }}>
+					<SkeletonLine font={{ ...styles.author, marginTop: 0 }} width="100%" />
+				</View>
+				<View style={{ marginTop: 8, width: "32%" }}>
+					<SkeletonLine font={styles.metadataText} width="100%" />
+				</View>
+			</View>
+			<View style={styles.tags}>
+				{[64, 88, 72].map((width) => (
+					<SkeletonBone key={width} height={26} width={width} radius="round" />
+				))}
+			</View>
+			<View style={styles.overview}>
+				<Text style={styles.overviewTitle}>Overview</Text>
+				<View>
+					{OVERVIEW_LINE_WIDTHS.map((width) => (
+						<SkeletonLine key={width} font={styles.overviewText} width={width} />
+					))}
+				</View>
+			</View>
+		</View>
+		<View style={[styles.buttonContainer, { bottom: buttonBottom }]}>
+			<View style={{ flex: 1 }}>
+				<SkeletonBone height={50} width="100%" radius={32} />
+			</View>
+			<View style={{ flex: 1 }}>
+				<SkeletonBone height={50} width="100%" radius={32} />
+			</View>
+		</View>
+	</View>
+);
 
 export default function EbookDetailScreen() {
 	const { ebookId } = useLocalSearchParams<{ ebookId: string }>();
@@ -52,13 +106,11 @@ export default function EbookDetailScreen() {
 					<BackButton />
 				</View>
 
-				{isLoading || !ebookDetail ? (
+				{isLoading ? (
+					<EbookDetailSkeleton buttonBottom={buttonBottom} />
+				) : !ebookDetail ? (
 					<View style={styles.loading}>
-						{isLoading ? (
-							<LoadingSpinner />
-						) : (
-							<Text style={styles.overviewText}>Ebook not found.</Text>
-						)}
+						<Text style={styles.overviewText}>Ebook not found.</Text>
 					</View>
 				) : (
 					<>

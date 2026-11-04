@@ -25,11 +25,22 @@ import {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import { useShallow } from "zustand/react/shallow";
 
-const backgroundImage = require("@/assets/images/background.png");
+const backgroundImage = require("@/assets/images/background.webp");
 
 const TeachingDetail = () => {
-	const { activeTab, teachingDetails, setActiveTab } = useTeachingStore();
+	const {
+		activeTab,
+		teachingDetails,
+		setActiveTab
+	} = useTeachingStore(
+		useShallow((s) => ({
+			activeTab: s.activeTab,
+			teachingDetails: s.teachingDetails,
+			setActiveTab: s.setActiveTab
+		}))
+	);
 	const { handleRefreshTeachingDetail, isRefreshing } = useTeachingDetail();
 	const [isFileDropdownOpen, setIsFileDropdownOpen] = useState(false);
 	const [openedFile, setOpenedFile] = useState<{

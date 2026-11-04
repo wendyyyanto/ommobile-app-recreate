@@ -28,7 +28,7 @@ const NotificationSwitch = ({
 					onValueChange={(value) => onValueChange(value, label)}
 					trackColor={{
 						false: colors.darkerGray,
-						true: colors.offBlack
+						true: colors.steelBlue
 					}}
 					thumbColor={checked ? colors.lightBlue : colors.darkGray}
 				/>
@@ -49,7 +49,7 @@ const NotificationSwitch = ({
 				<MotiView
 					animate={{
 						backgroundColor: checked
-							? colors.offBlack
+							? colors.steelBlue
 							: colors.darkerGray
 					}}
 					transition={{ type: "timing", duration: 200 }}

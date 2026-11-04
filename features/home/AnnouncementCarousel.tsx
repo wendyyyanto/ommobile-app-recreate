@@ -1,4 +1,5 @@
 import colors from "@/constants/colors";
+import { SkeletonBone } from "@/features/skeletons/ContentSkeletons";
 import { useAnnouncementStore } from "@/stores/announcementStore";
 import { getImageSource } from "@/utils/imageHelper";
 import { Image } from "expo-image";
@@ -14,19 +15,28 @@ import Carousel, {
 	Pagination
 } from "react-native-reanimated-carousel";
 
-const AnnouncementCarousel = () => {
-	const { announcementList } = useAnnouncementStore();
+const SKELETON_SLIDES = [
+	{ id: 0, announcementTitle: "", bannerUrl: "" },
+	{ id: 1, announcementTitle: "", bannerUrl: "" },
+	{ id: 2, announcementTitle: "", bannerUrl: "" }
+];
+
+const AnnouncementCarousel = ({ isLoading = false }: { isLoading?: boolean }) => {
+	const announcementList = useAnnouncementStore((s) => s.announcementList);
 	const progress = useSharedValue<number>(0);
 	const carouselRef = useRef<ICarouselInstance>(null);
+	const slides = isLoading ? SKELETON_SLIDES : announcementList;
 
 	return (
 		<View className="flex-1 justify-center items-center">
 			<Carousel
+				key={isLoading ? "loading" : "loaded"}
 				ref={carouselRef}
-				autoPlay={true}
+				autoPlay={!isLoading}
+				enabled={!isLoading}
 				autoPlayInterval={5000}
 				snapEnabled={true}
-				data={announcementList}
+				data={slides}
 				loop={true}
 				pagingEnabled={true}
 				mode="parallax"
@@ -37,21 +47,25 @@ const AnnouncementCarousel = () => {
 				onProgressChange={progress}
 				width={Dimensions.get("window").width}
 				height={200}
-				renderItem={({ item }) => (
-					<Image
-						source={getImageSource(item.bannerUrl)}
-						style={{
-							width: "100%",
-							height: "100%",
-							borderRadius: 16
-						}}
-						contentFit="cover"
-					/>
-				)}
+				renderItem={({ item }) =>
+					isLoading ? (
+						<SkeletonBone height="100%" width="100%" radius={16} />
+					) : (
+						<Image
+							source={getImageSource(item.bannerUrl)}
+							style={{
+								width: "100%",
+								height: "100%",
+								borderRadius: 16
+							}}
+							contentFit="cover"
+						/>
+					)
+				}
 			/>
 			<Pagination.Custom
 				progress={progress}
-				data={announcementList}
+				data={slides}
 				size={8}
 				dotStyle={{
 					backgroundColor: colors.charcoalSlate,

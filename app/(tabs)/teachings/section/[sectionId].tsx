@@ -1,55 +1,73 @@
 import BackButton from "@/components/ui/BackButton";
+import ErrorState from "@/components/ui/ErrorState";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { TeachingListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import SectionBookFilterDropdown from "@/features/section/SectionBookFilterDropdown";
 import SectionOtherFilterDropdown from "@/features/section/SectionOtherFilterDropdown";
 import useTeachingSection from "@/hooks/useTeachingSection";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
-import { isNearScrollEnd } from "@/utils/paginationHelper";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import {
+	FlatList,
 	ImageBackground,
 	Pressable,
 	RefreshControl,
-	ScrollView,
 	StyleSheet,
 	Text,
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useShallow } from "zustand/react/shallow";
 
-const backgroundImage = require("@/assets/images/background.png");
+const backgroundImage = require("@/assets/images/background.webp");
+
+const ItemSeparator = () => <View style={{ height: 16 }} />;
 
 const TeachingsSection = () => {
-	const { name: sectionName, sectionId } = useLocalSearchParams();
+	const { name, sectionId } = useLocalSearchParams<{
+		name?: string;
+		sectionId?: string;
+	}>();
+	const sectionName =
+		name ||
+		(sectionId ?? "")
+			.split("-")
+			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+			.join(" ");
 	const {
 		isLoadingSectionTeachings,
 		sectionTeachings,
 		isLoadMoreSectionTeachings
-	} = useTeachingStore();
+	} = useTeachingStore(
+		useShallow((s) => ({
+			isLoadingSectionTeachings: s.isLoadingSectionTeachings,
+			sectionTeachings: s.sectionTeachings,
+			isLoadMoreSectionTeachings: s.isLoadMoreSectionTeachings
+		}))
+	);
 	const { setIsFilterByBookOpen, setIsFilterByOtherOpen } =
-		useTeachingFilterStore();
+		useTeachingFilterStore(
+			useShallow((s) => ({
+				setIsFilterByBookOpen: s.setIsFilterByBookOpen,
+				setIsFilterByOtherOpen: s.setIsFilterByOtherOpen
+			}))
+		);
 	const {
+		hasError,
 		handleCloseSectionTeachings,
 		handleRefreshSectionTeachings,
 		handleLoadMoreSectionTeachings
 	} = useTeachingSection({
-		sectionName: sectionName as string
+		sectionName
 	});
 
-	if (isLoadingSectionTeachings && sectionTeachings.length === 0) {
-		return (
-			<ImageBackground source={backgroundImage} className="flex-1">
-				<View className="flex-1 justify-center items-center">
-					<LoadingSpinner />
-				</View>
-			</ImageBackground>
-		);
-	}
+	const isInitialLoading =
+		isLoadingSectionTeachings && sectionTeachings.length === 0;
 
 	return (
 		<ImageBackground source={backgroundImage} className="flex-1">
@@ -61,12 +79,14 @@ const TeachingsSection = () => {
 					<View className="flex justify-start items-start gap-4">
 						<BackButton onPress={handleCloseSectionTeachings} />
 						<Text className="text-3xl text-wrap text-white font-poppins">
-							{(sectionName as string).split(" ").join("\n")}
+							{sectionName.split(" ").join("\n")}
 						</Text>
 					</View>
 
 					<Pressable
-						className="rounded-full px-5 py-5 bg-slate-gray"
+						accessibilityRole="button"
+						accessibilityLabel="Search teachings"
+						className="rounded-full px-5 py-5 bg-slate-gray active:opacity-70"
 						onPress={() => router.push("/teachings/search")}
 					>
 						<Image
@@ -120,7 +140,16 @@ const TeachingsSection = () => {
 
 				<View className="px-4 flex-1 gap-3">
 					<Text style={fonts.subtitle1White}>Latest Teachings</Text>
-					<ScrollView
+					{isInitialLoading ? (
+						<View className="flex-1">
+							<TeachingListSkeleton count={6} />
+						</View>
+					) : (
+					<FlatList
+						data={isLoadingSectionTeachings ? [] : sectionTeachings}
+						keyExtractor={(teaching) => String(teaching.id)}
+						renderItem={({ item }) => <TeachingCard teaching={item} />}
+						ItemSeparatorComponent={ItemSeparator}
 						refreshControl={
 							<RefreshControl
 								refreshing={isLoadingSectionTeachings}
@@ -129,39 +158,35 @@ const TeachingsSection = () => {
 						}
 						showsVerticalScrollIndicator={false}
 						className="flex-1"
-						onScroll={(event) => {
-							if (isNearScrollEnd(event)) {
-								void handleLoadMoreSectionTeachings();
+						contentContainerStyle={{ flexGrow: 1, paddingBottom: 160 }}
+						onEndReached={() =>
+								sectionTeachings.length > 0 &&
+								void handleLoadMoreSectionTeachings()
 							}
-						}}
-						scrollEventThrottle={16}
-					>
-						<View className="flex-1 gap-4 relative pb-40">
-							{isLoadingSectionTeachings ? (
-								<View className="absolute left-1/2 top-56 -translate-x-1/2 -translate-y-1/2">
+						onEndReachedThreshold={0.1}
+						ListEmptyComponent={
+							isLoadingSectionTeachings ? (
+								<View className="flex-1 justify-center items-center">
 									<LoadingSpinner />
 								</View>
-							) : sectionTeachings?.length > 0 ? (
-								<>
-									{sectionTeachings?.map((teaching) => (
-										<TeachingCard
-											key={teaching.id}
-											teaching={teaching}
-										/>
-									))}
-									{isLoadMoreSectionTeachings && (
-										<LoadingSpinner label="Loading more teachings..." />
-									)}
-								</>
+							) : hasError ? (
+								<ErrorState
+									message="Couldn't load teachings. Check your connection and try again."
+									onRetry={handleRefreshSectionTeachings}
+								/>
 							) : (
 								<View className="flex-1 justify-center items-center">
-									<Text style={fonts.caption1White}>
-										No teachings found
-									</Text>
+									<Text style={fonts.caption1White}>No teachings found</Text>
 								</View>
-							)}
-						</View>
-					</ScrollView>
+							)
+						}
+						ListFooterComponent={
+							isLoadMoreSectionTeachings ? (
+								<LoadingSpinner label="Loading more teachings..." />
+							) : null
+						}
+					/>
+					)}
 
 					<SectionBookFilterDropdown />
 					<SectionOtherFilterDropdown />

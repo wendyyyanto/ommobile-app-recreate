@@ -4,17 +4,28 @@ import { getTeachings } from "@/services/teachingServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { GetTeachingParams } from "@/types/teaching";
+import { showErrorToast } from "@/utils/toastHelper";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const useFilterOther = () => {
-	const { setFilterOtherOptions } = useTeachingFilterStore();
+	const setFilterOtherOptions = useTeachingFilterStore(
+		(s) => s.setFilterOtherOptions
+	);
 	const {
 		setIsLoadingSectionTeachings,
 		setSectionTeachings,
 		setIsLoadMoreSectionTeachings,
 		setSectionTeachingsPagination
-	} = useTeachingStore();
+	} = useTeachingStore(
+		useShallow((s) => ({
+			setIsLoadingSectionTeachings: s.setIsLoadingSectionTeachings,
+			setSectionTeachings: s.setSectionTeachings,
+			setIsLoadMoreSectionTeachings: s.setIsLoadMoreSectionTeachings,
+			setSectionTeachingsPagination: s.setSectionTeachingsPagination
+		}))
+	);
 	const { name } = useLocalSearchParams<{ name?: string | string[] }>();
 	const sectionName = Array.isArray(name) ? name[0] : name;
 
@@ -88,6 +99,7 @@ const useFilterOther = () => {
 				},
 				onError: (error) => {
 					console.log(error);
+					showErrorToast("Couldn't apply the filter. Please try again.");
 				},
 				onFulfilled: () => {
 					setIsLoadingSectionTeachings(false);

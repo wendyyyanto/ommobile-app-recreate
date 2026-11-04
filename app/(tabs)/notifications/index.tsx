@@ -1,36 +1,38 @@
+import ErrorState from "@/components/ui/ErrorState";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
-import NotificationPageSkeleton from "@/features/skeletons/NotificationPageSkeleton";
+import { NotificationListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import useNotification from "@/hooks/useNotification";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { formatDate } from "@/utils/timeHelper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import {
+	FlatList,
 	ImageBackground,
 	Pressable,
 	RefreshControl,
-	ScrollView,
 	Text,
 	View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Notifications = () => {
-	const { notificationList, isLoadingNotificationList } =
-		useNotificationStore();
+	const notificationList = useNotificationStore((s) => s.notificationList);
+	const isLoadingNotificationList = useNotificationStore(
+		(s) => s.isLoadingNotificationList
+	);
 
 	const {
+		hasError,
 		handleNotificationItemPressed,
 		handleRefreshNotifications,
 		isRefreshing
 	} = useNotification();
 
-	if (isLoadingNotificationList) return <NotificationPageSkeleton />;
-
 	return (
 		<ImageBackground
-			source={require("@/assets/images/background_notification.png")}
+			source={require("@/assets/images/background_notification.webp")}
 			resizeMode="cover"
 			className="flex-1"
 		>
@@ -43,7 +45,9 @@ const Notifications = () => {
 
 						<Pressable
 							hitSlop={12}
-							className="z-10"
+							accessibilityRole="button"
+							accessibilityLabel="Settings"
+							className="z-10 active:opacity-70"
 							onPress={() => router.push("/settings")}
 						>
 							<Ionicons
@@ -53,7 +57,9 @@ const Notifications = () => {
 							/>
 						</Pressable>
 					</View>
-					<ScrollView
+					<FlatList
+						data={isLoadingNotificationList ? [] : notificationList}
+						keyExtractor={(notification) => String(notification.id)}
 						className="flex-1"
 						contentContainerStyle={{ flexGrow: 1 }}
 						showsVerticalScrollIndicator={false}
@@ -66,71 +72,61 @@ const Notifications = () => {
 								colors={[colors.black]}
 							/>
 						}
-					>
-						{notificationList?.length === 0 ? (
-							<ImageBackground
-								imageStyle={{ transform: [{ scale: 1.5 }] }}
-								source={require("@/assets/images/notif_empty.png")}
-								className="flex-1 justify-center items-center"
-								resizeMode="contain"
-							>
-								<Text
-									style={[
-										fonts.body1White,
-										{
-											opacity: 0.7,
-											marginTop: 160,
-											width: "80%",
-											textAlign: "center"
-										}
-									]}
+						ListEmptyComponent={
+							isLoadingNotificationList ? (
+								<NotificationListSkeleton count={8} />
+							) : hasError ? (
+								<ErrorState
+									message="Couldn't load notifications. Check your connection and try again."
+									onRetry={handleRefreshNotifications}
+								/>
+							) : (
+								<ImageBackground
+									imageStyle={{ transform: [{ scale: 1.5 }] }}
+									source={require("@/assets/images/notif_empty.webp")}
+									className="flex-1 justify-center items-center"
+									resizeMode="contain"
 								>
-									You have no notifications right now. Come
-									back later.
-								</Text>
-							</ImageBackground>
-						) : (
-							<View>
-								{notificationList?.map((notification) => (
-									<Pressable
-										key={notification.id}
-										className="mb-4"
-										onPress={() => {
-											handleNotificationItemPressed(
-												notification.id
-											);
-										}}
+									<Text
+										style={[
+											fonts.body1White,
+											{
+												opacity: 0.7,
+												marginTop: 160,
+												width: "80%",
+												textAlign: "center"
+											}
+										]}
 									>
-										<Text
-											style={[
-												fonts.subtitle2White,
-												{ fontWeight: "500" }
-											]}
-										>
-											{notification.title} -{" "}
-											{formatDate(
-												notification.event_date,
-												"MMMM Do, YYYY"
-											)}
-										</Text>
-										<Text style={[fonts.caption1Grey]}>
-											{formatDate(
-												notification.created_at,
-												"MMMM Do, YYYY"
-											)}
-										</Text>
-										<View
-											style={{
-												borderWidth: 0.5,
-												borderColor: colors.darkGray,
-												marginTop: 16
-											}}
-										/>
-									</Pressable>
-								))}
-							</View>
+										You have no notifications right now. Come back later.
+									</Text>
+								</ImageBackground>
+							)
+						}
+						renderItem={({ item: notification }) => (
+							<Pressable
+								className="mb-4"
+								onPress={() => {
+									handleNotificationItemPressed(notification.id);
+								}}
+							>
+								<Text style={[fonts.subtitle2White, { fontWeight: "500" }]}>
+									{notification.title} -{" "}
+									{formatDate(notification.event_date, "MMMM Do, YYYY")}
+								</Text>
+								<Text style={[fonts.caption1Grey]}>
+									{formatDate(notification.created_at, "MMMM Do, YYYY")}
+								</Text>
+								<View
+									style={{
+										borderWidth: 0.5,
+										borderColor: colors.darkGray,
+										marginTop: 16
+									}}
+								/>
+							</Pressable>
 						)}
-					</ScrollView>
+					/>
 				</View>
 			</SafeAreaView>
 		</ImageBackground>

@@ -13,7 +13,8 @@
 			"channel": "preview",
 			"environment": "production",
 			"android": {
-				"buildType": "apk"
+				"buildType": "apk",
+				"autoIncrement": "versionCode"
 			},
 			"ios": {
 				"simulator": false,
@@ -25,7 +26,8 @@
 			"channel": "production",
 			"environment": "production",
 			"android": {
-				"buildType": "app-bundle"
+				"buildType": "app-bundle",
+				"autoIncrement": "versionCode"
 			},
 			"ios": {
 				"simulator": false,

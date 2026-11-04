@@ -11,7 +11,7 @@ export default function EbookCard({
 }) {
 	return (
 		<Pressable
-			className="flex flex-1 flex-row items-center bg-charcoal-blue rounded-2xl py-2 px-4 gap-4"
+			className="flex flex-1 flex-row items-center bg-charcoal-blue rounded-2xl py-2 px-4 gap-4 active:opacity-70"
 			onPress={() =>
 				router.push({
 					pathname: "/(resources)/ebooks/[ebookId]",

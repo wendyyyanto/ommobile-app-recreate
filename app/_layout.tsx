@@ -26,10 +26,8 @@ const isExpoGo = Constants.executionEnvironment === "storeClient";
 // Initialize at module load: child screen effects (e.g. notification settings
 // calling OneSignal.User.getTags) run before this layout's effects would.
 if (!isExpoGo) {
-	OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+	OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.None);
 	OneSignal.initialize(process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID as string);
-	OneSignal.Notifications.requestPermission(true);
-	void enableUnsetNotificationCategories();
 }
 
 export default function RootLayout() {
@@ -52,6 +50,12 @@ export default function RootLayout() {
 			ScreenOrientation.OrientationLock.PORTRAIT_UP
 		);
 	}, []);
+
+	useEffect(() => {
+		if (!isLoggedIn || isExpoGo) return;
+		OneSignal.Notifications.requestPermission(false);
+		void enableUnsetNotificationCategories();
+	}, [isLoggedIn]);
 
 	useEffect(() => {
 		if (isExpoGo) return;
@@ -92,9 +96,9 @@ export default function RootLayout() {
 				<Stack.Protected guard={isLoggedIn}>
 					<Stack.Screen name="(tabs)" />
 					<Stack.Screen name="(resources)" />
-					<Stack.Screen name="notifications" />
-					<Stack.Screen name="teaching" />
-					<Stack.Screen name="teachings" />
+					<Stack.Screen name="notifications/[notificationId]" />
+					<Stack.Screen name="teaching/[teachingId]" />
+					<Stack.Screen name="teachings/[teachingId]" />
 					<Stack.Screen name="settings" />
 				</Stack.Protected>
 				<Stack.Protected guard={!isLoggedIn}>

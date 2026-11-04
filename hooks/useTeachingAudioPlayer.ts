@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from "react";
 
 const useTeachingAudioPlayer = () => {
-	const { teachingDetails } = useTeachingStore();
+	const teachingDetails = useTeachingStore((s) => s.teachingDetails);
 
 	const [currentTime, setCurrentTime] = useState(0);
 	const [duration, setDuration] = useState(0);
@@ -78,13 +78,9 @@ const useTeachingAudioPlayer = () => {
 	};
 
 	const handleChangePlaybackRate = () => {
-		if (playbackRate >= 2) {
-			setPlaybackRate(1);
-			player.setPlaybackRate(1);
-		} else {
-			setPlaybackRate(playbackRate + 0.25);
-			player.setPlaybackRate(playbackRate);
-		}
+		const next = playbackRate >= 2 ? 1 : playbackRate + 0.25;
+		setPlaybackRate(next);
+		player.setPlaybackRate(next);
 	};
 
 	return {

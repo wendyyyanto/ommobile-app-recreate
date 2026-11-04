@@ -20,6 +20,8 @@ export default function RegisterSuccessScreen() {
 				}}
 			>
 				<Pressable
+					accessibilityRole="button"
+					accessibilityLabel="Go back"
 					style={{ width: 40, height: 40 }}
 					onPress={() => router.back()}
 				>

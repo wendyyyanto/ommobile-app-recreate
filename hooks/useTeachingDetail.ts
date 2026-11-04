@@ -3,11 +3,21 @@ import { getTeachingDetails } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const useTeachingDetail = () => {
 	const { teachingId } = useLocalSearchParams<{ teachingId: string }>();
-	const { setActiveTab, setIsLoadingTeachingDetails, setTeachingDetails } =
-		useTeachingStore();
+	const {
+		setActiveTab,
+		setIsLoadingTeachingDetails,
+		setTeachingDetails
+	} = useTeachingStore(
+		useShallow((s) => ({
+			setActiveTab: s.setActiveTab,
+			setIsLoadingTeachingDetails: s.setIsLoadingTeachingDetails,
+			setTeachingDetails: s.setTeachingDetails
+		}))
+	);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 
 	const fetchTeachingDetail = useCallback(

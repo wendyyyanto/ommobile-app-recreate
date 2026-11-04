@@ -26,4 +26,16 @@ instance.interceptors.request.use((config) => {
 	return config;
 });
 
+instance.interceptors.response.use(undefined, (error) => {
+	const { token, logout } = useAuthStore.getState();
+	if (
+		error.response?.status === 401 &&
+		token &&
+		error.config?.headers?.Authorization === `Bearer ${token}`
+	) {
+		logout();
+	}
+	return Promise.reject(error);
+});
+
 export default instance;

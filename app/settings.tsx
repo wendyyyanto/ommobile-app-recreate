@@ -13,6 +13,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useShallow } from "zustand/react/shallow";
 
 const confirmAccountDeletion = (
 	setIsDeleting: (isDeleting: boolean) => void
@@ -49,8 +50,15 @@ const confirmAccountDeletion = (
 
 const NotificationSettings = () => {
 	const [isDeleting, setIsDeleting] = useState(false);
-	const { notificationSegments, userNotificationTags } =
-		useNotificationStore();
+	const {
+		notificationSegments,
+		userNotificationTags
+	} = useNotificationStore(
+		useShallow((s) => ({
+			notificationSegments: s.notificationSegments,
+			userNotificationTags: s.userNotificationTags
+		}))
+	);
 	const profile = useAuthStore((s) => s.profile);
 	const {
 		handleCheckedChange,

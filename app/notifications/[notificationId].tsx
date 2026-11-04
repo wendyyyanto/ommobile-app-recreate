@@ -7,10 +7,18 @@ import { formatDate } from "@/utils/timeHelper";
 import { Image } from "expo-image";
 import { ImageBackground, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useShallow } from "zustand/react/shallow";
 
 const NotificationDetail = () => {
-	const { notificationDetail, isLoadingNotificationDetail } =
-		useNotificationStore();
+	const {
+		notificationDetail,
+		isLoadingNotificationDetail
+	} = useNotificationStore(
+		useShallow((s) => ({
+			notificationDetail: s.notificationDetail,
+			isLoadingNotificationDetail: s.isLoadingNotificationDetail
+		}))
+	);
 
 	useNotificationDetail();
 
@@ -24,7 +32,7 @@ const NotificationDetail = () => {
 
 	return (
 		<ImageBackground
-			source={require("@/assets/images/background_notification.png")}
+			source={require("@/assets/images/background_notification.webp")}
 			resizeMode="cover"
 			className="flex-1"
 		>
