@@ -2,6 +2,7 @@ import colors from "@/constants/colors";
 import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
 import { useTeachingStore } from "@/stores/teachingStore";
+import * as Haptics from "expo-haptics";
 import { MotiView } from "moti";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useShallow } from "zustand/react/shallow";
@@ -19,6 +20,12 @@ const TeachingTab = () => {
 		}))
 	);
 
+	const selectTab = (tab: TabEnum) => {
+		if (tab === activeTab) return;
+		void Haptics.selectionAsync();
+		setActiveTab(tab);
+	};
+
 	return (
 		<View className="flex-1 flex justify-center items-center">
 			<View style={styles.tabBar}>
@@ -32,7 +39,7 @@ const TeachingTab = () => {
 
 				<Pressable
 					className="flex-1 flex justify-center items-center z-10"
-					onPress={() => setActiveTab(TabEnum.AUDIO)}
+					onPress={() => selectTab(TabEnum.AUDIO)}
 				>
 					<Text
 						style={[
@@ -49,7 +56,7 @@ const TeachingTab = () => {
 
 				<Pressable
 					className="flex-1 flex justify-center items-center z-10"
-					onPress={() => setActiveTab(TabEnum.VIDEO)}
+					onPress={() => selectTab(TabEnum.VIDEO)}
 				>
 					<Text
 						style={[

@@ -2,10 +2,12 @@ import EbookCard from "@/components/ui/EbookCard";
 import ErrorState from "@/components/ui/ErrorState";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE, OPACITY_TRANSITION } from "@/constants/motion";
 import { EbookListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { getEbooks } from "@/services/ebookServices";
@@ -79,7 +81,7 @@ export default function EBooksResourcesScreen() {
 					onChangeText={setQuery}
 				/>
 			</View>
-			{isLoading ? (
+			{isLoading && ebooks.length === 0 ? (
 				<EbookListSkeleton count={7} />
 			) : hasError ? (
 				<ErrorState
@@ -87,18 +89,23 @@ export default function EBooksResourcesScreen() {
 					onRetry={() => setRetryCount((n) => n + 1)}
 				/>
 			) : (
-				<ScrollView showsVerticalScrollIndicator={false}>
-					<View className="flex-1 pb-8 gap-3">
-						{ebooks.length === 0 && (
-							<Text style={fonts.caption1Grey} className="text-center">
-								{query ? "No ebooks found." : "No ebooks available."}
-							</Text>
-						)}
-						{ebooks.map((ebook) => (
-							<EbookCard key={ebook.id} ebookDetails={ebook} />
-						))}
-					</View>
-				</ScrollView>
+				<Animated.View entering={CONTENT_FADE} style={{ flex: 1 }}>
+					<Animated.ScrollView
+						showsVerticalScrollIndicator={false}
+						style={[OPACITY_TRANSITION, { opacity: isLoading ? 0.5 : 1 }]}
+					>
+						<View className="flex-1 pb-8 gap-3">
+							{ebooks.length === 0 && (
+								<Text style={fonts.caption1Grey} className="text-center">
+									{query ? "No ebooks found." : "No ebooks available."}
+								</Text>
+							)}
+							{ebooks.map((ebook) => (
+								<EbookCard key={ebook.id} ebookDetails={ebook} />
+							))}
+						</View>
+					</Animated.ScrollView>
+				</Animated.View>
 			)}
 		</SafeAreaView>
 	);

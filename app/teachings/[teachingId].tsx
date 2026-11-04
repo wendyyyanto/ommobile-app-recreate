@@ -1,14 +1,17 @@
 import BackButton from "@/components/ui/BackButton";
+import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
 import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
+import { EASE_OUT, QUICK_FADE, QUICK_FADE_OUT } from "@/constants/motion";
 import { TeachingDownloadsSkeleton } from "@/features/skeletons/ContentSkeletons";
 import TeachingAudioTab from "@/features/teaching/TeachingAudioTab";
 import TeachingTab from "@/features/teaching/TeachingTab";
 import TeachingVideoTab from "@/features/teaching/TeachingVideoTab";
+import useFileDownload from "@/hooks/useFileDownload";
 import useTeachingDetail from "@/hooks/useTeachingDetail";
 import { useTeachingStore } from "@/stores/teachingStore";
-import { handleDownloadFile } from "@/utils/fileHelper";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { MotiView } from "moti";
 import { useEffect, useState } from "react";
@@ -22,11 +25,21 @@ import {
 	View
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { Keyframe, useReducedMotion } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import { useShallow } from "zustand/react/shallow";
 
 const backgroundImage = require("@/assets/images/background.webp");
+
+const DROPDOWN_ENTER = new Keyframe({
+	from: { opacity: 0, transform: [{ translateY: 6 }, { scale: 0.97 }] },
+	to: {
+		opacity: 1,
+		transform: [{ translateY: 0 }, { scale: 1 }],
+		easing: EASE_OUT
+	}
+}).duration(150);
 
 const TeachingDetail = () => {
 	const {
@@ -44,17 +57,24 @@ const TeachingDetail = () => {
 	);
 	const { handleRefreshTeachingDetail, isRefreshing } = useTeachingDetail();
 	const [isFileDropdownOpen, setIsFileDropdownOpen] = useState(false);
+	const { pendingUrls, downloadFile } = useFileDownload();
+	const reduced = useReducedMotion();
 	const loadedDetails = isLoadingTeachingDetails ? null : teachingDetails;
 	const audioUrl = loadedDetails?.audio_file?.url?.trim();
 	const pdfUrl = loadedDetails?.pdf_file?.url?.trim();
 	const pptUrl = loadedDetails?.ppt_file?.url?.trim();
 	const hasBothTeachingFiles = Boolean(pdfUrl && pptUrl);
+	const isDownloadingTeachingFile = pendingUrls.some(
+		(url) => url === pdfUrl || url === pptUrl
+	);
+	const isDownloadingAudio = pendingUrls.includes(audioUrl ?? "");
 	const swipeToAudioGesture = Gesture.Pan()
 		.enabled(activeTab === TabEnum.VIDEO)
 		.activeOffsetX([-30, 30])
 		.failOffsetY([-20, 20])
 		.onEnd(({ translationX, velocityX }) => {
 			if (translationX >= 50 || velocityX >= 500) {
+				void Haptics.selectionAsync();
 				setActiveTab(TabEnum.AUDIO);
 			}
 		})
@@ -72,7 +92,7 @@ const TeachingDetail = () => {
 			text2: "Please wait while we download the file...",
 			visibilityTime: 6000
 		});
-		handleDownloadFile(url);
+		void downloadFile(url);
 	};
 
 	const handleFileButtonPress = () => {
@@ -129,11 +149,13 @@ const TeachingDetail = () => {
 							)}
 							{(pptUrl || pdfUrl) && (
 								<View style={styles.downloadButtonSlot}>
-									<Pressable
+									<PressableScale
+										disabled={isDownloadingTeachingFile}
 										style={[
 											styles.downloadButton,
 											styles.fullWidthDownloadButton,
-											hasBothTeachingFiles && styles.downloadDropdownButton
+											hasBothTeachingFiles && styles.downloadDropdownButton,
+											isDownloadingTeachingFile && styles.downloadingButton
 										]}
 										onPress={handleFileButtonPress}
 									>
@@ -165,10 +187,14 @@ const TeachingDetail = () => {
 												/>
 											</MotiView>
 										)}
-									</Pressable>
+									</PressableScale>
 
 									{isFileDropdownOpen && hasBothTeachingFiles && (
-										<View style={styles.fileDropdown}>
+										<Animated.View
+											entering={reduced ? QUICK_FADE : DROPDOWN_ENTER}
+											exiting={QUICK_FADE_OUT}
+											style={styles.fileDropdown}
+										>
 											<Pressable
 												style={styles.fileDropdownOption}
 												onPress={() => {
@@ -194,16 +220,18 @@ const TeachingDetail = () => {
 												/>
 												<Text style={fonts.caption2White}>PDF File</Text>
 											</Pressable>
-										</View>
+										</Animated.View>
 									)}
 								</View>
 							)}
 							{activeTab === TabEnum.AUDIO && audioUrl && (
 								<View style={styles.downloadButtonSlot}>
-									<Pressable
+									<PressableScale
+										disabled={isDownloadingAudio}
 										style={[
 											styles.downloadButton,
-											styles.fullWidthDownloadButton
+											styles.fullWidthDownloadButton,
+											isDownloadingAudio && styles.downloadingButton
 										]}
 										onPress={() => {
 											Toast.show({
@@ -213,7 +241,7 @@ const TeachingDetail = () => {
 													"It might take a few minutes to finish the download, please wait...",
 												visibilityTime: 6000
 											});
-											handleDownloadFile(audioUrl);
+											void downloadFile(audioUrl);
 										}}
 									>
 										<Image
@@ -221,7 +249,7 @@ const TeachingDetail = () => {
 											style={{ width: 16, height: 16 }}
 										/>
 										<Text style={fonts.caption2White}>Download Audio</Text>
-									</Pressable>
+									</PressableScale>
 								</View>
 							)}
 						</View>
@@ -244,6 +272,9 @@ const styles = StyleSheet.create({
 		borderRadius: 40,
 		paddingHorizontal: 24,
 		paddingVertical: 16
+	},
+	downloadingButton: {
+		opacity: 0.6
 	},
 	downloadDropdownButton: {
 		gap: 8,

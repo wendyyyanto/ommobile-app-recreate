@@ -1,11 +1,13 @@
 import BackButton from "@/components/ui/BackButton";
+import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
+import { CONTENT_FADE } from "@/constants/motion";
 import {
 	SkeletonBone,
 	SkeletonLine
 } from "@/features/skeletons/ContentSkeletons";
 import PdfViewer from "@/features/teaching/PdfViewer";
-import { handleDownloadFile } from "@/utils/fileHelper";
+import useFileDownload from "@/hooks/useFileDownload";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
@@ -15,12 +17,12 @@ import { EbookDetails } from "@/types/ebook";
 import {
 	Modal,
 	Platform,
-	Pressable,
 	ScrollView,
 	StyleSheet,
 	Text,
 	View
 } from "react-native";
+import Animated from "react-native-reanimated";
 import {
 	SafeAreaView,
 	useSafeAreaInsets
@@ -82,6 +84,7 @@ export default function EbookDetailScreen() {
 	const [ebookDetail, setEbookDetail] = useState<EbookDetails | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isReading, setIsReading] = useState(false);
+	const { pendingUrls, downloadFile } = useFileDownload();
 	const insets = useSafeAreaInsets();
 	// same rule as the tab bar: iOS buttons may sit inside the home indicator inset
 	const buttonBottom = Platform.OS === "ios" ? 16 : 16 + insets.bottom;
@@ -113,7 +116,7 @@ export default function EbookDetailScreen() {
 						<Text style={styles.overviewText}>Ebook not found.</Text>
 					</View>
 				) : (
-					<>
+					<Animated.View entering={CONTENT_FADE} style={styles.safeArea}>
 						<ScrollView
 							showsVerticalScrollIndicator={false}
 							contentContainerStyle={[
@@ -162,23 +165,28 @@ export default function EbookDetailScreen() {
 						<View
 							style={[styles.buttonContainer, { bottom: buttonBottom }]}
 						>
-							<Pressable
-								style={styles.downloadButton}
+							<PressableScale
+								disabled={pendingUrls.includes(ebookDetail.ebook_file.url)}
+								style={[
+									styles.downloadButton,
+									pendingUrls.includes(ebookDetail.ebook_file.url) &&
+										styles.downloadingButton
+								]}
 								onPress={() => {
 									// ponytail: saves a new copy on every tap; track downloaded ids if duplicates become a problem.
-									void handleDownloadFile(ebookDetail.ebook_file.url);
+									void downloadFile(ebookDetail.ebook_file.url);
 								}}
 							>
 								<Text style={styles.downloadButtonText}>Download</Text>
-							</Pressable>
-							<Pressable
+							</PressableScale>
+							<PressableScale
 								style={styles.readButton}
 								onPress={() => setIsReading(true)}
 							>
 								<Text style={styles.readButtonText}>Read Book</Text>
-							</Pressable>
+							</PressableScale>
 						</View>
-					</>
+					</Animated.View>
 				)}
 			</SafeAreaView>
 			<Modal
@@ -309,6 +317,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		borderRadius: 32,
 		backgroundColor: colors.darkSlateBlue
+	},
+	downloadingButton: {
+		opacity: 0.6
 	},
 	downloadButtonText: {
 		fontFamily: "Poppins_400Regular",

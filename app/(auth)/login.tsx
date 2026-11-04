@@ -1,3 +1,4 @@
+import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { login } from "@/services/authServices";
@@ -129,7 +130,7 @@ export default function LoginScreen() {
 				</View>
 
 				<View style={{ gap: 40 }}>
-					<Pressable
+					<PressableScale
 						style={{
 							backgroundColor: colors.white,
 							borderRadius: 40,
@@ -150,7 +151,7 @@ export default function LoginScreen() {
 						>
 							{isLoading ? "Sending link..." : "Continue"}
 						</Text>
-					</Pressable>
+					</PressableScale>
 
 					<Pressable
 						style={{ alignItems: "center" }}

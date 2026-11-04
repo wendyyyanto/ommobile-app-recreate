@@ -1,7 +1,9 @@
 import ErrorState from "@/components/ui/ErrorState";
+import PressableScale from "@/components/ui/PressableScale";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE } from "@/constants/motion";
 import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { TeachingListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { getTeachings } from "@/services/teachingServices";
@@ -15,12 +17,12 @@ import { MotiView } from "moti";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	ImageBackground,
-	Pressable,
 	RefreshControl,
 	ScrollView,
 	Text,
 	View
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useShallow } from "zustand/react/shallow";
 
@@ -158,24 +160,24 @@ const Teachings = () => {
 						<Text className="text-3xl w-2/5 text-white font-poppins">
 							Bible Teachings
 						</Text>
-						<Pressable
+						<PressableScale
 							accessibilityRole="button"
 							accessibilityLabel="Search teachings"
-							className="rounded-full px-5 py-5 bg-slate-gray active:opacity-70"
+							className="rounded-full px-5 py-5 bg-slate-gray"
 							onPress={() => router.push("/teachings/search")}
 						>
 							<Image
 								source={require("@/assets/icons/search_icon.svg")}
 								style={{ width: 14, height: 14 }}
 							/>
-						</Pressable>
+						</PressableScale>
 					</View>
 					<View className="flex-row gap-2 mb-11">
 						{teachingCategories.map((category) => (
-							<Pressable
+							<PressableScale
 								key={category.id}
 								accessibilityRole="button"
-								className="flex-1 min-h-[84px] justify-between p-2.5 rounded-2xl border active:opacity-70"
+								className="flex-1 min-h-[84px] justify-between p-2.5 rounded-2xl border"
 								style={{
 									backgroundColor: category.background,
 									borderColor: category.border
@@ -199,7 +201,7 @@ const Teachings = () => {
 										marginBottom: -4
 									}}
 								/>
-							</Pressable>
+							</PressableScale>
 						))}
 					</View>
 
@@ -226,13 +228,19 @@ const Teachings = () => {
 									<TeachingListSkeleton count={5} />
 								)}
 								{!isLoadingPopularTeachings &&
-									popularTeachings?.length > 0 &&
-									popularTeachings?.map((teaching) => (
-										<TeachingCard
-											key={teaching.id}
-											teaching={teaching}
-										/>
-									))}
+									popularTeachings?.length > 0 && (
+										<Animated.View
+											entering={CONTENT_FADE}
+											style={{ gap: 16 }}
+										>
+											{popularTeachings.map((teaching) => (
+												<TeachingCard
+													key={teaching.id}
+													teaching={teaching}
+												/>
+											))}
+										</Animated.View>
+									)}
 								{hasError && popularTeachings?.length === 0 && (
 									<ErrorState
 										message="Couldn't load teachings. Check your connection and try again."

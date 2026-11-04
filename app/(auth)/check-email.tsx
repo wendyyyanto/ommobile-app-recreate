@@ -1,11 +1,17 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE, EASE_OUT } from "@/constants/motion";
 import { login } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Dimensions, Pressable, Text, View } from "react-native";
+import Animated, {
+	FadeIn,
+	Keyframe,
+	useReducedMotion
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -15,10 +21,17 @@ const GLOW_IMAGE_SIZE = SCREEN_WIDTH * 1.54;
 
 const RESEND_SECONDS = 60;
 
+const GLOW_ENTER = new Keyframe({
+	from: { opacity: 0, transform: [{ scale: 0.97 }] },
+	to: { opacity: 1, transform: [{ scale: 1 }], easing: EASE_OUT }
+}).duration(400);
+const TEXT_ENTER = FadeIn.duration(300).easing(EASE_OUT).delay(100);
+
 export default function CheckEmailScreen() {
 	const { email } = useLocalSearchParams<{ email?: string }>();
 	const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
 	const [isResending, setIsResending] = useState(false);
+	const reduced = useReducedMotion();
 
 	useEffect(() => {
 		// countdown only gates "Resend"; signing in happens solely via the emailed magic link
@@ -50,8 +63,8 @@ export default function CheckEmailScreen() {
 
 	return (
 		<View style={{ flex: 1, backgroundColor: colors.black }}>
-			<Image
-				source={require("@/assets/images/email.webp")}
+			<Animated.View
+				entering={reduced ? CONTENT_FADE : GLOW_ENTER}
 				style={{
 					position: "absolute",
 					top: 0,
@@ -59,8 +72,13 @@ export default function CheckEmailScreen() {
 					width: GLOW_IMAGE_SIZE,
 					height: GLOW_IMAGE_SIZE
 				}}
-				contentFit="contain"
-			/>
+			>
+				<Image
+					source={require("@/assets/images/email.webp")}
+					style={{ width: "100%", height: "100%" }}
+					contentFit="contain"
+				/>
+			</Animated.View>
 
 			<SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
 				<View
@@ -70,7 +88,8 @@ export default function CheckEmailScreen() {
 						paddingTop: 20
 					}}
 				>
-					<View
+					<Animated.View
+						entering={reduced ? CONTENT_FADE : TEXT_ENTER}
 						style={{
 							flex: 1,
 							alignItems: "center",
@@ -121,7 +140,7 @@ export default function CheckEmailScreen() {
 								</Text>
 							</Pressable>
 						</View>
-					</View>
+					</Animated.View>
 				</View>
 			</SafeAreaView>
 		</View>

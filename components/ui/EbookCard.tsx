@@ -1,8 +1,9 @@
+import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
 import { EbookSummary } from "@/types/ebook";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 export default function EbookCard({
 	ebookDetails
@@ -10,8 +11,8 @@ export default function EbookCard({
 	ebookDetails: EbookSummary;
 }) {
 	return (
-		<Pressable
-			className="flex flex-1 flex-row items-center bg-charcoal-blue rounded-2xl py-2 px-4 gap-4 active:opacity-70"
+		<PressableScale
+			className="flex flex-1 flex-row items-center bg-charcoal-blue rounded-2xl py-2 px-4 gap-4"
 			onPress={() =>
 				router.push({
 					pathname: "/(resources)/ebooks/[ebookId]",
@@ -26,7 +27,7 @@ export default function EbookCard({
 						: require("@/assets/images/ebooks.png")
 				}
 				style={{ width: 52, height: 77, borderRadius: 3 }}
-				transition={1000}
+				transition={200}
 				contentFit="cover"
 			/>
 			<View className="flex-1 flex-col gap-1">
@@ -60,6 +61,6 @@ export default function EbookCard({
 					))}
 				</View>
 			</View>
-		</Pressable>
+		</PressableScale>
 	);
 }

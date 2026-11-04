@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { File, Paths } from "expo-file-system";
 import { Linking, Platform } from "react-native";
 import type { FileSystem as RNFileSystemType } from "react-native-file-access";
@@ -73,6 +74,7 @@ const openDownloadLocation = async (): Promise<void> => {
 };
 
 const showDownloadedToast = (text2: string): void => {
+	void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 	Toast.show({
 		type: "success",
 		text1: "File downloaded successfully",
@@ -108,6 +110,7 @@ export const handleDownloadFile = async (url: string): Promise<void> => {
 		showDownloadedToast("Tap to open it in the Files app");
 	} catch (error) {
 		console.log(error);
+		void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 		showErrorToast(
 			"Failed to download file",
 			"Something went wrong while downloading the file, please try again later or contact support"

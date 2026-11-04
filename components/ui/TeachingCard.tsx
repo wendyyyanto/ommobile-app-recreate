@@ -1,8 +1,9 @@
+import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
 import useTeachingCard from "@/hooks/useTeachingCard";
 import { Teaching } from "@/types/teaching";
 import { Image } from "expo-image";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 	const { handleTeachingCardPress } = useTeachingCard();
@@ -15,8 +16,8 @@ const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 			? [passage || "Unknown", teacher || "Unknown"]
 			: ["Unknown"];
 	return (
-		<Pressable
-			className="text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl border-dark-slate-blue border active:opacity-70"
+		<PressableScale
+			className="text-white p-4 flex flex-row gap-4 bg-charcoal-blue rounded-2xl border-dark-slate-blue border"
 			onPress={() => handleTeachingCardPress(teaching.id)}
 		>
 			<Image
@@ -48,7 +49,7 @@ const TeachingCard = ({ teaching }: { teaching: Teaching }) => {
 					</Text>
 				))}
 			</View>
-		</Pressable>
+		</PressableScale>
 	);
 };
 

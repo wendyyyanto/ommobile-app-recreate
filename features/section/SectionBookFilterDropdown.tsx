@@ -1,46 +1,121 @@
+import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import useFilterBook from "@/hooks/useFilterBook";
 import { getDropdowns } from "@/services/dropdownServices";
 import { useTeachingFilterStore } from "@/stores/teachingFilterStore";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+	BottomSheetFooterProps,
+	BottomSheetScrollView
+} from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+	FILTER_FOOTER_SPACE,
+	FILTER_OPEN_INDEX,
+	FILTER_SNAP_POINTS,
+	FilterSheetBackdrop,
+	FilterSheetFooter
+} from "./FilterSheetParts";
 import SectionBookOptionsAccordion from "./SectionBookOptionsAccordion";
 import { useShallow } from "zustand/react/shallow";
+
+const BookFilterFooter = (props: BottomSheetFooterProps) => {
+	const { selectedBook, setIsFilterByBookOpen, setSelectedBook } =
+		useTeachingFilterStore(
+			useShallow((s) => ({
+				selectedBook: s.selectedBook,
+				setIsFilterByBookOpen: s.setIsFilterByBookOpen,
+				setSelectedBook: s.setSelectedBook
+			}))
+		);
+	const { handleFilterTeachingByBook } = useFilterBook();
+
+	return (
+		<FilterSheetFooter {...props} visible={Boolean(selectedBook)}>
+			{selectedBook && (
+				<>
+					<PressableScale
+						className="flex-1"
+						onPress={() => setSelectedBook(null)}
+					>
+						<Text
+							style={[
+								fonts.body1White,
+								{ color: colors.lightBlue, textAlign: "center" }
+							]}
+						>
+							Reset Selections
+						</Text>
+					</PressableScale>
+					<PressableScale
+						className="bg-white rounded-full p-4 flex-row flex-1 items-center justify-center"
+						onPress={(e) => {
+							e.preventDefault();
+							setIsFilterByBookOpen(false);
+							handleFilterTeachingByBook(
+								selectedBook.bookName,
+								selectedBook.chapters
+							);
+						}}
+					>
+						<Text
+							style={[
+								fonts.body1White,
+								{ color: colors.black, textAlign: "center" }
+							]}
+						>
+							Show {selectedBook.bookName.slice(0, 3)}{" "}
+							{selectedBook.chapters.length === 1
+								? selectedBook.chapters[0]
+								: `${selectedBook.chapters[0]} - ${
+										selectedBook.chapters[
+											selectedBook.chapters.length - 1
+										]
+									}`}
+						</Text>
+						<Image
+							source={require("@/assets/icons/chevron_right.svg")}
+							tintColor={colors.black}
+							style={{
+								width: 24,
+								height: 24
+							}}
+						/>
+					</PressableScale>
+				</>
+			)}
+		</FilterSheetFooter>
+	);
+};
 
 const SectionBookFilterDropdown = () => {
 	const {
 		bookOptions,
 		bookChapters,
-		selectedBook,
 		setIsFilterByBookOpen,
 		setBookOptions,
 		setBookChapters,
-		isFilterByBookOpen,
-		setSelectedBook
+		isFilterByBookOpen
 	} = useTeachingFilterStore(
 		useShallow((s) => ({
 			bookOptions: s.bookOptions,
 			bookChapters: s.bookChapters,
-			selectedBook: s.selectedBook,
 			setIsFilterByBookOpen: s.setIsFilterByBookOpen,
 			setBookOptions: s.setBookOptions,
 			setBookChapters: s.setBookChapters,
-			isFilterByBookOpen: s.isFilterByBookOpen,
-			setSelectedBook: s.setSelectedBook
+			isFilterByBookOpen: s.isFilterByBookOpen
 		}))
 	);
-
-	const { handleSelectAllChapters, handleFilterTeachingByBook } =
-		useFilterBook();
 
 	const { name } = useLocalSearchParams<{ name?: string | string[] }>();
 	const sectionName = Array.isArray(name) ? name[0] : name;
 
 	const bottomSheetRef = useRef<BottomSheet>(null);
+	const insets = useSafeAreaInsets();
 
 	useEffect(() => {
 		getDropdowns(
@@ -80,7 +155,7 @@ const SectionBookFilterDropdown = () => {
 
 	useEffect(() => {
 		if (isFilterByBookOpen) {
-			bottomSheetRef.current?.expand();
+			bottomSheetRef.current?.snapToIndex(FILTER_OPEN_INDEX);
 		} else {
 			bottomSheetRef.current?.close();
 		}
@@ -89,11 +164,15 @@ const SectionBookFilterDropdown = () => {
 	return (
 		<BottomSheet
 			ref={bottomSheetRef}
-			index={isFilterByBookOpen ? 0 : -1}
-			snapPoints={["50%", "80%", "100%"]}
+			index={isFilterByBookOpen ? FILTER_OPEN_INDEX : -1}
+			snapPoints={FILTER_SNAP_POINTS}
+			enableDynamicSizing={false}
 			enablePanDownToClose
+			topInset={insets.top}
+			backdropComponent={FilterSheetBackdrop}
+			footerComponent={BookFilterFooter}
 			onClose={() => setIsFilterByBookOpen(false)}
-			handleIndicatorStyle={{ display: "none" }}
+			handleIndicatorStyle={{ backgroundColor: colors.slateGray }}
 			backgroundStyle={{
 				backgroundColor: colors.black,
 				borderRadius: 20
@@ -104,14 +183,18 @@ const SectionBookFilterDropdown = () => {
 					style={[fonts.body1White, { color: colors.lightBlue }]}
 				></Text>
 				<Text style={[fonts.subtitle1White]}>Books</Text>
-				<Pressable onPress={() => setIsFilterByBookOpen(false)}>
+				<PressableScale onPress={() => setIsFilterByBookOpen(false)}>
 					<Image
 						source={require("@/assets/icons/close.svg")}
 						style={{ width: 40, height: 40 }}
 					/>
-				</Pressable>
+				</PressableScale>
 			</View>
-			<BottomSheetScrollView>
+			<BottomSheetScrollView
+				contentContainerStyle={{
+					paddingBottom: FILTER_FOOTER_SPACE + insets.bottom
+				}}
+			>
 				{bookOptions?.length > 0 &&
 					bookOptions?.map((book) => {
 						const totalChapters =
@@ -129,70 +212,6 @@ const SectionBookFilterDropdown = () => {
 						);
 					})}
 			</BottomSheetScrollView>
-
-			{selectedBook && (
-				<View className="sticky bottom-0 left-0 right-0 justify-center items-center flex-row bg-black py-4 px-10 gap-10">
-					<Pressable
-						className="flex-1"
-						onPress={() => {
-							const totalChapters =
-								bookChapters.length > 0 &&
-								bookChapters?.find(
-									(chapter) =>
-										chapter.id === selectedBook.bookName
-								)?.name;
-
-							return handleSelectAllChapters(
-								Number(totalChapters)
-							);
-						}}
-					>
-						<Text
-							style={[
-								fonts.body1White,
-								{ color: colors.lightBlue, textAlign: "center" }
-							]}
-						>
-							Select All Chapters
-						</Text>
-					</Pressable>
-					<Pressable
-						className="bg-white rounded-full p-4 flex-row flex-1 items-center justify-center"
-						onPress={(e) => {
-							e.preventDefault();
-							setIsFilterByBookOpen(false);
-							handleFilterTeachingByBook(
-								selectedBook.bookName,
-								selectedBook.chapters
-							);
-						}}
-					>
-						<Text
-							style={[
-								fonts.body1White,
-								{ color: colors.black, textAlign: "center" }
-							]}
-						>
-							Show {selectedBook.bookName.slice(0, 3)}{" "}
-							{selectedBook.chapters.length === 1
-								? selectedBook.chapters[0]
-								: `${selectedBook.chapters[0]} - ${
-										selectedBook.chapters[
-											selectedBook.chapters.length - 1
-										]
-									}`}
-						</Text>
-						<Image
-							source={require("@/assets/icons/chevron_right.svg")}
-							tintColor={colors.black}
-							style={{
-								width: 24,
-								height: 24
-							}}
-						/>
-					</Pressable>
-				</View>
-			)}
 		</BottomSheet>
 	);
 };

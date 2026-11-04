@@ -1,8 +1,10 @@
 import ErrorState from "@/components/ui/ErrorState";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import PressableScale from "@/components/ui/PressableScale";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE } from "@/constants/motion";
 import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { annoucementBanners } from "@/constants/placeholders";
 import AnnouncementCarousel from "@/features/home/AnnouncementCarousel";
@@ -30,6 +32,7 @@ import {
 	Text,
 	View
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useShallow } from "zustand/react/shallow";
 
@@ -207,8 +210,8 @@ export default function Index() {
 						<View className="flex flex-col gap-4">
 							<Text style={fonts.subtitle1White}>Resources</Text>
 							<View className="flex flex-row gap-3">
-								<Pressable
-									className="bg-charcoal-blue border-dark-slate-blue border rounded-3xl flex-1 p-4 active:opacity-70"
+								<PressableScale
+									className="bg-charcoal-blue border-dark-slate-blue border rounded-3xl flex-1 p-4"
 									onPress={() => {
 										router.push("/(resources)/ebooks");
 									}}
@@ -232,9 +235,9 @@ export default function Index() {
 									<Text style={fonts.caption1Grey}>
 										Biblical books to strengthen your faith.
 									</Text>
-								</Pressable>
-								<Pressable
-									className="bg-charcoal-blue border-dark-slate-blue border rounded-3xl flex-1 p-4 active:opacity-70"
+								</PressableScale>
+								<PressableScale
+									className="bg-charcoal-blue border-dark-slate-blue border rounded-3xl flex-1 p-4"
 									onPress={() => {
 										router.push(
 											"/(resources)/class-materials"
@@ -260,7 +263,7 @@ export default function Index() {
 									<Text style={fonts.caption1Grey}>
 										Material from OM classes.
 									</Text>
-								</Pressable>
+								</PressableScale>
 							</View>
 						</View>
 
@@ -272,8 +275,8 @@ export default function Index() {
 								>
 									Latest Teachings
 								</Text>
-								<Pressable
-									className="bg-charcoal-blue rounded-full py-2 w-1/4 active:opacity-70"
+								<PressableScale
+									className="bg-charcoal-blue rounded-full py-2 w-1/4"
 									onPress={() => router.push("/teachings")}
 								>
 									<Text
@@ -287,20 +290,26 @@ export default function Index() {
 									>
 										Browse All
 									</Text>
-								</Pressable>
+								</PressableScale>
 							</View>
 							<View className="flex flex-1 gap-4">
 								{isLoadingLatestTeachings && (
 									<TeachingListSkeleton count={4} />
 								)}
 								{!isLoadingLatestTeachings &&
-									latestTeachings?.length > 0 &&
-									latestTeachings?.map((teaching) => (
-										<TeachingCard
-											key={teaching.id}
-											teaching={teaching}
-										/>
-									))}
+									latestTeachings?.length > 0 && (
+										<Animated.View
+											entering={CONTENT_FADE}
+											style={{ gap: 16 }}
+										>
+											{latestTeachings.map((teaching) => (
+												<TeachingCard
+													key={teaching.id}
+													teaching={teaching}
+												/>
+											))}
+										</Animated.View>
+									)}
 								{hasError && latestTeachings?.length === 0 && (
 									<View className="py-10">
 										<ErrorState

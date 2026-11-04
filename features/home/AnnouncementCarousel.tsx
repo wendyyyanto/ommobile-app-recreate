@@ -8,6 +8,7 @@ import { Dimensions, View } from "react-native";
 import {
 	Extrapolation,
 	interpolate,
+	useReducedMotion,
 	useSharedValue
 } from "react-native-reanimated";
 import Carousel, {
@@ -25,6 +26,7 @@ const AnnouncementCarousel = ({ isLoading = false }: { isLoading?: boolean }) =>
 	const announcementList = useAnnouncementStore((s) => s.announcementList);
 	const progress = useSharedValue<number>(0);
 	const carouselRef = useRef<ICarouselInstance>(null);
+	const reduced = useReducedMotion();
 	const slides = isLoading ? SKELETON_SLIDES : announcementList;
 
 	return (
@@ -32,7 +34,7 @@ const AnnouncementCarousel = ({ isLoading = false }: { isLoading?: boolean }) =>
 			<Carousel
 				key={isLoading ? "loading" : "loaded"}
 				ref={carouselRef}
-				autoPlay={!isLoading}
+				autoPlay={!isLoading && !reduced}
 				enabled={!isLoading}
 				autoPlayInterval={5000}
 				snapEnabled={true}
