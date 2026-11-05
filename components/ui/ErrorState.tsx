@@ -1,5 +1,6 @@
+import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 type ErrorStateProps = {
 	message?: string;
@@ -17,13 +18,13 @@ const ErrorState = ({
 			>
 				{message}
 			</Text>
-			<Pressable
+			<PressableScale
 				className="rounded-full px-8 py-3 bg-slate-gray"
 				onPress={onRetry}
 				accessibilityRole="button"
 			>
 				<Text style={fonts.subtitle1White}>Try again</Text>
-			</Pressable>
+			</PressableScale>
 		</View>
 	);
 };

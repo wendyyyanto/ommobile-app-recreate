@@ -1,3 +1,4 @@
+import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
 import { ClassWeekListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { getClassDetails } from "@/services/classServices";
@@ -74,7 +75,7 @@ export default function ClassMaterialsDetailScreen() {
 					</Text>
 					<ScrollView showsVerticalScrollIndicator={false}>
 						{weeks.map((week) => (
-							<Pressable
+							<PressableScale
 								className="flex flex-row justify-between items-center px-4 py-3 bg-charcoal-blue rounded-2xl mb-3"
 								key={week}
 								onPress={() =>
@@ -91,7 +92,7 @@ export default function ClassMaterialsDetailScreen() {
 									source={require("@/assets/icons/chevron_right.svg")}
 									style={{ width: 40, height: 40 }}
 								/>
-							</Pressable>
+							</PressableScale>
 						))}
 					</ScrollView>
 				</View>

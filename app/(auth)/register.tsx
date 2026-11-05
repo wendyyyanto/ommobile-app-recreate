@@ -1,7 +1,9 @@
+import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import { register } from "@/services/authServices";
 import { showErrorToast } from "@/utils/toastHelper";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -32,7 +34,12 @@ export default function RegisterScreen() {
 		register(
 			{ name: trimmedName, email: trimmedEmail },
 			{
-				onSuccess: () => router.replace("/register-success"),
+				onSuccess: () => {
+					void Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Success
+					);
+					router.replace("/register-success");
+				},
 				onError: (error) =>
 					showErrorToast(
 						error?.response?.data?.message ??
@@ -162,7 +169,7 @@ export default function RegisterScreen() {
 					</View>
 
 					<View style={{ gap: 24, marginTop: 8 }}>
-						<Pressable
+						<PressableScale
 							style={{
 								backgroundColor: colors.white,
 								borderRadius: 40,
@@ -183,7 +190,7 @@ export default function RegisterScreen() {
 							>
 								{isLoading ? "Submitting..." : "Submit"}
 							</Text>
-						</Pressable>
+						</PressableScale>
 
 						<View
 							style={{

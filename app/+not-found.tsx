@@ -1,7 +1,8 @@
+import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
 import { router, usePathname } from "expo-router";
 import { useEffect } from "react";
-import { ImageBackground, Pressable, Text, View } from "react-native";
+import { ImageBackground, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const backgroundImage = require("@/assets/images/background.webp");
@@ -28,12 +29,12 @@ const NotFound = () => {
 						The link you opened doesn&apos;t point anywhere in the
 						app.
 					</Text>
-					<Pressable
+					<PressableScale
 						className="bg-charcoal-blue rounded-2xl px-6 py-3"
 						onPress={() => router.replace("/")}
 					>
 						<Text style={fonts.body2White}>Go to Home</Text>
-					</Pressable>
+					</PressableScale>
 				</View>
 			</SafeAreaView>
 		</ImageBackground>

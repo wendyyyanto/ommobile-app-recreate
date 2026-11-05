@@ -1,3 +1,4 @@
+import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
 import { ClassMaterialListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import PdfViewer from "@/features/teaching/PdfViewer";
@@ -74,7 +75,7 @@ export default function ClassWeekMaterialsScreen() {
 							</Text>
 						)}
 						{materials.map((material) => (
-							<Pressable
+							<PressableScale
 								key={material.id}
 								className="flex-row items-center gap-4 px-5 py-4 bg-charcoal-blue rounded-3xl"
 								disabled={!material.file}
@@ -95,7 +96,7 @@ export default function ClassWeekMaterialsScreen() {
 								>
 									{material.title}
 								</Text>
-							</Pressable>
+							</PressableScale>
 						))}
 					</View>
 				</ScrollView>

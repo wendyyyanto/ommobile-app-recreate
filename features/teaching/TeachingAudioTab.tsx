@@ -1,7 +1,9 @@
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { TabEnum } from "@/constants/enums";
 import fonts from "@/constants/fonts";
+import { QUICK_FADE } from "@/constants/motion";
+import { TeachingAudioSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { useTeachingStore } from "@/stores/teachingStore";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import {
@@ -9,6 +11,7 @@ import {
 	Gesture,
 	GestureDetector
 } from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 import TeachingAudioPlayer from "./TeachingAudioPlayer";
 import { useShallow } from "zustand/react/shallow";
 
@@ -28,17 +31,21 @@ const TeachingAudioTab = () => {
 	const flingGestureHandler = Gesture.Fling()
 		.direction(Directions.LEFT)
 		.onStart(() => {
+			void Haptics.selectionAsync();
 			setActiveTab(TabEnum.VIDEO);
 		})
 		.runOnJS(true);
 
 	if (isLoadingTeachingDetails) {
-		return <LoadingSpinner />;
+		return <TeachingAudioSkeleton />;
 	}
 
 	return (
 		<GestureDetector gesture={flingGestureHandler}>
-			<View className="justify-center items-center">
+			<Animated.View
+				entering={QUICK_FADE}
+				style={{ justifyContent: "center", alignItems: "center" }}
+			>
 				<Image
 					source={teachingDetails?.thumbnail_url}
 					style={{
@@ -80,7 +87,7 @@ const TeachingAudioTab = () => {
 						This teaching has no audio
 					</Text>
 				)}
-			</View>
+			</Animated.View>
 		</GestureDetector>
 	);
 };

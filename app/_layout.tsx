@@ -12,6 +12,7 @@ import { enableUnsetNotificationCategories } from "@/hooks/useNotificationSettin
 import { useAuthStore } from "@/stores/authStore";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useReducedMotion } from "react-native-reanimated";
 import {
 	LogLevel,
 	OneSignal,
@@ -32,6 +33,7 @@ if (!isExpoGo) {
 
 export default function RootLayout() {
 	const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+	const reduced = useReducedMotion();
 	const [fontsLoaded, fontError] = useFonts({
 		Poppins_400Regular,
 		Poppins_500Medium,
@@ -90,11 +92,12 @@ export default function RootLayout() {
 			<Stack
 				screenOptions={{
 					headerShown: false,
-					contentStyle: { backgroundColor: "black" }
+					contentStyle: { backgroundColor: "black" },
+					animation: reduced ? "fade" : "default"
 				}}
 			>
 				<Stack.Protected guard={isLoggedIn}>
-					<Stack.Screen name="(tabs)" />
+					<Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
 					<Stack.Screen name="(resources)" />
 					<Stack.Screen name="notifications/[notificationId]" />
 					<Stack.Screen name="teaching/[teachingId]" />
@@ -102,7 +105,7 @@ export default function RootLayout() {
 					<Stack.Screen name="settings" />
 				</Stack.Protected>
 				<Stack.Protected guard={!isLoggedIn}>
-					<Stack.Screen name="(auth)" />
+					<Stack.Screen name="(auth)" options={{ animation: "fade" }} />
 				</Stack.Protected>
 			</Stack>
 			<Toast />

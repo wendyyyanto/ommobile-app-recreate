@@ -1,9 +1,11 @@
 import BackButton from "@/components/ui/BackButton";
 import ErrorState from "@/components/ui/ErrorState";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import PressableScale from "@/components/ui/PressableScale";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE } from "@/constants/motion";
 import { TeachingListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import SectionBookFilterDropdown from "@/features/section/SectionBookFilterDropdown";
 import SectionOtherFilterDropdown from "@/features/section/SectionOtherFilterDropdown";
@@ -15,12 +17,12 @@ import { router, useLocalSearchParams } from "expo-router";
 import {
 	FlatList,
 	ImageBackground,
-	Pressable,
 	RefreshControl,
 	StyleSheet,
 	Text,
 	View
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useShallow } from "zustand/react/shallow";
 
@@ -83,23 +85,23 @@ const TeachingsSection = () => {
 						</Text>
 					</View>
 
-					<Pressable
+					<PressableScale
 						accessibilityRole="button"
 						accessibilityLabel="Search teachings"
-						className="rounded-full px-5 py-5 bg-slate-gray active:opacity-70"
+						className="rounded-full px-5 py-5 bg-slate-gray"
 						onPress={() => router.push("/teachings/search")}
 					>
 						<Image
 							source={require("@/assets/icons/search_icon.svg")}
 							style={{ width: 14, height: 14 }}
 						/>
-					</Pressable>
+					</PressableScale>
 				</View>
 
 				<View className="px-4 flex flex-row gap-4">
 					{(sectionId === "new-testament" ||
 						sectionId === "old-testament") && (
-						<Pressable
+						<PressableScale
 							style={styles.filterButton}
 							onPress={() => {
 								setIsFilterByBookOpen(true);
@@ -113,9 +115,9 @@ const TeachingsSection = () => {
 								source={require("@/assets/icons/chevron_Down.svg")}
 								style={{ width: 32, height: 32 }}
 							/>
-						</Pressable>
+						</PressableScale>
 					)}
-					<Pressable
+					<PressableScale
 						style={styles.filterButton}
 						onPress={() => {
 							setIsFilterByOtherOpen(true);
@@ -135,7 +137,7 @@ const TeachingsSection = () => {
 							source={require("@/assets/icons/chevron_Down.svg")}
 							style={{ width: 32, height: 32 }}
 						/>
-					</Pressable>
+					</PressableScale>
 				</View>
 
 				<View className="px-4 flex-1 gap-3">
@@ -145,6 +147,7 @@ const TeachingsSection = () => {
 							<TeachingListSkeleton count={6} />
 						</View>
 					) : (
+					<Animated.View entering={CONTENT_FADE} style={{ flex: 1 }}>
 					<FlatList
 						data={isLoadingSectionTeachings ? [] : sectionTeachings}
 						keyExtractor={(teaching) => String(teaching.id)}
@@ -186,12 +189,12 @@ const TeachingsSection = () => {
 							) : null
 						}
 					/>
+					</Animated.View>
 					)}
-
-					<SectionBookFilterDropdown />
-					<SectionOtherFilterDropdown />
 				</View>
 			</SafeAreaView>
+			<SectionBookFilterDropdown />
+			<SectionOtherFilterDropdown />
 		</ImageBackground>
 	);
 };

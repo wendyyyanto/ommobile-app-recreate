@@ -1,11 +1,14 @@
 import ErrorState from "@/components/ui/ErrorState";
+import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE, OPACITY_TRANSITION } from "@/constants/motion";
 import { ClassListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useMemo, useState } from "react";
 import { getClasses } from "@/services/classServices";
@@ -93,7 +96,7 @@ export default function ClassMaterialsScreen() {
 					onChangeText={setQuery}
 				/>
 			</View>
-			{isLoading ? (
+			{isLoading && classes.length === 0 ? (
 				<ClassListSkeleton />
 			) : hasError ? (
 				<ErrorState
@@ -101,47 +104,52 @@ export default function ClassMaterialsScreen() {
 					onRetry={() => setRetryCount((n) => n + 1)}
 				/>
 			) : (
-				<ScrollView showsVerticalScrollIndicator={false}>
-					<View className="flex-1 pb-8 gap-3">
-						{classMaterialsList.length === 0 && (
-							<Text style={fonts.caption1Grey} className="text-center">
-								{query ? "No classes found." : "No classes available."}
-							</Text>
-						)}
-						{classMaterialsList.map((item) => (
-							<View key={item.category}>
-								<Text style={fonts.subtitle1White} className="mb-2">
-									{item.category}
+				<Animated.View entering={CONTENT_FADE} style={{ flex: 1 }}>
+					<Animated.ScrollView
+						showsVerticalScrollIndicator={false}
+						style={[OPACITY_TRANSITION, { opacity: isLoading ? 0.5 : 1 }]}
+					>
+						<View className="flex-1 pb-8 gap-3">
+							{classMaterialsList.length === 0 && (
+								<Text style={fonts.caption1Grey} className="text-center">
+									{query ? "No classes found." : "No classes available."}
 								</Text>
-								<View className="flex gap-3">
-									{item.classes.map((classItem) => (
-										<Pressable
-											key={classItem.id}
-											className="flex flex-col gap-1 px-4 py-3 bg-charcoal-blue rounded-2xl"
-											onPress={() =>
-												router.push({
-													pathname: "/class-materials/[id]",
-													params: {
-														id: classItem.id,
-														title: classItem.title,
-														totalWeeks: classItem.total_weeks
-													}
-												})
-											}
-										>
-											<Text style={fonts.subtitle1White}>
-												{classItem.title}
-											</Text>
-											<Text style={fonts.caption1Grey}>
-												{classItem.total_weeks} Weeks
-											</Text>
-										</Pressable>
-									))}
+							)}
+							{classMaterialsList.map((item) => (
+								<View key={item.category}>
+									<Text style={fonts.subtitle1White} className="mb-2">
+										{item.category}
+									</Text>
+									<View className="flex gap-3">
+										{item.classes.map((classItem) => (
+											<PressableScale
+												key={classItem.id}
+												className="flex flex-col gap-1 px-4 py-3 bg-charcoal-blue rounded-2xl"
+												onPress={() =>
+													router.push({
+														pathname: "/class-materials/[id]",
+														params: {
+															id: classItem.id,
+															title: classItem.title,
+															totalWeeks: classItem.total_weeks
+														}
+													})
+												}
+											>
+												<Text style={fonts.subtitle1White}>
+													{classItem.title}
+												</Text>
+												<Text style={fonts.caption1Grey}>
+													{classItem.total_weeks} Weeks
+												</Text>
+											</PressableScale>
+										))}
+									</View>
 								</View>
-							</View>
-						))}
-					</View>
-				</ScrollView>
+							))}
+						</View>
+					</Animated.ScrollView>
+				</Animated.View>
 			)}
 		</SafeAreaView>
 	);

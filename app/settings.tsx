@@ -1,5 +1,6 @@
 import BackButton from "@/components/ui/BackButton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
 import NotificationSwitch from "@/features/notification/NotificationSwitch";
@@ -118,14 +119,14 @@ const NotificationSettings = () => {
 							>
 								Unable to load notification settings.
 							</Text>
-							<Pressable
+							<PressableScale
 								className="rounded-full bg-charcoal-blue px-6 py-3"
 								onPress={() => void loadNotificationSettings()}
 							>
 								<Text style={fonts.caption1White}>
 									Try Again
 								</Text>
-							</Pressable>
+							</PressableScale>
 						</View>
 					) : notificationSegments.length === 0 ? (
 						<Text
