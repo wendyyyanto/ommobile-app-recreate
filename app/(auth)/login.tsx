@@ -154,6 +154,7 @@ export default function LoginScreen() {
 					</PressableScale>
 
 					<Pressable
+						className="active:opacity-70"
 						style={{ alignItems: "center" }}
 						onPress={() => router.push("/register")}
 					>

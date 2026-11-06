@@ -1,12 +1,15 @@
+import BackButton from "@/components/ui/BackButton";
 import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE } from "@/constants/motion";
 import { ClassWeekListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { getClassDetails } from "@/services/classServices";
 import { useClassStore } from "@/stores/classStore";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useShallow } from "zustand/react/shallow";
 
@@ -46,17 +49,7 @@ export default function ClassMaterialsDetailScreen() {
 			className="flex-1 flex-col gap-7 px-4 py-5"
 		>
 			<View className="flex-row items-center gap-4">
-				<Pressable
-					accessibilityRole="button"
-					accessibilityLabel="Go back"
-					style={{ width: 40, height: 40 }}
-					onPress={() => router.back()}
-				>
-					<Image
-						source={require("@/assets/icons/arrow_back.svg")}
-						style={{ width: 40, height: 40 }}
-					/>
-				</Pressable>
+				<BackButton />
 				<Text style={fonts.body2White} className="flex-1">
 					{title ?? classDetails?.title}
 				</Text>
@@ -64,7 +57,10 @@ export default function ClassMaterialsDetailScreen() {
 			{isLoading && !weekCount ? (
 				<ClassWeekListSkeleton count={6} />
 			) : (
-				<View className="flex-1 flex-col gap-4">
+				<Animated.View
+					entering={CONTENT_FADE}
+					style={{ flex: 1, gap: 16 }}
+				>
 					{classDetails?.description ? (
 						<Text style={fonts.caption2Grey}>
 							{classDetails.description}
@@ -95,7 +91,7 @@ export default function ClassMaterialsDetailScreen() {
 							</PressableScale>
 						))}
 					</ScrollView>
-				</View>
+				</Animated.View>
 			)}
 		</SafeAreaView>
 	);

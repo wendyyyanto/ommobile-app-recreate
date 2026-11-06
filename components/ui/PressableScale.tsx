@@ -16,12 +16,14 @@ cssInterop(AnimatedPressable, { className: "style" });
 type PressableScaleProps = Omit<PressableProps, "style"> & {
 	className?: string;
 	style?: StyleProp<ViewStyle>;
+	scaleTo?: number;
 };
 
 const PressableScale = ({
 	onPressIn,
 	onPressOut,
 	style,
+	scaleTo = 0.97,
 	...props
 }: PressableScaleProps) => {
 	const [pressed, setPressed] = useState(false);
@@ -41,7 +43,10 @@ const PressableScale = ({
 			style={[
 				styles.base,
 				style,
-				pressed && (reduced ? styles.pressedDimmed : styles.pressedScaled)
+				pressed &&
+					(reduced
+						? styles.pressedDimmed
+						: { transform: [{ scale: scaleTo }] })
 			]}
 		/>
 	);
@@ -54,9 +59,6 @@ const styles = StyleSheet.create({
 		transitionProperty: ["transform", "opacity"],
 		transitionDuration: "120ms",
 		transitionTimingFunction: CSS_EASE_OUT
-	},
-	pressedScaled: {
-		transform: [{ scale: 0.97 }]
 	},
 	pressedDimmed: {
 		opacity: 0.7

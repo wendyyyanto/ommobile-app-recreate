@@ -1,3 +1,4 @@
+import BackButton from "@/components/ui/BackButton";
 import ErrorState from "@/components/ui/ErrorState";
 import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
@@ -6,7 +7,7 @@ import { CONTENT_FADE, OPACITY_TRANSITION } from "@/constants/motion";
 import { ClassListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -62,17 +63,7 @@ export default function ClassMaterialsScreen() {
 	return (
 		<SafeAreaView edges={["top"]} className="flex-1 flex-col gap-7 px-4 py-5">
 			<View className="flex-row items-center gap-4">
-				<Pressable
-					accessibilityRole="button"
-					accessibilityLabel="Go back"
-					style={{ width: 40, height: 40 }}
-					onPress={() => router.back()}
-				>
-					<Image
-						source={require("@/assets/icons/arrow_back.svg")}
-						style={{ width: 40, height: 40 }}
-					/>
-				</Pressable>
+				<BackButton />
 				<Text style={fonts.body2White}>Class Materials</Text>
 			</View>
 			<View

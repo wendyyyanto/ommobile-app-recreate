@@ -4,6 +4,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE, OPACITY_TRANSITION } from "@/constants/motion";
 import useSearchTeachings from "@/hooks/useSearchTeachings";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Image } from "expo-image";
@@ -11,12 +12,13 @@ import { router } from "expo-router";
 import { useRef } from "react";
 import {
 	FlatList,
-	ImageBackground,
 	Pressable,
+	StyleSheet,
 	Text,
 	TextInput,
 	View
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useShallow } from "zustand/react/shallow";
 
@@ -51,16 +53,19 @@ const SearchTeaching = () => {
 	const backgroundImage =
 		searchQuery.trim() !== "" &&
 		searchTeachings?.length === 0 &&
+		!isLoadingSearchTeachings &&
 		!hasError
 			? require("@/assets/images/search_noresult.webp")
 			: require("@/assets/images/search_initial.webp");
 
 	return (
-		<ImageBackground
-			source={backgroundImage}
-			className="flex-1"
-			resizeMode="contain"
-		>
+		<View className="flex-1">
+			<Image
+				source={backgroundImage}
+				style={StyleSheet.absoluteFill}
+				contentFit="contain"
+				transition={200}
+			/>
 			<SafeAreaView
 				edges={["top", "bottom"]}
 				className="flex-1 px-4 gap-7 mt-6"
@@ -97,28 +102,38 @@ const SearchTeaching = () => {
 					/>
 				</Pressable>
 
-				{isLoadingSearchTeachings ? (
+				{isLoadingSearchTeachings && searchTeachings?.length === 0 ? (
 					<View className="flex-1 justify-center items-center">
 						<LoadingSpinner
 							label={`Searching for "${searchQuery}"...`}
 						/>
 					</View>
 				) : searchTeachings?.length > 0 ? (
-					<FlatList
-						data={searchTeachings}
-						keyExtractor={(teaching) => String(teaching.id)}
-						renderItem={({ item }) => <TeachingCard teaching={item} />}
-						ItemSeparatorComponent={ItemSeparator}
-						showsVerticalScrollIndicator={false}
-						contentContainerStyle={{ paddingBottom: 160 }}
-						onEndReached={() => void handleLoadMoreSearchTeachings()}
-						onEndReachedThreshold={0.5}
-						ListFooterComponent={
-							isLoadMoreSearchTeachings ? (
-								<LoadingSpinner label="Loading more teachings..." />
-							) : null
-						}
-					/>
+					<Animated.View entering={CONTENT_FADE} style={{ flex: 1 }}>
+						<Animated.View
+							style={[
+								OPACITY_TRANSITION,
+								{ flex: 1, opacity: isLoadingSearchTeachings ? 0.5 : 1 }
+							]}
+						>
+							<FlatList
+								key={searchQuery}
+								data={searchTeachings}
+								keyExtractor={(teaching) => String(teaching.id)}
+								renderItem={({ item }) => <TeachingCard teaching={item} />}
+								ItemSeparatorComponent={ItemSeparator}
+								showsVerticalScrollIndicator={false}
+								contentContainerStyle={{ paddingBottom: 160 }}
+								onEndReached={() => void handleLoadMoreSearchTeachings()}
+								onEndReachedThreshold={0.5}
+								ListFooterComponent={
+									isLoadMoreSearchTeachings ? (
+										<LoadingSpinner label="Loading more teachings..." />
+									) : null
+								}
+							/>
+						</Animated.View>
+					</Animated.View>
 				) : hasError ? (
 					<ErrorState
 						message="Couldn't search right now. Check your connection and try again."
@@ -144,7 +159,7 @@ const SearchTeaching = () => {
 					</View>
 				)}
 			</SafeAreaView>
-		</ImageBackground>
+		</View>
 	);
 };
 

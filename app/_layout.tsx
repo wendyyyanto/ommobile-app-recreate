@@ -7,6 +7,7 @@ import {
 } from "@expo-google-fonts/poppins";
 import Constants from "expo-constants";
 import { router, SplashScreen, Stack } from "expo-router";
+import * as ExpoSplashScreen from "expo-splash-screen";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { enableUnsetNotificationCategories } from "@/hooks/useNotificationSettings";
 import { useAuthStore } from "@/stores/authStore";
@@ -23,6 +24,10 @@ import Toast from "react-native-toast-message";
 SplashScreen.preventAutoHideAsync();
 
 const isExpoGo = Constants.executionEnvironment === "storeClient";
+
+if (!isExpoGo) {
+	ExpoSplashScreen.setOptions({ duration: 400, fade: true });
+}
 
 // Initialize at module load: child screen effects (e.g. notification settings
 // calling OneSignal.User.getTags) run before this layout's effects would.

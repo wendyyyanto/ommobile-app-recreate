@@ -1,3 +1,4 @@
+import BackButton from "@/components/ui/BackButton";
 import EbookCard from "@/components/ui/EbookCard";
 import ErrorState from "@/components/ui/ErrorState";
 import colors from "@/constants/colors";
@@ -5,8 +6,7 @@ import fonts from "@/constants/fonts";
 import { CONTENT_FADE, OPACITY_TRANSITION } from "@/constants/motion";
 import { EbookListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
@@ -47,17 +47,7 @@ export default function EBooksResourcesScreen() {
 	return (
 		<SafeAreaView edges={["top"]} className="flex-1 flex-col gap-7 px-4 py-5">
 			<View className="flex-row items-center gap-4">
-				<Pressable
-					accessibilityRole="button"
-					accessibilityLabel="Go back"
-					style={{ width: 40, height: 40 }}
-					onPress={() => router.back()}
-				>
-					<Image
-						source={require("@/assets/icons/arrow_back.svg")}
-						style={{ width: 40, height: 40 }}
-					/>
-				</Pressable>
+				<BackButton />
 				<Text style={fonts.body2White}>E-Books</Text>
 			</View>
 			<View

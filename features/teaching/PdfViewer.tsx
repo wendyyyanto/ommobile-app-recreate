@@ -2,6 +2,7 @@ import BackButton from "@/components/ui/BackButton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE } from "@/constants/motion";
 import { deleteCachedFile, downloadFileToCache } from "@/utils/fileHelper";
 import { showErrorToast } from "@/utils/toastHelper";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -9,6 +10,7 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import Pdf, { type PdfRef } from "react-native-pdf";
+import Animated from "react-native-reanimated";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 
@@ -146,7 +148,7 @@ const PdfViewer = ({
 						}}
 					/>
 				) : localPath ? (
-					<>
+					<Animated.View entering={CONTENT_FADE} style={{ flex: 1 }}>
 						<View style={styles.controls}>
 							<Pressable
 								style={styles.iconButton}
@@ -209,7 +211,7 @@ const PdfViewer = ({
 							}}
 							style={styles.pdf}
 						/>
-					</>
+					</Animated.View>
 				) : (
 					<View style={styles.loadingContainer}>
 						<LoadingSpinner label="Downloading file..." />

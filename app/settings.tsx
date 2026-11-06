@@ -1,8 +1,8 @@
 import BackButton from "@/components/ui/BackButton";
-import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PressableScale from "@/components/ui/PressableScale";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import { NotificationSettingsSkeleton } from "@/features/skeletons/ContentSkeletons";
 import NotificationSwitch from "@/features/notification/NotificationSwitch";
 import useNotificationSettings, {
 	toNotificationTagName
@@ -11,6 +11,7 @@ import { deleteAccount } from "@/services/authServices";
 import { useAuthStore } from "@/stores/authStore";
 import { useNotificationStore } from "@/stores/notificationStore";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,20 +29,28 @@ const confirmAccountDeletion = (
 				text: "Delete",
 				style: "destructive",
 				onPress: () => {
+					void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 					setIsDeleting(true);
 					void deleteAccount({
 						onSuccess: () => {
+							void Haptics.notificationAsync(
+								Haptics.NotificationFeedbackType.Success
+							);
 							Alert.alert(
 								"Account deleted",
 								"Your account has been deleted."
 							);
 							useAuthStore.getState().logout();
 						},
-						onError: () =>
+						onError: () => {
+							void Haptics.notificationAsync(
+								Haptics.NotificationFeedbackType.Error
+							);
 							Alert.alert(
 								"Something went wrong",
 								"We couldn't delete your account. Please try again."
-							),
+							);
+						},
 						onFulfilled: () => setIsDeleting(false)
 					});
 				}
@@ -108,9 +117,7 @@ const NotificationSettings = () => {
 					</Text>
 
 					{isLoadingNotificationSettings ? (
-						<View className="min-h-72 justify-center">
-							<LoadingSpinner label="Loading notification settings..." />
-						</View>
+						<NotificationSettingsSkeleton count={5} />
 					) : hasNotificationSettingsError ? (
 						<View className="min-h-72 items-center justify-center gap-4">
 							<Text
@@ -159,7 +166,7 @@ const NotificationSettings = () => {
 				<View className="h-px bg-dark-slate-blue" />
 
 				<Pressable
-					className="flex-row items-center gap-2 px-4 py-8"
+					className="flex-row items-center gap-2 px-4 py-8 active:opacity-70"
 					hitSlop={8}
 					onPress={useAuthStore.getState().logout}
 				>
@@ -168,7 +175,7 @@ const NotificationSettings = () => {
 				</Pressable>
 
 				<Pressable
-					className="flex-row items-center gap-2 px-4 pb-8"
+					className="flex-row items-center gap-2 px-4 pb-8 active:opacity-70"
 					disabled={isDeleting}
 					hitSlop={8}
 					onPress={() => confirmAccountDeletion(setIsDeleting)}

@@ -5,7 +5,7 @@ import PressableScale from "@/components/ui/PressableScale";
 import TeachingCard from "@/components/ui/TeachingCard";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
-import { CONTENT_FADE } from "@/constants/motion";
+import { CONTENT_FADE, ROTATE_TRANSITION } from "@/constants/motion";
 import { TeachingListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import SectionBookFilterDropdown from "@/features/section/SectionBookFilterDropdown";
 import SectionOtherFilterDropdown from "@/features/section/SectionOtherFilterDropdown";
@@ -22,7 +22,7 @@ import {
 	Text,
 	View
 } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, { useReducedMotion } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useShallow } from "zustand/react/shallow";
 
@@ -52,13 +52,20 @@ const TeachingsSection = () => {
 			isLoadMoreSectionTeachings: s.isLoadMoreSectionTeachings
 		}))
 	);
-	const { setIsFilterByBookOpen, setIsFilterByOtherOpen } =
-		useTeachingFilterStore(
-			useShallow((s) => ({
-				setIsFilterByBookOpen: s.setIsFilterByBookOpen,
-				setIsFilterByOtherOpen: s.setIsFilterByOtherOpen
-			}))
-		);
+	const {
+		isFilterByBookOpen,
+		isFilterByOtherOpen,
+		setIsFilterByBookOpen,
+		setIsFilterByOtherOpen
+	} = useTeachingFilterStore(
+		useShallow((s) => ({
+			isFilterByBookOpen: s.isFilterByBookOpen,
+			isFilterByOtherOpen: s.isFilterByOtherOpen,
+			setIsFilterByBookOpen: s.setIsFilterByBookOpen,
+			setIsFilterByOtherOpen: s.setIsFilterByOtherOpen
+		}))
+	);
+	const reduced = useReducedMotion();
 	const {
 		hasError,
 		handleCloseSectionTeachings,
@@ -67,9 +74,6 @@ const TeachingsSection = () => {
 	} = useTeachingSection({
 		sectionName
 	});
-
-	const isInitialLoading =
-		isLoadingSectionTeachings && sectionTeachings.length === 0;
 
 	return (
 		<ImageBackground source={backgroundImage} className="flex-1">
@@ -111,10 +115,21 @@ const TeachingsSection = () => {
 							<Text className="text-white font-poppins">
 								All Books
 							</Text>
-							<Image
-								source={require("@/assets/icons/chevron_Down.svg")}
-								style={{ width: 32, height: 32 }}
-							/>
+							<Animated.View
+								style={[
+									!reduced && ROTATE_TRANSITION,
+									{
+										transform: [
+											{ rotate: isFilterByBookOpen ? "180deg" : "0deg" }
+										]
+									}
+								]}
+							>
+								<Image
+									source={require("@/assets/icons/chevron_Down.svg")}
+									style={{ width: 32, height: 32 }}
+								/>
+							</Animated.View>
 						</PressableScale>
 					)}
 					<PressableScale
@@ -133,29 +148,40 @@ const TeachingsSection = () => {
 								Filters
 							</Text>
 						</View>
-						<Image
-							source={require("@/assets/icons/chevron_Down.svg")}
-							style={{ width: 32, height: 32 }}
-						/>
+						<Animated.View
+							style={[
+								!reduced && ROTATE_TRANSITION,
+								{
+									transform: [
+										{ rotate: isFilterByOtherOpen ? "180deg" : "0deg" }
+									]
+								}
+							]}
+						>
+							<Image
+								source={require("@/assets/icons/chevron_Down.svg")}
+								style={{ width: 32, height: 32 }}
+							/>
+						</Animated.View>
 					</PressableScale>
 				</View>
 
 				<View className="px-4 flex-1 gap-3">
 					<Text style={fonts.subtitle1White}>Latest Teachings</Text>
-					{isInitialLoading ? (
+					{isLoadingSectionTeachings ? (
 						<View className="flex-1">
 							<TeachingListSkeleton count={6} />
 						</View>
 					) : (
 					<Animated.View entering={CONTENT_FADE} style={{ flex: 1 }}>
 					<FlatList
-						data={isLoadingSectionTeachings ? [] : sectionTeachings}
+						data={sectionTeachings}
 						keyExtractor={(teaching) => String(teaching.id)}
 						renderItem={({ item }) => <TeachingCard teaching={item} />}
 						ItemSeparatorComponent={ItemSeparator}
 						refreshControl={
 							<RefreshControl
-								refreshing={isLoadingSectionTeachings}
+								refreshing={false}
 								onRefresh={handleRefreshSectionTeachings}
 							/>
 						}
@@ -168,11 +194,7 @@ const TeachingsSection = () => {
 							}
 						onEndReachedThreshold={0.1}
 						ListEmptyComponent={
-							isLoadingSectionTeachings ? (
-								<View className="flex-1 justify-center items-center">
-									<LoadingSpinner />
-								</View>
-							) : hasError ? (
+							hasError ? (
 								<ErrorState
 									message="Couldn't load teachings. Check your connection and try again."
 									onRetry={handleRefreshSectionTeachings}

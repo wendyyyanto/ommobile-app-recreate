@@ -196,6 +196,7 @@ const TeachingDetail = () => {
 											style={styles.fileDropdown}
 										>
 											<Pressable
+												className="active:bg-slate-gray-blue"
 												style={styles.fileDropdownOption}
 												onPress={() => {
 													if (pptUrl) downloadTeachingFile(pptUrl);
@@ -209,6 +210,7 @@ const TeachingDetail = () => {
 											</Pressable>
 											<View style={styles.fileDropdownSeparator} />
 											<Pressable
+												className="active:bg-slate-gray-blue"
 												style={styles.fileDropdownOption}
 												onPress={() => {
 													if (pdfUrl) downloadTeachingFile(pdfUrl);

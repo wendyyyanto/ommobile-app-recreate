@@ -1,7 +1,7 @@
 import ErrorState from "@/components/ui/ErrorState";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
-import { CONTENT_FADE } from "@/constants/motion";
+import { CONTENT_FADE, EASE_OUT } from "@/constants/motion";
 import { NotificationListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import useNotification from "@/hooks/useNotification";
 import { useNotificationStore } from "@/stores/notificationStore";
@@ -16,10 +16,16 @@ import {
 	Text,
 	View
 } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, { Keyframe, useReducedMotion } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const EMPTY_STATE_ENTER = new Keyframe({
+	from: { opacity: 0, transform: [{ scale: 0.97 }] },
+	to: { opacity: 1, transform: [{ scale: 1 }], easing: EASE_OUT }
+}).duration(300);
+
 const Notifications = () => {
+	const reduced = useReducedMotion();
 	const notificationList = useNotificationStore((s) => s.notificationList);
 	const isLoadingNotificationList = useNotificationStore(
 		(s) => s.isLoadingNotificationList
@@ -85,26 +91,31 @@ const Notifications = () => {
 											onRetry={handleRefreshNotifications}
 										/>
 									) : (
-										<ImageBackground
-											imageStyle={{ transform: [{ scale: 1.5 }] }}
-											source={require("@/assets/images/notif_empty.webp")}
-											className="flex-1 justify-center items-center"
-											resizeMode="contain"
+										<Animated.View
+											entering={reduced ? CONTENT_FADE : EMPTY_STATE_ENTER}
+											style={{ flex: 1 }}
 										>
-											<Text
-												style={[
-													fonts.body1White,
-													{
-														opacity: 0.7,
-														marginTop: 160,
-														width: "80%",
-														textAlign: "center"
-													}
-												]}
+											<ImageBackground
+												imageStyle={{ transform: [{ scale: 1.5 }] }}
+												source={require("@/assets/images/notif_empty.webp")}
+												className="flex-1 justify-center items-center"
+												resizeMode="contain"
 											>
-												You have no notifications right now. Come back later.
-											</Text>
-										</ImageBackground>
+												<Text
+													style={[
+														fonts.body1White,
+														{
+															opacity: 0.7,
+															marginTop: 160,
+															width: "80%",
+															textAlign: "center"
+														}
+													]}
+												>
+													You have no notifications right now. Come back later.
+												</Text>
+											</ImageBackground>
+										</Animated.View>
 									)
 								}
 								renderItem={({ item: notification }) => (

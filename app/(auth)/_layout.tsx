@@ -11,7 +11,12 @@ const AuthLayout = () => {
 				animation: reduced ? "fade" : "default",
 				headerShown: false
 			}}
-		/>
+		>
+			<Stack.Screen
+				name="login"
+				options={{ animationTypeForReplace: "pop" }}
+			/>
+		</Stack>
 	);
 };
 

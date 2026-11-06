@@ -5,12 +5,7 @@ import { getImageSource } from "@/utils/imageHelper";
 import { Image } from "expo-image";
 import { useRef } from "react";
 import { Dimensions, View } from "react-native";
-import {
-	Extrapolation,
-	interpolate,
-	useReducedMotion,
-	useSharedValue
-} from "react-native-reanimated";
+import { useReducedMotion, useSharedValue } from "react-native-reanimated";
 import Carousel, {
 	ICarouselInstance,
 	Pagination
@@ -61,6 +56,7 @@ const AnnouncementCarousel = ({ isLoading = false }: { isLoading?: boolean }) =>
 								borderRadius: 16
 							}}
 							contentFit="cover"
+							transition={200}
 						/>
 					)
 				}
@@ -79,25 +75,6 @@ const AnnouncementCarousel = ({ isLoading = false }: { isLoading?: boolean }) =>
 					overflow: "hidden",
 					width: 20,
 					height: 4
-				}}
-				customReanimatedStyle={(progress, index, length) => {
-					let val = Math.abs(progress - index);
-					if (index === 0 && progress > length - 1) {
-						val = Math.abs(progress - length);
-					}
-
-					return {
-						transform: [
-							{
-								translateY: interpolate(
-									val,
-									[0, 1],
-									[0, 0],
-									Extrapolation.CLAMP
-								)
-							}
-						]
-					};
 				}}
 				containerStyle={{ gap: 4, marginTop: 10 }}
 				onPress={() => {}}

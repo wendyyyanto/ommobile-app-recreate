@@ -48,7 +48,6 @@ const useSearchTeachings = () => {
 			return;
 		}
 
-		setSearchTeachings([]);
 		setIsLoadingSearchTeachings(true);
 		getTeachings(
 			{
@@ -67,6 +66,7 @@ const useSearchTeachings = () => {
 					if (requestId !== requestIdRef.current) return;
 
 					console.log(error);
+					setSearchTeachings([]);
 					setHasError(true);
 				},
 				onFulfilled: () => {

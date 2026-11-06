@@ -9,6 +9,7 @@ import {
 
 export const CSS_EASE_OUT = cubicBezier(0.23, 1, 0.32, 1) as unknown as string;
 export const EASE_OUT = Easing.bezier(0.23, 1, 0.32, 1);
+export const EASE_IN_OUT = Easing.bezier(0.77, 0, 0.175, 1);
 
 export const CONTENT_FADE = FadeIn.duration(200)
 	.easing(EASE_OUT)
@@ -24,6 +25,12 @@ export const ROW_LAYOUT = LinearTransition.duration(200).easing(EASE_OUT);
 
 export const BACKGROUND_TRANSITION = {
 	transitionProperty: "backgroundColor",
+	transitionDuration: "150ms",
+	transitionTimingFunction: CSS_EASE_OUT
+} as const;
+
+export const COLOR_TRANSITION = {
+	transitionProperty: "color",
 	transitionDuration: "150ms",
 	transitionTimingFunction: CSS_EASE_OUT
 } as const;

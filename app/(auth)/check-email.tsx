@@ -1,8 +1,9 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
-import { CONTENT_FADE, EASE_OUT } from "@/constants/motion";
+import { COLOR_TRANSITION, CONTENT_FADE, EASE_OUT } from "@/constants/motion";
 import { login } from "@/services/authServices";
 import { showErrorToast, showSuccessToast } from "@/utils/toastHelper";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -48,6 +49,9 @@ export default function CheckEmailScreen() {
 			{ email },
 			{
 				onSuccess: () => {
+					void Haptics.notificationAsync(
+						Haptics.NotificationFeedbackType.Success
+					);
 					setSecondsLeft(RESEND_SECONDS);
 					showSuccessToast("Sign-in link sent");
 				},
@@ -112,12 +116,14 @@ export default function CheckEmailScreen() {
 
 						<View style={{ alignItems: "center", gap: 24 }}>
 							<Pressable
+								className="active:opacity-70"
 								disabled={secondsLeft > 0 || isResending}
 								onPress={handleResend}
 							>
-								<Text
+								<Animated.Text
 									style={[
 										fonts.body1White,
+										COLOR_TRANSITION,
 										{
 											color:
 												secondsLeft > 0
@@ -132,9 +138,12 @@ export default function CheckEmailScreen() {
 											? `  ${secondsLeft}`
 											: ""}
 									</Text>
-								</Text>
+								</Animated.Text>
 							</Pressable>
-							<Pressable onPress={() => router.replace("/login")}>
+							<Pressable
+								className="active:opacity-70"
+								onPress={() => router.replace("/login")}
+							>
 								<Text style={fonts.subtitle1White}>
 									Use another email
 								</Text>

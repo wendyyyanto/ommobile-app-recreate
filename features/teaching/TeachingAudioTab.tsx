@@ -48,6 +48,7 @@ const TeachingAudioTab = () => {
 			>
 				<Image
 					source={teachingDetails?.thumbnail_url}
+					transition={200}
 					style={{
 						width: 200,
 						height: 200

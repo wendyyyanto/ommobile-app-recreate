@@ -1,13 +1,16 @@
+import BackButton from "@/components/ui/BackButton";
 import PressableScale from "@/components/ui/PressableScale";
 import fonts from "@/constants/fonts";
+import { CONTENT_FADE } from "@/constants/motion";
 import { ClassMaterialListSkeleton } from "@/features/skeletons/ContentSkeletons";
 import PdfViewer from "@/features/teaching/PdfViewer";
 import { useClassStore } from "@/stores/classStore";
 import { ClassMaterial } from "@/types/class";
 import { Image } from "expo-image";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Modal, ScrollView, Text, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const isPdf = (material: ClassMaterial) =>
@@ -48,22 +51,13 @@ export default function ClassWeekMaterialsScreen() {
 			className="flex-1 flex-col gap-7 px-4 py-5"
 		>
 			<View className="flex-row items-center gap-4">
-				<Pressable
-					accessibilityRole="button"
-					accessibilityLabel="Go back"
-					style={{ width: 40, height: 40 }}
-					onPress={() => router.back()}
-				>
-					<Image
-						source={require("@/assets/icons/arrow_back.svg")}
-						style={{ width: 40, height: 40 }}
-					/>
-				</Pressable>
+				<BackButton />
 				<Text style={fonts.body2White}>Week {week}</Text>
 			</View>
 			{!classDetails ? (
 				<ClassMaterialListSkeleton count={5} />
 			) : (
+				<Animated.View entering={CONTENT_FADE} style={{ flex: 1 }}>
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View className="flex-1 pb-8 gap-3">
 						{materials.length === 0 && (
@@ -100,6 +94,7 @@ export default function ClassWeekMaterialsScreen() {
 						))}
 					</View>
 				</ScrollView>
+				</Animated.View>
 			)}
 			<Modal
 				visible={Boolean(openedMaterial)}

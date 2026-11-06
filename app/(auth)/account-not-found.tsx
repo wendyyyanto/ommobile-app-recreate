@@ -68,13 +68,17 @@ export default function AccountNotFoundScreen() {
 
 						<View style={{ alignItems: "center", gap: 24 }}>
 							<Pressable
+								className="active:opacity-70"
 								onPress={() => router.replace("/register")}
 							>
 								<Text style={fonts.subtitle1White}>
 									Create Account
 								</Text>
 							</Pressable>
-							<Pressable onPress={() => router.back()}>
+							<Pressable
+								className="active:opacity-70"
+								onPress={() => router.back()}
+							>
 								<Text style={fonts.subtitle1White}>
 									Use another email
 								</Text>

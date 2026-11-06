@@ -264,7 +264,22 @@ export const ClassWeekListSkeleton = ({ count }: { count: number }) => (
 	</LoadingGroup>
 );
 
-const MATERIAL_WIDTHS = ["72%", "54%", "86%", "62%"] as const;
+const SETTING_WIDTHS = ["46%", "34%", "52%", "40%", "30%"] as const;
+
+export const NotificationSettingsSkeleton = ({ count }: { count: number }) => (
+	<LoadingGroup label="Loading notification settings" className="mt-4">
+		{Array.from({ length: count }, (_, i) => (
+			<View key={i} className="min-h-12 flex-row items-center justify-between">
+				<View style={{ width: SETTING_WIDTHS[i % SETTING_WIDTHS.length] }}>
+					<SkeletonLine font={fonts.body2White} width="100%" />
+				</View>
+				<SkeletonBone height={31} width={51} radius="round" />
+			</View>
+		))}
+	</LoadingGroup>
+);
+
+const MATERIAL_WIDTHS =["72%", "54%", "86%", "62%"] as const;
 
 export const ClassMaterialListSkeleton = ({ count }: { count: number }) => (
 	<LoadingGroup label="Loading class materials" className="gap-3">

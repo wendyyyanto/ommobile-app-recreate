@@ -1,5 +1,6 @@
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
+import * as Haptics from "expo-haptics";
 import { MotiView } from "moti";
 import { Platform, Pressable, Switch, Text, View } from "react-native";
 
@@ -44,7 +45,10 @@ const NotificationSwitch = ({
 				accessibilityLabel={label}
 				accessibilityState={{ checked }}
 				hitSlop={8}
-				onPress={() => onValueChange(!checked, label)}
+				onPress={() => {
+					void Haptics.selectionAsync();
+					onValueChange(!checked, label);
+				}}
 			>
 				<MotiView
 					animate={{

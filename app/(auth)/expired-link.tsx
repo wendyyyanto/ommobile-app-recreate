@@ -81,13 +81,20 @@ export default function ExpiredLinkScreen() {
 
 						<View style={{ alignItems: "center", gap: 24 }}>
 							{email && (
-								<Pressable disabled={isResending} onPress={handleResend}>
+								<Pressable
+									className="active:opacity-70"
+									disabled={isResending}
+									onPress={handleResend}
+								>
 									<Text style={fonts.subtitle1White}>
 										Resend link
 									</Text>
 								</Pressable>
 							)}
-							<Pressable onPress={() => router.replace("/login")}>
+							<Pressable
+								className="active:opacity-70"
+								onPress={() => router.replace("/login")}
+							>
 								<Text style={fonts.subtitle1White}>
 									Use another email
 								</Text>

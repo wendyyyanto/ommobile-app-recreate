@@ -13,7 +13,6 @@ import { Teaching } from "@/types/teaching";
 import { showErrorToast } from "@/utils/toastHelper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { MotiView } from "moti";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	ImageBackground,
@@ -152,10 +151,7 @@ const Teachings = () => {
 			resizeMode="cover"
 		>
 			<SafeAreaView edges={["top"]} className="flex-1 mt-6">
-				<MotiView
-					transition={{ type: "spring" }}
-					className="flex-1 px-4 font-poppins"
-				>
+				<View className="flex-1 px-4 font-poppins">
 					<View className="flex-row justify-between items-start mb-6">
 						<Text className="text-3xl w-2/5 text-white font-poppins">
 							Bible Teachings
@@ -230,6 +226,7 @@ const Teachings = () => {
 								{!isLoadingPopularTeachings &&
 									popularTeachings?.length > 0 && (
 										<Animated.View
+											key={popularTeachings[0].id}
 											entering={CONTENT_FADE}
 											style={{ gap: 16 }}
 										>
@@ -250,7 +247,7 @@ const Teachings = () => {
 							</View>
 						</ScrollView>
 					</View>
-				</MotiView>
+				</View>
 			</SafeAreaView>
 		</ImageBackground>
 	);

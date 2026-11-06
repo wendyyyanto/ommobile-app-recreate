@@ -208,7 +208,10 @@ export default function RegisterScreen() {
 							>
 								Already have an account?
 							</Text>
-							<Pressable onPress={() => router.replace("/login")}>
+							<Pressable
+								className="active:opacity-70"
+								onPress={() => router.replace("/login")}
+							>
 								<Text
 									style={{
 										fontSize: 14,
