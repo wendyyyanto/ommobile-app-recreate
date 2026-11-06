@@ -1,0 +1,24 @@
+html,
+body {
+	margin: 0;
+	height: 100%;
+	background: #000000;
+	overflow: hidden;
+}
+
+#viewerContainer {
+	position: absolute;
+	inset: 0;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.pdfViewer {
+	--page-margin: 8px auto;
+	--page-border: 0;
+}
+
+.pdfViewer .textLayer .highlight {
+	--highlight-bg-color: rgb(96 207 255 / 0.35);
+	--highlight-selected-bg-color: rgb(96 207 255 / 0.7);
+}

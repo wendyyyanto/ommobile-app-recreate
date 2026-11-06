@@ -7,7 +7,7 @@ import { showErrorToast } from "@/utils/toastHelper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { useEffect, useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import Pdf, { type PdfRef } from "react-native-pdf";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
@@ -26,12 +26,6 @@ body{display:flex;align-items:center;justify-content:center}
 video{width:100%;max-height:100%}audio{width:calc(100% - 32px)}</style></head>
 <body><${media} src="${url.replace(/"/g, "&quot;")}" controls autoplay playsinline></${media}></body></html>`;
 
-const MIN_SCALE = 1;
-const MAX_SCALE = 4;
-const ZOOM_STEP = 1.25;
-const clampScale = (value: number) =>
-	Math.min(MAX_SCALE, Math.max(MIN_SCALE, value));
-
 const PdfViewer = ({
 	source,
 	isPdf = true,
@@ -46,10 +40,8 @@ const PdfViewer = ({
 	const [localPath, setLocalPath] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 	const [pageCount, setPageCount] = useState(0);
-	const [scale, setScale] = useState(1);
+	const [pageInput, setPageInput] = useState("1");
 	const pdfRef = useRef<PdfRef>(null);
-	// pinch gestures report here without touching the `scale` prop: on Android a prop change redraws the document
-	const liveScaleRef = useRef(1);
 	const onCloseRef = useRef(onClose);
 	onCloseRef.current = onClose;
 
@@ -60,8 +52,6 @@ const PdfViewer = ({
 		setLocalPath(null);
 		setPage(1);
 		setPageCount(0);
-		setScale(1);
-		liveScaleRef.current = 1;
 
 		downloadFileToCache(source)
 			.then((path) => {
@@ -104,8 +94,19 @@ const PdfViewer = ({
 		pdfRef.current?.setPage(target);
 	};
 
-	const zoomBy = (factor: number) =>
-		setScale(clampScale(liveScaleRef.current * factor));
+	useEffect(() => {
+		setPageInput(String(page));
+	}, [page]);
+
+	const submitPage = () => {
+		const target = Math.min(pageCount, Math.max(1, parseInt(pageInput, 10)));
+		if (Number.isNaN(target)) {
+			setPageInput(String(page));
+			return;
+		}
+		setPageInput(String(target));
+		goToPage(target);
+	};
 
 	const canPrev = page > 1;
 	const canNext = page < pageCount;
@@ -159,8 +160,21 @@ const PdfViewer = ({
 									color={canPrev ? "white" : colors.darkGray}
 								/>
 							</Pressable>
+							<TextInput
+								style={[fonts.subtitle2White, styles.pageInput]}
+								value={pageInput}
+								onChangeText={(text) => setPageInput(text.replace(/\D/g, ""))}
+								onSubmitEditing={submitPage}
+								onBlur={submitPage}
+								keyboardType="number-pad"
+								returnKeyType="go"
+								maxLength={5}
+								selectTextOnFocus
+								editable={pageCount > 0}
+								accessibilityLabel="Jump to page"
+							/>
 							<Text style={[fonts.subtitle2White, styles.label]}>
-								{pageCount ? `${page} / ${pageCount}` : ""}
+								{pageCount ? `/ ${pageCount}` : ""}
 							</Text>
 							<Pressable
 								style={styles.iconButton}
@@ -174,37 +188,18 @@ const PdfViewer = ({
 									color={canNext ? "white" : colors.darkGray}
 								/>
 							</Pressable>
-							<View style={styles.spacer} />
-							<Pressable
-								style={styles.iconButton}
-								onPress={() => zoomBy(1 / ZOOM_STEP)}
-								accessibilityLabel="Zoom out"
-							>
-								<Ionicons name="remove" size={22} color="white" />
-							</Pressable>
-							<Pressable
-								style={styles.iconButton}
-								onPress={() => zoomBy(ZOOM_STEP)}
-								accessibilityLabel="Zoom in"
-							>
-								<Ionicons name="add" size={22} color="white" />
-							</Pressable>
 						</View>
 						<Pdf
 							ref={pdfRef}
 							enablePaging
 							source={{ uri: localPath }}
-							scale={scale}
-							minScale={MIN_SCALE}
-							maxScale={MAX_SCALE}
+							minScale={1}
+							maxScale={1}
 							trustAllCerts={false}
 							onLoadComplete={(numberOfPages) => setPageCount(numberOfPages)}
 							onPageChanged={(current, numberOfPages) => {
 								setPage(current);
 								setPageCount(numberOfPages);
-							}}
-							onScaleChanged={(current) => {
-								liveScaleRef.current = current;
 							}}
 							onError={(error) => {
 								console.log(error);
@@ -248,12 +243,21 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center"
 	},
-	label: {
-		minWidth: 64,
-		textAlign: "center"
+	pageInput: {
+		minWidth: 48,
+		height: 36,
+		paddingHorizontal: 8,
+		paddingVertical: 0,
+		lineHeight: 20,
+		textAlign: "center",
+		textAlignVertical: "center",
+		includeFontPadding: false,
+		borderWidth: 1,
+		borderColor: colors.darkGray,
+		borderRadius: 8
 	},
-	spacer: {
-		flex: 1
+	label: {
+		minWidth: 48
 	},
 	pdf: {
 		flex: 1,
