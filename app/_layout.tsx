@@ -105,7 +105,6 @@ export default function RootLayout() {
 					<Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
 					<Stack.Screen name="(resources)" />
 					<Stack.Screen name="notifications/[notificationId]" />
-					<Stack.Screen name="teaching/[teachingId]" />
 					<Stack.Screen name="teachings/[teachingId]" />
 					<Stack.Screen name="settings" />
 				</Stack.Protected>
