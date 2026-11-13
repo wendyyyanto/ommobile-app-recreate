@@ -1,3 +1,4 @@
+import { TAB_BAR_SPACE } from "@/components/ui/FloatingTabBar";
 import ErrorState from "@/components/ui/ErrorState";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import PressableScale from "@/components/ui/PressableScale";
@@ -154,7 +155,7 @@ export default function Index() {
 			<SafeAreaView edges={["top"]} className="flex-1">
 				<ScrollView
 					className="flex-1"
-					contentContainerStyle={{ flexGrow: 1 }}
+					contentContainerStyle={{ flexGrow: 1, paddingBottom: TAB_BAR_SPACE }}
 					showsVerticalScrollIndicator={false}
 					alwaysBounceVertical
 					refreshControl={
