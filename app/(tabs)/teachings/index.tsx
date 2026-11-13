@@ -1,3 +1,4 @@
+import { TAB_BAR_SPACE } from "@/components/ui/FloatingTabBar";
 import ErrorState from "@/components/ui/ErrorState";
 import PressableScale from "@/components/ui/PressableScale";
 import TeachingCard from "@/components/ui/TeachingCard";
@@ -158,7 +159,7 @@ const Teachings = () => {
 						</Text>
 						<ScrollView
 							className="flex-1"
-							contentContainerStyle={{ flexGrow: 1 }}
+							contentContainerStyle={{ flexGrow: 1, paddingBottom: TAB_BAR_SPACE }}
 							showsVerticalScrollIndicator={false}
 							alwaysBounceVertical
 							refreshControl={
