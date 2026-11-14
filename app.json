@@ -8,7 +8,6 @@
 		"icon": "./assets/images/app_icon.png",
 		"scheme": "ommobileapp",
 		"userInterfaceStyle": "automatic",
-		"newArchEnabled": true,
 		"ios": {
 			"supportsTablet": false,
 			"bundleIdentifier": "com.anonymous.ommobileapp",
@@ -30,7 +29,6 @@
 		"android": {
 			"versionCode": 1402,
 			"icon": "./assets/images/app_icon.png",
-			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false,
 			"package": "com.anonymous.ommobileapp",
 			"intentFilters": [
@@ -97,7 +95,8 @@
 			[
 				"onesignal-expo-plugin",
 				{
-					"mode": "production"
+					"mode": "production",
+					"iPhoneDeploymentTarget": "15.1"
 				}
 			]
 		],
