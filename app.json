@@ -11,7 +11,7 @@
 		"ios": {
 			"supportsTablet": false,
 			"bundleIdentifier": "com.anonymous.ommobileapp",
-			"buildNumber": "5",
+			"buildNumber": "6",
 			"associatedDomains": ["applinks:mobile.organic-ministry.org"],
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false,
