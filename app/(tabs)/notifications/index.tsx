@@ -1,3 +1,4 @@
+import { TAB_BAR_SPACE } from "@/components/ui/FloatingTabBar";
 import ErrorState from "@/components/ui/ErrorState";
 import colors from "@/constants/colors";
 import fonts from "@/constants/fonts";
@@ -73,7 +74,7 @@ const Notifications = () => {
 								data={notificationList}
 								keyExtractor={(notification) => String(notification.id)}
 								className="flex-1"
-								contentContainerStyle={{ flexGrow: 1 }}
+								contentContainerStyle={{ flexGrow: 1, paddingBottom: TAB_BAR_SPACE }}
 								showsVerticalScrollIndicator={false}
 								alwaysBounceVertical
 								refreshControl={

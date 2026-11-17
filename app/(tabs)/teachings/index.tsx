@@ -1,3 +1,4 @@
+import { TAB_BAR_SPACE } from "@/components/ui/FloatingTabBar";
 import ErrorState from "@/components/ui/ErrorState";
 import PressableScale from "@/components/ui/PressableScale";
 import TeachingCard from "@/components/ui/TeachingCard";
@@ -6,6 +7,7 @@ import fonts from "@/constants/fonts";
 import { CONTENT_FADE } from "@/constants/motion";
 import { TEACHINGS_PAGE_SIZE } from "@/constants/pagination";
 import { TeachingListSkeleton } from "@/features/skeletons/ContentSkeletons";
+import TeachingCategoryBento from "@/features/teaching/TeachingCategoryBento";
 import { getTeachings } from "@/services/teachingServices";
 import { useTeachingStore } from "@/stores/teachingStore";
 import { Pagination } from "@/types/request";
@@ -123,27 +125,6 @@ const Teachings = () => {
 		void fetchPopularTeachings(true);
 	}, [fetchPopularTeachings]);
 
-	const teachingCategories = [
-		{
-			name: "New Testament",
-			id: "new-testament",
-			background: "#1B3550",
-			border: colors.steelBlue
-		},
-		{
-			name: "Old Testament",
-			id: "old-testament",
-			background: "#1D3B38",
-			border: "#3F8F84"
-		},
-		{
-			name: "Topical",
-			id: "topical",
-			background: "#34264A",
-			border: "#8A6BB0"
-		}
-	];
-
 	return (
 		<ImageBackground
 			source={backgroundImage}
@@ -168,37 +149,8 @@ const Teachings = () => {
 							/>
 						</PressableScale>
 					</View>
-					<View className="flex-row gap-2 mb-11">
-						{teachingCategories.map((category) => (
-							<PressableScale
-								key={category.id}
-								accessibilityRole="button"
-								className="flex-1 min-h-[84px] justify-between p-2.5 rounded-2xl border"
-								style={{
-									backgroundColor: category.background,
-									borderColor: category.border
-								}}
-								onPress={() =>
-									router.push(
-										`/teachings/section/${category.id}?name=${category.name}`
-									)
-								}
-							>
-								<Text style={fonts.caption2White} numberOfLines={2}>
-									{category.name}
-								</Text>
-								<Image
-									source={require("@/assets/icons/chevron_right.svg")}
-									style={{
-										width: 24,
-										height: 24,
-										alignSelf: "flex-end",
-										marginRight: -4,
-										marginBottom: -4
-									}}
-								/>
-							</PressableScale>
-						))}
+					<View className="mb-11">
+						<TeachingCategoryBento />
 					</View>
 
 					<View className="flex-1 gap-4">
@@ -207,7 +159,7 @@ const Teachings = () => {
 						</Text>
 						<ScrollView
 							className="flex-1"
-							contentContainerStyle={{ flexGrow: 1 }}
+							contentContainerStyle={{ flexGrow: 1, paddingBottom: TAB_BAR_SPACE }}
 							showsVerticalScrollIndicator={false}
 							alwaysBounceVertical
 							refreshControl={

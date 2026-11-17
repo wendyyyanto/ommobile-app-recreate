@@ -1,32 +1,17 @@
 import { router, Tabs, usePathname, useSegments } from "expo-router";
 
-import colors from "@/constants/colors";
-import fonts from "@/constants/fonts";
-import { Image } from "expo-image";
-import { Platform, Text } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const tabBarIconSize = { width: 18, height: 18, marginBottom: 6 };
+import FloatingTabBar from "@/components/ui/FloatingTabBar";
 
 export default function TabsLayout() {
-	const insets = useSafeAreaInsets();
 	const pathname = usePathname();
 	const segments = useSegments();
 	const shouldHideTabBar = segments.length > 2;
-	// iOS home indicator is a gesture overlay, so content can sit inside its inset;
-	// Android button nav would cover it, so keep the full inset there
-	const tabBarPaddingBottom =
-		Platform.OS === "ios" ? 16 : 12 + insets.bottom;
-	const baseTabBarStyle = {
-		backgroundColor: "black",
-		paddingBottom: tabBarPaddingBottom,
-		paddingTop: 10,
-		height: 58 + 10 + tabBarPaddingBottom,
-		borderColor: "transparent"
-	};
 
 	return (
 		<Tabs
+			tabBar={(props) =>
+				shouldHideTabBar ? null : <FloatingTabBar {...props} />
+			}
 			screenOptions={{
 				headerTransparent: true,
 				headerShadowVisible: false,
@@ -35,52 +20,13 @@ export default function TabsLayout() {
 				},
 				headerTintColor: "white",
 				sceneStyle: {
-					backgroundColor: "black"
-				},
-				tabBarStyle: shouldHideTabBar
-					? [{ ...baseTabBarStyle }, { display: "none" }]
-					: baseTabBarStyle,
-				tabBarLabelStyle: {
-					...fonts.caption1White
+					backgroundColor: "transparent"
 				}
 			}}
 		>
 			<Tabs.Screen
 				name="index"
-				options={{
-					title: "Home",
-					tabBarLabel: ({ focused }) => (
-						<Text
-							numberOfLines={2}
-							adjustsFontSizeToFit
-							minimumFontScale={0.8}
-							style={[
-								fonts.caption1White,
-								{
-									color: focused
-										? colors.lightBlue
-										: colors.white
-								}
-							]}
-							className="text-center"
-						>
-							Home
-						</Text>
-					),
-					tabBarIcon: ({ focused }) =>
-						focused ? (
-							<Image
-								source={require("@/assets/icons/home_active.svg")}
-								style={tabBarIconSize}
-							/>
-						) : (
-							<Image
-								source={require("@/assets/icons/home_inactive.svg")}
-								style={tabBarIconSize}
-							/>
-						),
-					headerShown: false
-				}}
+				options={{ title: "Home", headerShown: false }}
 			/>
 			<Tabs.Screen
 				name="teachings"
@@ -92,40 +38,7 @@ export default function TabsLayout() {
 						router.replace("/teachings");
 					}
 				}}
-				options={{
-					title: "Teachings",
-					tabBarLabel: ({ focused }) => (
-						<Text
-							numberOfLines={2}
-							adjustsFontSizeToFit
-							minimumFontScale={0.8}
-							style={[
-								fonts.caption1White,
-								{
-									color: focused
-										? colors.lightBlue
-										: colors.white
-								}
-							]}
-							className="text-center"
-						>
-							Teachings
-						</Text>
-					),
-					tabBarIcon: ({ focused }) =>
-						focused ? (
-							<Image
-								source={require("@/assets/icons/teaching_active.svg")}
-								style={tabBarIconSize}
-							/>
-						) : (
-							<Image
-								source={require("@/assets/icons/teaching_inactive.svg")}
-								style={tabBarIconSize}
-							/>
-						),
-					headerShown: false
-				}}
+				options={{ title: "Teachings", headerShown: false }}
 			/>
 			<Tabs.Screen
 				name="notifications"
@@ -137,40 +50,7 @@ export default function TabsLayout() {
 						router.replace("/notifications");
 					}
 				}}
-				options={{
-					title: "Notifications",
-					tabBarLabel: ({ focused }) => (
-						<Text
-							numberOfLines={2}
-							adjustsFontSizeToFit
-							minimumFontScale={0.8}
-							style={[
-								fonts.caption1White,
-								{
-									color: focused
-										? colors.lightBlue
-										: colors.white
-								}
-							]}
-							className="text-center"
-						>
-							Notifications
-						</Text>
-					),
-					tabBarIcon: ({ focused }) =>
-						focused ? (
-							<Image
-								source={require("@/assets/icons/notif_active.svg")}
-								style={tabBarIconSize}
-							/>
-						) : (
-							<Image
-								source={require("@/assets/icons/notif_inactive.svg")}
-								style={tabBarIconSize}
-							/>
-						),
-					headerShown: false
-				}}
+				options={{ title: "Notifications", headerShown: false }}
 			/>
 		</Tabs>
 	);
